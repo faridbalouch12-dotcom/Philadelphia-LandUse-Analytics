@@ -163,3 +163,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Data storage policy:** [`docs/policies/data_storage_policy.md`](./docs/policies/data_storage_policy.md)
 - **Contributing guide:** [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 - **Learning resources:** [`docs/learning_resources.md`](./docs/learning_resources.md)
+- **Bibliography:** [`docs/bibliography.md`](./docs/bibliography.md)
