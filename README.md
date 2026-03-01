@@ -162,3 +162,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Repo settings applied:** [`docs/repo_settings_applied.md`](./docs/repo_settings_applied.md)
 - **Data storage policy:** [`docs/policies/data_storage_policy.md`](./docs/policies/data_storage_policy.md)
 - **Contributing guide:** [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- **Learning resources:** [`docs/learning_resources.md`](./docs/learning_resources.md)
