@@ -115,13 +115,18 @@ SCORING (0–2 each, max 10):
 1. Clarity        — Is it crisp, precise, unambiguous, correct terminology?
 2. Completeness   — Are all required sections/fields present?
 3. Traceability   — Are there source links, cross-links, evidence? Can claims be verified?
-4. Consistency    — Does it align with the glossary, style guide, and other artifacts?
+4. Consistency    — Does it align with the glossary, style guide, templates, and other artifacts?
                     For style guide alignment, check:
                     • File names follow lowercase_with_underscores convention
                     • Required sections present (Purpose, Scope, References where applicable)
-                    • Resources cited using IDs from resources.md ([B3], [D7], etc.)
+                    • Resources cited using IDs from `claude/resources.md` ([B3], [D7], etc.)
                     • Markdown formatting is consistent (headings, lists, links)
                     • Cross-references use correct relative paths and resolve
+                    For template compliance (memos/specs/notes), check:
+                    • Header block present with all required metadata fields
+                    • Sections match the appropriate template structure
+                    • Any Assumptions and Risks sections required by the chosen template use the specified table format
+                    • Change Log is present and maintained
 5. Task Objective Mastery — Does the output demonstrate the stated learning objective
                             with thoughtful choices and explicit rationale?
 ```
