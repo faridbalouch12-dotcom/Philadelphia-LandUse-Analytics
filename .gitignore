@@ -1,0 +1,25 @@
+# ignore all files in the large_data directory
+# large_data directory should have files no larger than 10 MB.
+/large_data/
+
+# ignore all shapefiles files and geogrpahic data as they tend to get very large.
+*.shp
+*.gpkg
+*.dbf
+*.prj
+*.shx
+*.cpg
+
+# ignore enviroment file
+.env
+
+# ignore virtual enviroments
+.venv/
+
+*.csv                          # ignore all CSVs by default
+!data/samples/*.csv            # except intentional small samples
+!tests/fixtures/*.csv          # except test fixtures
+
+*.pyc
+.ipynb_checkpoints/
+__pycache__/

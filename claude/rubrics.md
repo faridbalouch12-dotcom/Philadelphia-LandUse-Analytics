@@ -9,6 +9,39 @@ When grading, always:
 
 ---
 
+## Universal Criterion Scoring Notes
+
+### Consistency (Criterion 4)
+
+When scoring Consistency (0–2), check alignment with `style_guide.md` and template usage:
+
+**For all documentation artifacts:**
+- File names follow lowercase_with_underscores convention
+- Required sections present (Purpose, Scope, References where applicable)
+- Resources cited using IDs from `resources.md` ([B3], [D7], etc.)
+- Markdown formatting is consistent (heading levels, list styles, link formats)
+- Cross-references use correct relative paths and resolve properly
+
+**For memos, specs, and notes (check template compliance):**
+- Header block present with all required metadata (Author, Created, Last Updated, Status/Source)
+- Document structure matches the appropriate template (memo_template.md or notes_template.md)
+- Assumptions section uses the specified table format (ID, Assumption, Impact if Wrong, Mitigation)
+- Risks section uses the specified table format (ID, Risk, Likelihood, Impact, Mitigation) where applicable
+- References section uses resource ID citation format ([B3], [D7])
+- Change Log is present and maintained
+
+**For code artifacts (Month 2+):**
+- Follows Google Python Style Guide conventions
+- PEP 8 compliant
+- Docstrings present where required
+
+**Scoring:**
+- **2 points:** Fully consistent — follows all style guide rules AND template structure where applicable
+- **1 point:** Mostly consistent — minor deviations (1-2 missing fields, inconsistent formatting, missing Change Log)
+- **0 points:** Inconsistent — multiple violations (wrong file names, missing required sections, doesn't follow template structure)
+
+---
+
 ## WEEK 1
 
 ### Day 1
@@ -188,6 +221,8 @@ When grading, always:
 ## WEEK 2
 
 > **Universal Week 2+ requirement for criterion 5:** Every task must (a) directly address the 'Do:' part of the task description, not merely paraphrase the instructions, and (b) include an Assumptions/Risks section for any feasibility or comparability task.
+>
+> **Template compliance:** Source catalog entries, feasibility checklists, critical field dictionaries, and decision memos should follow the memo_template.md structure. Reading/resource notes should follow the notes_template.md structure. Check that the header block, Assumptions/Risks tables, and Change Log are present.
 
 ### Day 6 — Planning Districts
 
@@ -319,6 +354,8 @@ When grading, always:
 ## WEEK 3
 
 > **Universal Week 3 requirement for criterion 5:** Must directly address the 'Do:' part of the task. Must include an Assumptions/Risks section for modeling and comparability tasks.
+>
+> **Template compliance:** Metric specs, modeling docs, and policy documents should follow memo_template.md structure. Reading notes should follow notes_template.md structure.
 
 ### Day 11
 
@@ -409,6 +446,8 @@ When grading, always:
 ## WEEK 4
 
 > **Universal Week 4 requirement for criterion 5:** Must directly address the 'Do:' part of the task. Must include an Assumptions/Risks section for modeling and comparability tasks.
+>
+> **Template compliance:** All specs, recaps, and policy documents should follow memo_template.md structure.
 
 ### Day 16
 

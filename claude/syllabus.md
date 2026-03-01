@@ -6,7 +6,7 @@ All tasks are listed by Week → Day → Task. For each task, the key fields are
 - **Learning Objective**
 - **Definition of Done** (the exact pass criteria)
 - **Deliverable Artifacts** (the exact file paths that must exist)
-- **Reading Resources** / **Video Resources** (IDs — resolve in `.claude/resources.md`)
+- **Reading Resources** / **Video Resources** (IDs — resolve in `claude/resources.md`)
 
 ---
 

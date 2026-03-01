@@ -1,29 +1,28 @@
-Philadelphia-LandUse-Analytics
-====================================
+# Philadelphia-LandUse-Analytics
 
-#### Project Overview
+## Project overview
 
 An analytics platform to analyze changes in Philadelphia's planning district over time with the support of public datasets.
 
-#### Project Goal
+## Project goal
 
-Build a reproducible analytics platform that explains how Philadelphia’s 18 planning districts change over time, using public datasets. The output is a district change explorer (interactive) plus a well-modeled warehouse that supports longitudinal analysis and future expansions.
+Build a reproducible analytics platform that explains how Philadelphia's 18 planning districts change over time, using public datasets. The output is a district change explorer (interactive) plus a well-modeled warehouse that supports longitudinal analysis and future expansions.
 
 District Change is defined by the change in permits of buildings (buildings getting a rental permit), zoning (single family home getting upzoned to a multi-family home), changes in demographics (income, race, education levels, etc) tracked by the American Commmunity Survey (ACS) and changes in the district's physical boundaries itself.
 
 
-#### Locked Decisions:
+## Locked decisions
 
 - Stack: Postgres + Python + dbt + Metabase + Docker
 - Reproducibility: Docker Compose is the default run path; GitHub is the source of truth
-- Modeling approach (fixed for Month 1): dbt stg_* → dim_*/fct_* with a district-time grain.
+- Modeling approach (fixed for Month 1): dbt stg_* -> dim_*/fct_* with a district-time grain.
 - Metic normalization: By land area. For example, permits granted per sq mi.
 - Data's time scope: Last 5 years.
 - Metric comparison period: year over year.
 - Incremental scope: Month 1 prioritizes permits + zoning + ACS + district boundaries; no extra datasets until those are stable.
 - Environment: dev runs locally via Docker; production/cloud deployment is out of scope for Month 1
 
-#### Repo Layout:
+## Repo layout
 
 - docker/ (compose, service configs)
 
@@ -31,14 +30,14 @@ District Change is defined by the change in permits of buildings (buildings gett
 
 - dbt/ (dbt project)
 
-- data/ (optional local dev samples; note what is/ isn’t committed)
+- data/ (optional local dev samples; note what is/ isn't committed)
 
 - docs/ (data dictionary, architecture notes)
 
 - sql/ (optional ad-hoc queries, debugging). 
-## Month-1 Deliverables (v0)
+## Month-1 deliverables (v0)
 
-By the end of Month 1, this repo will contain a runnable, end-to-end MVP slice (ingest → model → explore) with the following artifacts:
+By the end of Month 1, this repo will contain a runnable, end-to-end MVP slice (ingest -> model -> explore) with the following artifacts:
 
 1) **Reproducible local environment**
 - `docker/` (or root) includes a working `docker-compose.yml` that starts **Postgres** and **Metabase** (and any supporting services) successfully.
@@ -55,7 +54,7 @@ By the end of Month 1, this repo will contain a runnable, end-to-end MVP slice (
 
 4) **Core reference data in the warehouse**
 - Planning district boundaries are loaded into a canonical raw table (and carried through to staging), with a clear district identifier strategy documented.
-- A “date spine” or time dimension exists for the Month-1 analysis window (e.g., last 5 years).
+- A "date spine" or time dimension exists for the Month-1 analysis window (e.g., last 5 years).
 
 5) **dbt project scaffold**
 - A dbt project exists (`dbt/` folder) with working profiles/config for the Postgres service.
@@ -71,11 +70,11 @@ By the end of Month 1, this repo will contain a runnable, end-to-end MVP slice (
   - a small set of ACS indicators aligned to the same district-time grain.
 
 8) **Dimensions (`dim_*`)**
-- Core dimensions exist to support analysis (at minimum `dim_district` and `dim_time`; optionally `dim_permit_type`, `dim_zoning_category` depending on what’s ingested first).
+- Core dimensions exist to support analysis (at minimum `dim_district` and `dim_time`; optionally `dim_permit_type`, `dim_zoning_category` depending on what's ingested first).
 
 9) **Data quality checks**
 - dbt tests are implemented for marts and key dims (at least `unique`, `not_null`, and `relationships` where applicable).
-- Basic “sanity checks” are documented (row count expectations, missingness checks, and any known caveats).
+- Basic "sanity checks" are documented (row count expectations, missingness checks, and any known caveats).
 
 10) **Metabase baseline analytics**
 - Metabase is connected to Postgres and contains:
@@ -86,7 +85,7 @@ By the end of Month 1, this repo will contain a runnable, end-to-end MVP slice (
 - `docs/README.md` exists as a docs index and links to all Month-1 docs.
 - At least one additional Month-1 doc exists describing:
   - the district-time grain,
-  - the definition of key metrics (e.g., “permits per sq mi”, “YoY change”), and
+  - the definition of key metrics (e.g., "permits per sq mi", "YoY change"), and
   - how to run the Month-1 pipeline end-to-end.
 
 12) **Project hygiene**
@@ -94,7 +93,7 @@ By the end of Month 1, this repo will contain a runnable, end-to-end MVP slice (
 - Repo includes baseline `.gitignore` and licensing is in place (already done)
   
 
-## How to Contribute / Work
+## How to contribute / work
 
 ### Workflow
 1. Create (or pick up) a GitHub Issue describing the change.
@@ -129,7 +128,7 @@ Before opening a PR, ensure:
   - `dbt run`
   - `dbt test`
 
-If you don’t have all services wired yet, document what you *did* run in the PR description.
+If you don't have all services wired yet, document what you *did* run in the PR description.
 
 ### Where to put things
 - **Curated docs:** `/docs` (anything you want to keep long-term)
@@ -145,7 +144,7 @@ If your change affects:
 - the data model,
 - a metric definition,
 - or a data source,
-then update the relevant doc in `/docs` and ensure it’s linked from `docs/README.md`.
+then update the relevant doc in `/docs` and ensure it's linked from `docs/README.md`.
 
 ### PR checklist
 - [ ] Scope is clear and matches the Issue
@@ -155,7 +154,11 @@ then update the relevant doc in `/docs` and ensure it’s linked from `docs/READ
 - [ ] No secrets committed; `.env.example` updated if new env vars were added
 
 
-## Links to Docs Index
+## Links to docs index
 
 - **Docs Index:** [`docs/README.md`](./docs/README.md)
+- **Style guide:** [`docs/style_guide.md`](./docs/style_guide.md)
+- **Repo settings checklist:** [`docs/repo_settings_checklist.md`](./docs/repo_settings_checklist.md)
 - **Repo settings applied:** [`docs/repo_settings_applied.md`](./docs/repo_settings_applied.md)
+- **Data storage policy:** [`docs/policies/data_storage_policy.md`](./docs/policies/data_storage_policy.md)
+- **Contributing guide:** [`CONTRIBUTING.md`](./CONTRIBUTING.md)
