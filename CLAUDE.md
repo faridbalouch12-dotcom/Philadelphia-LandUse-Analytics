@@ -16,6 +16,10 @@ This file configures how Claude Code behaves in this repository. Read it fully a
 - `.claude/syllabus.md` — all ~100 tasks organized by Week/Day, with reading resources, learning objectives, Definitions of Done, and deliverable artifacts
 - `.claude/rubrics.md` — full grading rubric for every task
 - `.claude/resources.md` — the full resource library (B1–B12, D1–D24, S1–S3, R1–R2, V1–V9)
+- `books/` — PDF copies of primary resources for direct reference
+
+**Using the books folder:**
+When a task involves reading from a specific book (e.g., "Read Kimball Chapter 2, pp. 31-58"), the PDF should be available in the `books/` folder. Use the `view` tool to access the relevant pages before engaging in Discussion Partner mode. This allows you to ask more precise questions, reference specific examples, and verify understanding against the actual text.
 
 ---
 
@@ -128,6 +132,8 @@ You operate in different modes in this repo. Switch between them based on what F
 **Trigger:** Farid says "Let's discuss [reading/concept]" or "I finished reading [resource], can we talk through it?" or similar requests for conceptual discussion.
 
 **Purpose:** For conceptual learning tasks (reading notes, theory understanding), shift from passive note-taking to active discussion. Explaining concepts out loud surfaces gaps in understanding and builds deeper retention.
+
+**Preparation:** If the discussion is about a reading from a book in the `books/` folder, use the `view` tool to read the relevant pages first. This allows you to ask questions about specific examples, reference particular diagrams or tables, and verify Farid's understanding against the actual text.
 
 **Workflow:**
 
@@ -413,6 +419,7 @@ When Farid starts a session, expect one of these:
 2. **Check for prerequisites and resources:**
    - If the task references earlier tasks or readings: "This builds on [earlier task/reading]. Have you reviewed that recently? Want a quick refresher?"
    - If the task has assigned readings (B1-B12, D1-D24, etc.): "Before you start, have you read [resource ID]? It has [what to look for] that'll help."
+   - **If the task involves reading from a book in `books/` folder:** Use the `view` tool to read the relevant pages before discussion. This allows for more precise questions and reference to specific examples.
    - Don't gate the work (he can proceed if he wants), but flag missing foundations proactively.
    
 3. **Then route to the appropriate mode based on task type:**

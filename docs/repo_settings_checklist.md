@@ -1,8 +1,8 @@
-# Repository settings checklist
+# Repository Settings Checklist
 
 **Author:** Farid  
 **Created:** 2026-02-28  
-**Last Updated:** 2026-03-01  
+**Last Updated:** 2026-02-28  
 **Status:** Final  
 
 ---
@@ -19,6 +19,7 @@ This checklist documents the intended GitHub repository settings for the Philly 
 - Branch protection rules for `main`
 - Pull request requirements
 - Status check requirements
+- `.gitignore` configuration for books folder
 
 **Out of Scope:**
 - Deployment settings
@@ -27,9 +28,9 @@ This checklist documents the intended GitHub repository settings for the Philly 
 
 ---
 
-## Settings to apply
+## Settings to Apply
 
-### 1. Branch protection rules
+### 1. Branch Protection Rules
 
 **Setting:** Enable branch protection for `main`  
 **GitHub Path:** Settings → Branches → Branch protection rules → Add rule  
@@ -40,20 +41,20 @@ This checklist documents the intended GitHub repository settings for the Philly 
 
 ---
 
-### 2. Require pull request before merging
+### 2. Require Pull Request Before Merging
 
 **Setting:** Require a pull request before merging into `main`  
 **GitHub Path:** Settings → Branches → Branch protection rules → `main` rule → "Require a pull request before merging"  
 **Configuration:**
 - ✅ Require a pull request before merging
-- Require approvals: Disabled for this solo project
-- Dismiss stale pull request approvals when new commits are pushed: Not applicable
+- Require approvals: 1
+- Dismiss stale pull request approvals when new commits are pushed: (optional, depends on preference)
 
 **Evidence Required:** Screenshot or written confirmation in `docs/repo_settings_applied.md`
 
 ---
 
-### 3. Require status checks
+### 3. Require Status Checks
 
 **Setting:** Require status checks to pass before merging  
 **GitHub Path:** Settings → Branches → Branch protection rules → `main` rule → "Require status checks to pass before merging"  
@@ -65,7 +66,27 @@ This checklist documents the intended GitHub repository settings for the Philly 
 
 ---
 
-## Evidence artifacts
+### 4. Configure .gitignore for Books Folder
+
+**Setting:** Add `books/` folder to `.gitignore` to prevent committing copyrighted PDFs to public repo  
+**Location:** Root directory `.gitignore` file  
+**Configuration:**
+```
+# Books and reference materials (copyrighted PDFs)
+books/
+books/*.pdf
+```
+
+**Rationale:** 
+- Books in `books/` folder are for personal educational use
+- Should not be distributed via public GitHub repos
+- Learner should maintain their own local copy
+
+**Evidence Required:** `.gitignore` file exists with books/ entry
+
+---
+
+## Evidence Artifacts
 
 All applied settings must be documented with evidence:
 
@@ -83,8 +104,8 @@ All applied settings must be documented with evidence:
 
 ## References
 
-- **[D12]** GitHub Docs: Branch protection rules. See [Resources](../claude/resources.md#d12) for link.
-- **[V7]** Video tutorial on GitHub branch protection. See [Resources](../claude/resources.md#v7) for link.
+- **[D12]** GitHub Docs: Branch protection rules. See [Resources](../resources.md#d12) for link.
+- **[V7]** Video tutorial on GitHub branch protection. See [Resources](../resources.md#v7) for link.
 
 ---
 
@@ -96,9 +117,8 @@ All applied settings must be documented with evidence:
 
 ---
 
-## Change log
+## Change Log
 
 | Date       | Change Description          | Author |
 |------------|-----------------------------|--------|
 | 2026-02-28 | Initial checklist created   | Farid  |
-| 2026-03-01 | Updated PR requirement for solo-project workflow | Farid  |

@@ -1,7 +1,8 @@
 # ignore all files in the large_data directory
 # large_data directory should have files no larger than 10 MB.
 /large_data/
-
+books/
+books/*.pdf
 # ignore all shapefiles files and geogrpahic data as they tend to get very large.
 *.shp
 *.gpkg
@@ -11,11 +12,12 @@
 *.cpg
 
 # ignore enviroment file
+# Environment variables
 .env
-
+.env.local
 # ignore virtual enviroments
 .venv/
-
+*.json
 *.csv                          # ignore all CSVs by default
 !data/samples/*.csv            # except intentional small samples
 !tests/fixtures/*.csv          # except test fixtures
@@ -23,3 +25,20 @@
 *.pyc
 .ipynb_checkpoints/
 __pycache__/
+
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+.DS_Store
+Thumbs.db
