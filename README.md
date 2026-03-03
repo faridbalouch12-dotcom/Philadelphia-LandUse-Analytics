@@ -167,3 +167,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Resource triage rules:** [`notes/resource_triage_rules.md`](./notes/resource_triage_rules.md)
 - **Kimball grain notes:** [`notes/kimball_grain_notes.md`](./notes/kimball_grain_notes.md)
 - **Kimball facts notes:** [`notes/kimball_facts_notes.md`](./notes/kimball_facts_notes.md)
+- **ACS period estimates notes:** [`notes/acs_period_estimates_notes.md`](./notes/acs_period_estimates_notes.md)

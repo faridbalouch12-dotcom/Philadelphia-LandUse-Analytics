@@ -21,13 +21,13 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ## Week 1 — Day 2: Learning Library
 
-- [ ] Task 2.1 — Create learning library skeleton
-- [ ] Task 2.2 — Create bibliography format
-- [ ] Task 2.3 — Define resource triage rules
-- [ ] Task 2.4 — Populate initial resource set
+- [x] Task 2.1 — Create learning library skeleton (PASS, 10/10, 2026-03-03)
+- [x] Task 2.2 — Create bibliography format (PASS, 10/10, 2026-03-03)
+- [x] Task 2.3 — Define resource triage rules (PASS, 10/10, 2026-03-03)
+- [x] Task 2.4 — Populate initial resource set (PASS, 10/10, 2026-03-03)
 - [x] Task 2.5 — Kimball: Grain notes (PASS, 10/10, 2026-03-02)
 - [x] Task 2.6 — Kimball: Facts notes (PASS, 10/10, 2026-03-02)
-- [ ] Task 2.7 — ACS: period estimates notes
+- [x] Task 2.7 — ACS: period estimates notes (PASS, 10/10, 2026-03-03)
 - [ ] Task 2.8 — PostGIS: spatial primer notes
 - [ ] Task 2.9 — Reference repo patterns (dbt / Git notes)
 - [ ] Task 2.10 — Reference repo patterns (project structure)
@@ -154,4 +154,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-02 (Task 2.6 graded)
+**Last updated:** 2026-03-03 (Task 2.7 graded)
