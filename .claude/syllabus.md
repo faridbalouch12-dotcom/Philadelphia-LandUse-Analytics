@@ -8,6 +8,8 @@ All tasks are listed by Week → Day → Task. For each task, the key fields are
 - **Deliverable Artifacts** (the exact file paths that must exist)
 - **Reading Resources** / **Video Resources** (IDs — resolve in `claude/resources.md`)
 
+> **Revision note (2026-03-03):** Trimmed ~18 bureaucracy/process tasks to accelerate path to Month 2. Removed: standalone grading rubric (4.1), issue templates (4.3–4.4), PR/exit checklists (4.5–4.6), label taxonomy (4.7), community health files (4.8), all weekly PR/merge/tag tasks (4.10, 5.10, 10.6, 10.7, 15.4, 20.2), and two redundant Day 3 docs (3.8, 3.9) absorbed into scope memo. What remains is all substantive.
+
 ---
 
 ## WEEK 1 — Repo Setup + Conceptual Foundations
@@ -263,22 +265,6 @@ All tasks are listed by Week → Day → Task. For each task, the key fields are
 
 ---
 
-**Task 3.8 — Create question backlog**
-- Description: Create a backlog of non-MVP questions (drivers, amenities, transit, causality) with priority and dependencies.
-- Learning Objective: Park ideas without derailing Month 1 scope.
-- Definition of Done: Backlog has sections by theme and each item has: priority, data dependency, and 'not in Month 1' flag.
-- Deliverables: `docs/questions_backlog.md`
-
----
-
-**Task 3.9 — Create non-goals doc**
-- Description: Write a standalone Non-Goals doc aligned with the scope memo.
-- Learning Objective: Make exclusions explicit to prevent creep.
-- Definition of Done: Non-goals doc matches scope memo; includes at least 8 non-goals and rationale for deferring them.
-- Deliverables: `docs/non_goals.md`
-
----
-
 **Task 3.10 — Create decision log**
 - Description: Read B7 chapter on 'Tracer bullets'. Create a decision log and record the locked decisions to date (>=6 entries).
 - Learning Objective: Preserve reasoning for future you (and reviewers).
@@ -292,15 +278,6 @@ All tasks are listed by Week → Day → Task. For each task, the key fields are
 
 ---
 
-**Task 4.1 — Create Week-1 grading rubric**
-- Description: Read D7. Create a Week-1 grading rubric with pass/fail + scoring criteria referencing artifacts.
-- Learning Objective: Make reviews fast and objective.
-- Definition of Done: Rubric includes criteria for clarity, completeness, traceability, and consistency. Each criterion points to specific artifacts.
-- Deliverables: `docs/grading_rubric_week1.md`
-- Reading: D7
-
----
-
 **Task 4.2 — Add PR template**
 - Description: Read D5, D17. Add PR template that forces you to link changed artifacts, assumptions, and evidence.
 - Learning Objective: Standardize PR quality and reduce review overhead.
@@ -310,72 +287,11 @@ All tasks are listed by Week → Day → Task. For each task, the key fields are
 
 ---
 
-**Task 4.3 — Add issue templates (docs work)**
-- Description: Read D6. Add issue templates for: data-source onboarding, spec change request, reading notes.
-- Learning Objective: Turn work into trackable units.
-- Definition of Done: All three templates exist, require key fields, and appear in 'New issue' chooser.
-- Deliverables: `.github/ISSUE_TEMPLATE/data_source_onboarding.md, .github/ISSUE_TEMPLATE/spec_change_request.md, .github/ISSUE_TEMPLATE/reading_notes.md`
-- Reading: D6
-
----
-
-**Task 4.4 — Configure issue chooser**
-- Description: Read D6. Configure issue chooser to discourage blank issues and add helpful links.
-- Learning Objective: Improve issue quality and navigation.
-- Definition of Done: Blank issues disabled; contact links added (docs index, learning resources).
-- Deliverables: `.github/ISSUE_TEMPLATE/config.yml`
-- Reading: D6
-
----
-
-**Task 4.5 — Add PR self-review checklist**
-- Description: Read D7. Create a PR self-review checklist (<=15 items) aligned to your rubric.
-- Learning Objective: Catch issues before review.
-- Definition of Done: Checklist items are concrete (e.g., 'updated docs index', 'no orphan files', 'assumptions logged').
-- Deliverables: `docs/checklists/pr_self_review_checklist.md`
-- Reading: D7
-
----
-
-**Task 4.6 — Create Week-1 exit checklist**
-- Description: Create Week-1 exit checklist that enumerates all Week-1 required artifacts.
-- Learning Objective: Prevent missed items.
-- Definition of Done: Checklist references every Week-1 deliverable file and indicates which day it belongs to.
-- Deliverables: `docs/checklists/week1_exit_checklist.md`
-
----
-
-**Task 4.7 — Define label taxonomy**
-- Description: Read D13. Define a label taxonomy and create labels in GitHub.
-- Learning Objective: Make issues/PRs searchable and consistent.
-- Definition of Done: Doc lists label names + intended use. Labels exist in GitHub UI (screenshot optional).
-- Deliverables: `docs/repo_labels.md (and labels created in GitHub UI)`
-- Reading: D13
-
----
-
-**Task 4.8 — Create community health files**
-- Description: Read D14. Add CODE_OF_CONDUCT and SECURITY policy (minimal templates).
-- Learning Objective: Learn standard repo expectations.
-- Definition of Done: Files exist and are generic; no personal data. README links to them.
-- Deliverables: `CODE_OF_CONDUCT.md, SECURITY.md`
-- Reading: D14
-
----
-
 **Task 4.9 — Update docs navigation map**
 - Description: Update docs index to ensure no orphan docs and that summaries are current.
 - Learning Objective: Maintain reviewability as docs grow.
 - Definition of Done: docs/README.md links to all docs in docs/ and has updated 1-line summaries.
 - Deliverables: `docs/README.md (updated)`
-
----
-
-**Task 4.10 — Open PR for Week-1 WIP**
-- Description: Open a Week-1 WIP PR containing Day 1–4 work. Use the PR template and self-review checklist.
-- Learning Objective: Practice incremental delivery and review loop.
-- Definition of Done: PR exists, uses template, links to rubric, and includes checklist completion.
-- Deliverables: `(GitHub PR) Week-1 WIP PR`
 
 ---
 
@@ -443,28 +359,11 @@ All tasks are listed by Week → Day → Task. For each task, the key fields are
 
 ---
 
-**Task 5.8 — Create Week-1 recap doc**
-- Description: Write a Week-1 recap summarizing what was created, what's missing, and Week-2 plan.
-- Learning Objective: Improve execution quality week-to-week.
-- Definition of Done: Recap links to key artifacts and includes next steps in bullets.
-- Deliverables: `docs/week1_recap.md`
-
----
-
 **Task 5.9 — Update learning library (Week-1)**
 - Description: Update learning library and bibliography based on anything discovered in Days 3–5.
 - Learning Objective: Keep the curriculum aligned to project needs.
 - Definition of Done: Learning resources and bibliography updated; no duplicates; each resource has a clear rationale.
 - Deliverables: `docs/learning_resources.md (updated), docs/bibliography.md (updated)`
-
----
-
-**Task 5.10 — Merge Week-1 PR + tag release**
-- Description: Read D14. Merge Week-1 PR to main and create a Week-1 tag/release note.
-- Learning Objective: Practice incremental releases and stable milestones.
-- Definition of Done: Main branch contains Week-1 artifacts. A GitHub Release or tag exists with brief release notes.
-- Deliverables: `GitHub Release/Tag (Week-1) + RELEASE_NOTES.md (optional)`
-- Reading: D14
 
 ---
 
@@ -570,15 +469,16 @@ All tasks are listed by Week → Day → Task. For each task, the key fields are
 
 ---
 
-### Day 10 — Week-2 QA + Close
+### Day 10 — Week-2 Close
 
 **Task 10.1** — Update docs index (Week 2) | Deliverable: `docs/README.md (updated)`
-**Task 10.2** — Consistency check sweep | Reading: D7 | Deliverable: `docs/glossary.md (updated) and/or docs/decision_log.md (updated)`
-**Task 10.3** — Traceability audit sweep | Deliverable: `docs/source_catalog/*.md, docs/feasibility/*.md, docs/data_dictionary/*.md (updated if needed)`
-**Task 10.4** — Limitations register hardening | Deliverable: `docs/limitations_register.md (updated)` — DoD: >=15 items, all have severity+mitigation+timeframe
+- DoD: Docs index updated; no orphan docs; summaries accurate for all Week 2 additions.
+
+**Task 10.4** — Limitations register hardening | Deliverable: `docs/limitations_register.md (updated)`
+- DoD: >=15 items total, all have severity + mitigation + timeframe.
+
 **Task 10.5** — Week-2 recap + Week-3 plan | Deliverable: `docs/week2_recap.md`
-**Task 10.6** — Open PR: Week-2 artifacts | Reading: D5, D7 | Video: V6 | Deliverable: `(GitHub PR) Week-2 PR`
-**Task 10.7** — Optional: Tag Week-2 milestone | Reading: D14 | Deliverable: `GitHub Release/Tag (Week-2) (optional)`
+- DoD: Recap links to key Week 2 artifacts and includes a bulleted Week-3 plan.
 
 ---
 
@@ -621,12 +521,11 @@ All tasks are listed by Week → Day → Task. For each task, the key fields are
 
 ---
 
-### Day 15 — Week-3 QA + Close
+### Day 15 — Week-3 Close
 
 **Task 15.1** — Cross-metric consistency check | Deliverable: `docs/decision_log.md (updated) and/or metrics docs updated` — DoD: >=5 issues fixed; no conflicting grain statements
 **Task 15.2** — Docs index update (Week 3) | Deliverable: `docs/README.md (updated)`
 **Task 15.3** — Week 3 recap + Week 4 plan | Deliverable: `docs/week3_recap.md`
-**Task 15.4** — Open PR: Week 3 specs | Reading: D5, D7 | Video: V6 | Deliverable: `(GitHub PR) Week-3 PR`
 
 ---
 
@@ -668,5 +567,4 @@ All tasks are listed by Week → Day → Task. For each task, the key fields are
 ### Day 20 — Month-1 Submission
 
 **Task 20.1** — Month-1 recap (executive summary) | Deliverable: `docs/month1_recap.md` — DoD: links to scope memo, catalogs, grain spec, key metrics, comparability plan, diagrams, limitations, product specs
-**Task 20.2** — Open PR: Month-1 submission | Reading: D7 | Video: V6 | Deliverable: `(GitHub PR) Month-1 submission PR`
 **Task 20.3** — Create Month-1 release/tag | Reading: D14 | Deliverable: `GitHub Release/Tag (Month-1)`

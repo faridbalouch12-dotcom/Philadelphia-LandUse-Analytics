@@ -59,7 +59,6 @@ When scoring Consistency (0–2), check alignment with `style_guide.md` and temp
 - README includes: Overview, Locked Decisions, Month-1 Deliverables, Repo Structure, Work Process, Docs links.
 
 **1.5 — Create Docs Index**
-- README includes the required sections listed above.
 - Docs index has no orphan docs; every doc has 1-line summary and working link.
 
 **1.6 — Add contribution workflow**
@@ -117,7 +116,7 @@ When scoring Consistency (0–2), check alignment with `style_guide.md` and temp
 ### Day 3
 
 **3.1 — Draft scope memo (v1)**
-- Scope/problem framing is non-technical, with explicit non-goals and measurable success criteria.
+- Scope memo includes all five required elements: objective, locked decisions, Month-1 deliverables list, explicit non-goals, and what success looks like. Non-technical framing; non-goals are specific (not vague deferrals).
 
 **3.2 — Write problem statement**
 - Scope/problem framing is non-technical, with explicit non-goals and measurable success criteria.
@@ -137,12 +136,6 @@ When scoring Consistency (0–2), check alignment with `style_guide.md` and temp
 **3.7 — Start assumptions log**
 - Output aligns to task description and demonstrates the learning objective in your own words.
 
-**3.8 — Create question backlog**
-- Output aligns to task description and demonstrates the learning objective in your own words.
-
-**3.9 — Create non-goals doc**
-- Output aligns to task description and demonstrates the learning objective in your own words.
-
 **3.10 — Create decision log**
 - Each decision log entry includes alternatives and implications; no retroactive vague entries.
 
@@ -150,36 +143,11 @@ When scoring Consistency (0–2), check alignment with `style_guide.md` and temp
 
 ### Day 4
 
-**4.1 — Create Week-1 grading rubric**
-- Output aligns to task description and demonstrates the learning objective in your own words.
-
 **4.2 — Add PR template**
-- Templates enforce required fields and align to rubric; confirms they appear in GitHub UI.
-
-**4.3 — Add issue templates (docs work)**
-- Output aligns to task description and demonstrates the learning objective in your own words.
-
-**4.4 — Configure issue chooser**
-- Output aligns to task description and demonstrates the learning objective in your own words.
-
-**4.5 — Add PR self-review checklist**
-- Output aligns to task description and demonstrates the learning objective in your own words.
-
-**4.6 — Create Week-1 exit checklist**
-- Output aligns to task description and demonstrates the learning objective in your own words.
-
-**4.7 — Define label taxonomy**
-- Output aligns to task description and demonstrates the learning objective in your own words.
-
-**4.8 — Create community health files**
-- Output aligns to task description and demonstrates the learning objective in your own words.
+- Template enforces required fields (Purpose, Artifacts Updated, Checklist, Risks/Assumptions, Links); confirms it appears in GitHub UI.
 
 **4.9 — Update docs navigation map**
-- README includes the required sections.
 - Docs index has no orphan docs; every doc has 1-line summary and working link.
-
-**4.10 — Open PR for Week-1 WIP**
-- Output aligns to task description and demonstrates the learning objective in your own words.
 
 ---
 
@@ -206,15 +174,9 @@ When scoring Consistency (0–2), check alignment with `style_guide.md` and temp
 **5.7 — Create limitations register (v0)**
 - Limitations register includes severity + mitigation + when it will be addressed; avoids hand-wavy 'data may be messy'.
 
-**5.8 — Create Week-1 recap doc**
-- Output aligns to task description and demonstrates the learning objective in your own words.
-
 **5.9 — Update learning library (Week-1)**
 - Resources are pre-curated; each entry includes 1-sentence 'why' tied to Month-1 needs; no filler links.
 - Bibliography IDs are consistent and referenced; includes access dates.
-
-**5.10 — Merge Week-1 PR + tag release**
-- Output aligns to task description and demonstrates the learning objective in your own words.
 
 ---
 
@@ -324,30 +286,16 @@ When scoring Consistency (0–2), check alignment with `style_guide.md` and temp
 
 ---
 
-### Day 10
+### Day 10 — Week-2 Close
 
 **10.1 — Update docs index (Week 2)**
 - Docs index updated; no orphan docs; summaries accurate.
-
-**10.2 — Consistency check sweep**
-- Output directly addresses the 'Do:' part. Issues are specific; not just "updated."
-
-**10.3 — Traceability audit sweep**
-- Catalog includes access URL(s), geometry, time semantics, candidate keys, cadence, top 3 risks.
-- Feasibility doc clearly states: chosen time field, geo linkage method, top blockers, links to catalog.
-- Critical fields doc marks required vs optional, null/invalid patterns, links to catalog.
 
 **10.4 — Limitations register hardening**
 - Each limitation includes severity + mitigation + timeframe; language is specific (not vague).
 
 **10.5 — Week-2 recap + Week-3 plan**
-- Output directly addresses the 'Do:' part. Includes Assumptions/Risks section.
-
-**10.6 — Open PR: Week-2 artifacts**
-- PR description links recap + key artifacts; checklist completed; commits logically grouped.
-
-**10.7 — Optional: Tag Week-2 milestone**
-- Output directly addresses the 'Do:' part. Includes Assumptions/Risks section.
+- Recap links to key Week 2 artifacts; Week-3 plan is specific (not generic bullets).
 
 ---
 
@@ -423,23 +371,20 @@ When scoring Consistency (0–2), check alignment with `style_guide.md` and temp
 - Output directly addresses the 'Do:' part. Includes Assumptions/Risks section.
 
 **14.4 — Update learning resources (Week 3 modeling)**
-- Diagram matches written grain/metric specs; entities and relationships are consistent.
+- New resources are Tier-1/2; each has 1-sentence 'why relevant to Week 3 modeling'.
 
 ---
 
-### Day 15
+### Day 15 — Week-3 Close
 
 **15.1 — Cross-metric consistency check**
-- Metric definition includes name, purpose, grain, numerator/denominator, and caveats.
+- Issues identified are specific (exact grain conflicts, naming mismatches); not generic "updated docs."
 
 **15.2 — Docs index update (Week 3)**
 - Docs index updated; no orphan docs; summaries accurate.
 
 **15.3 — Week 3 recap + Week 4 plan**
-- Output directly addresses the 'Do:' part. Includes Assumptions/Risks section.
-
-**15.4 — Open PR: Week 3 specs**
-- PR links to recap and key specs; checklist completed; commits logically grouped.
+- Recap links to key Week 3 artifacts; Week-4 plan is specific (not generic bullets).
 
 ---
 
@@ -481,7 +426,7 @@ When scoring Consistency (0–2), check alignment with `style_guide.md` and temp
 - Docs index updated; no orphan docs; summaries accurate.
 
 **18.2 — Traceability pass: cross-links**
-- Metric definition includes name, purpose, grain, numerator/denominator, and caveats.
+- Cross-links verified across source catalog, feasibility, data dictionary, and metrics docs; broken links fixed.
 
 **18.3 — Consistency pass: terminology & naming**
 - Output directly addresses the 'Do:' part. Includes Assumptions/Risks section.
@@ -500,17 +445,14 @@ When scoring Consistency (0–2), check alignment with `style_guide.md` and temp
 - Output directly addresses the 'Do:' part. Includes Assumptions/Risks section.
 
 **19.3 — Update learning resources (Week 4)**
-- Output directly addresses the 'Do:' part. Includes Assumptions/Risks section.
+- New resources are Tier-1/2; each has 1-sentence 'why relevant to Week 4 work'.
 
 ---
 
 ### Day 20
 
 **20.1 — Month-1 recap (executive summary)**
-- Output directly addresses the 'Do:' part. Includes Assumptions/Risks section.
-
-**20.2 — Open PR: Month-1 submission**
-- PR links to recap and key specs; checklist completed; commits logically grouped.
+- Recap links to all key Month-1 artifacts; summary is substantive (not a file list).
 
 **20.3 — Create Month-1 release/tag**
 - Output directly addresses the 'Do:' part. Includes Assumptions/Risks section.

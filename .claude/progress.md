@@ -41,24 +41,14 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [ ] Task 3.5 — List MVP datasets + rationale
 - [ ] Task 3.6 — Draft data access notes
 - [ ] Task 3.7 — Start assumptions log
-- [ ] Task 3.8 — Create question backlog
-- [ ] Task 3.9 — Create non-goals doc
 - [ ] Task 3.10 — Create decision log
 
-## Week 1 — Day 4: GitHub Hygiene
+## Week 1 — Day 4: GitHub Workflow Infrastructure
 
-- [ ] Task 4.1 — Create Week-1 grading rubric
 - [ ] Task 4.2 — Add PR template
-- [ ] Task 4.3 — Add issue templates (docs work)
-- [ ] Task 4.4 — Configure issue chooser
-- [ ] Task 4.5 — Add PR self-review checklist
-- [ ] Task 4.6 — Create Week-1 exit checklist
-- [ ] Task 4.7 — Define label taxonomy
-- [ ] Task 4.8 — Create community health files
 - [ ] Task 4.9 — Update docs navigation map
-- [ ] Task 4.10 — Open PR for Week-1 WIP
 
-## Week 1 — Day 5: Policies & Wrap-up
+## Week 1 — Day 5: Policies & Week-1 Close
 
 - [ ] Task 5.1 — Create source catalog template
 - [ ] Task 5.2 — Create feasibility checklist template
@@ -67,9 +57,7 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [ ] Task 5.5 — Draft land-area denominator policy
 - [ ] Task 5.6 — Draft ACS usage policy
 - [ ] Task 5.7 — Create limitations register (v0)
-- [ ] Task 5.8 — Create Week-1 recap doc
 - [ ] Task 5.9 — Update learning library (Week-1)
-- [ ] Task 5.10 — Merge Week-1 PR + tag release
 
 ## Week 2 — Dataset Cataloging
 
@@ -84,7 +72,7 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [ ] Task 7.2 — Source catalog entry: L&I permits
 - [ ] Task 7.3 — Feasibility checklist: L&I permits
 - [ ] Task 7.4 — Critical fields dictionary: L&I permits
-- [ ] Task 7.5 — Permits date fields audit
+- [ ] Task 7.5 — Permit category grouping decision memo
 - [ ] Task 7.6 — Permits geocoding risk note
 - [ ] Task 7.7 — Update learning resources (permits/open data)
 - [ ] Task 8.1 — Review dataset metadata: Zoning base districts
@@ -102,12 +90,8 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [ ] Task 9.6 — Uncertainty messaging note (MOE-aware)
 - [ ] Task 9.7 — Update learning resources (ACS additions)
 - [ ] Task 10.1 — Update docs index (Week 2)
-- [ ] Task 10.2 — Consistency check sweep
-- [ ] Task 10.3 — Traceability audit sweep
 - [ ] Task 10.4 — Limitations register hardening
 - [ ] Task 10.5 — Week-2 recap + Week-3 plan
-- [ ] Task 10.6 — Open PR: Week-2 artifacts
-- [ ] Task 10.7 — Optional: Tag Week-2 milestone
 
 ## Week 3 — Data Modeling
 
@@ -131,7 +115,6 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [ ] Task 15.1 — Cross-metric consistency check
 - [ ] Task 15.2 — Docs index update (Week 3)
 - [ ] Task 15.3 — Week 3 recap + Week 4 plan
-- [ ] Task 15.4 — Open PR: Week 3 specs
 
 ## Week 4 — Diagrams & Product Specs
 
@@ -149,9 +132,8 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [ ] Task 19.2 — Create 'compare districts' view spec
 - [ ] Task 19.3 — Update learning resources (Week 4 docs/diagrams)
 - [ ] Task 20.1 — Month-1 recap (executive summary)
-- [ ] Task 20.2 — Open PR: Month-1 submission
 - [ ] Task 20.3 — Create Month-1 release/tag
 
 ---
 
-**Last updated:** 2026-03-03 (Task 2.10 graded)
+**Last updated:** 2026-03-03 (syllabus trimmed — 18 bureaucracy tasks removed)
