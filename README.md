@@ -169,3 +169,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Kimball facts notes:** [`notes/kimball_facts_notes.md`](./notes/kimball_facts_notes.md)
 - **ACS period estimates notes:** [`notes/acs_period_estimates_notes.md`](./notes/acs_period_estimates_notes.md)
 - **PostGIS spatial primer notes:** [`notes/postgis_spatial_primer_notes.md`](./notes/postgis_spatial_primer_notes.md)
+- **Missing Semester Git notes:** [`notes/missing_semester_git_notes.md`](./notes/missing_semester_git_notes.md)

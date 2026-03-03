@@ -29,7 +29,7 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [x] Task 2.6 — Kimball: Facts notes (PASS, 10/10, 2026-03-02)
 - [x] Task 2.7 — ACS: period estimates notes (PASS, 10/10, 2026-03-03)
 - [x] Task 2.8 — PostGIS: spatial primer notes (PASS, 10/10, 2026-03-03)
-- [ ] Task 2.9 — Reference repo patterns (dbt / Git notes)
+- [x] Task 2.9 — Reference repo patterns (dbt / Git notes) (PASS, 10/10, 2026-03-03)
 - [ ] Task 2.10 — Reference repo patterns (project structure)
 
 ## Week 1 — Day 3: Conceptual Design
@@ -154,4 +154,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-03 (Task 2.8 graded)
+**Last updated:** 2026-03-03 (Task 2.9 graded)
