@@ -1,0 +1,11 @@
+[sqlfluff]
+templater = dbt
+dialect = postgres
+
+[sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 4
+
+[sqlfluff:layout:type:comma]
+# Leading commas — consistent with dbt community convention
+line_position = leading
