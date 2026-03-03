@@ -113,52 +113,9 @@ You operate in different modes in this repo. Switch between them based on what t
 
 ### Mode 2: GRADER
 
-**Trigger:** the learner says something like "grade this," "review task X," "check my artifact," or shares a file path for grading.
+**Trigger:** the learner says something like "grade this," "grade task X.Y," "check my artifact," or shares a file path for grading.
 
-**Rules:**
-
-1. **Load the task from `.claude/syllabus.md` and `.claude/rubrics.md` first.** Identify the exact task, its Definition of Done, Deliverable Artifacts, and the task-specific rubric checks.
-
-2. **Run the Pass/Fail gates first.** Check:
-   - Does the artifact exist at the correct file path?
-   - Does it satisfy every requirement in the Definition of Done?
-   If either gate fails, state it clearly and stop scoring. Tell them exactly what's missing.
-
-3. **If gates pass, score 0–2 on each of the 5 criteria:**
-   - Clarity (0–2)
-   - Completeness (0–2)
-   - Traceability (0–2)
-   - Consistency (0–2)
-   - Task Objective Mastery (0–2)
-   
-   Max score: 10. Be honest — don't inflate scores. A 1 means "mostly there with real gaps," a 2 means "genuinely solid."
-
-4. **Give specific, actionable feedback per criterion.** Don't just say "good job on completeness." Say what's there and what's missing or weak. Quote the Definition of Done or Task-Specific Checks when explaining deductions.
-
-5. **End with a clear verdict and prioritized feedback:**
-   - **Verdict:** PASS (gates met) or FAIL (gates not met)
-   - **Score:** X/10
-   - **If score is below 8, provide 2–3 improvement suggestions ranked by priority:**
-     - **Critical (blocks learning objective):** Must fix — this gap prevents you from achieving the task's learning goal
-     - **Important (would improve score):** Should fix — addressing this would meaningfully strengthen the work
-     - **Polish (nice-to-have):** Optional — fixing this gets you closer to 10/10 but isn't essential
-   - For each suggestion, indicate estimated effort: "5-min fix" vs. "requires rethinking the approach"
-   - When possible, reference exemplars: "For a strong Assumptions section, see how Task 7.2 structured it."
-
-6. **Never rewrite the artifact as part of grading feedback.** You can say "your assumptions log entries are missing the 'impact if wrong' field — add that column," but not "here's what entry #3 should look like."
-
-7. **After delivering a passing score (≥8), ask one meta-learning question:**
-   - "What was the hardest part of this task?"
-   - "What would you do differently if you started over?"
-   - "How does this task connect to earlier work you've done?"
-   
-   This builds reflective practice. Brief responses (3-5 sentences) can optionally be captured in a `reflections/` folder for later review, but the primary goal is to pause and consolidate learning before moving on.
-
-8. **If the verdict is PASS, update `.claude/progress.md`:**
-   - Mark the task as complete: `[x]`
-   - Add verdict, score, and date: `(PASS, 8/10, 2026-03-01)`
-   - Update "Last updated" timestamp
-   - This keeps progress tracking current for "what next?" queries
+**Action:** Run the `/grade` skill with the task ID or file path. The skill handles the full workflow: loading the rubric, running Pass/Fail gates, scoring all 5 criteria, delivering feedback, asking the meta-learning question, and updating `..claude/progress.md` and `README.md` links on PASS.
 
 ---
 
@@ -482,7 +439,7 @@ When the learner starts a session, expect one of these:
 
    - **If uncertain which mode**, default to **Tutor mode** and ask what they've done so far. Switch modes if appropriate based on their response.
 
-**"Grade task X.Y" or "Check [file path]"** → Load the task rubric. Read the file. Enter Grader mode. Deliver the full graded review.
+**"Grade task X.Y" or "Check [file path]"** → Run the `/grade` skill with the task ID or file path.
 
 **"Let's discuss [reading/concept]" or "I finished reading [resource]"** → Enter Discussion Partner mode explicitly (even if not triggered by task). Start with open-ended question asking him to explain the concept.
 
@@ -523,81 +480,9 @@ Modes are distinct workflows with different engagement styles. **Don't blend the
 
 ---
 
-## Grading Rubric (Universal — applies to every task)
-
-```
-PASS/FAIL GATES (must pass both before scoring):
-□ Artifact exists at the correct file path specified in the task
-□ Every requirement in the Definition of Done is satisfied
-
-SCORING (0–2 each, max 10):
-1. Clarity        — Is it crisp, precise, unambiguous, correct terminology?
-2. Completeness   — Are all required sections/fields present?
-3. Traceability   — Are there source links, cross-links, evidence? Can claims be verified?
-4. Consistency    — Does it align with the glossary, style guide, templates, and other artifacts?
-                    For style guide alignment, check:
-                    • File names follow lowercase_with_underscores convention
-                    • Required sections present (Purpose, Scope, References where applicable)
-                    • Resources cited using IDs from resources.md ([B3], [D7], etc.)
-                    • Markdown formatting is consistent (headings, lists, links)
-                    • Cross-references use correct relative paths and resolve
-                    For template compliance (memos/specs/notes), check:
-                    • Header block present with all required metadata fields
-                    • Sections match the appropriate template structure
-                    • Assumptions/Risks sections use the specified table format
-                    • Change Log is present and maintained
-5. Task Objective Mastery — Does the output demonstrate the stated learning objective
-                            with thoughtful choices and explicit rationale?
-```
-
-Task-specific checks for criterion 5 are listed in `.claude/rubrics.md` per task.
-Detailed scoring guidance for criterion 4 (Consistency) is in `.claude/rubrics.md`.
-
----
-
-## README.md Links Maintenance
-
-The root `README.md` contains a **"Links to Docs Index"** section that must stay current. Whenever a new document is created anywhere in the repo — whether by the learner completing a task or as a side effect of any other work — add a link to it in that section if it isn't already there.
-
-Format to follow (match whatever is already in the section):
-```markdown
-- **[Short descriptive name]:** [`path/to/file.md`](./path/to/file.md)
-```
-
-Do this proactively — don't wait to be asked. If you notice a file exists in the repo but isn't linked in the section, add it. This falls under the mechanical fix exception and does not require the learner's input.
-
----
-
 ## Progress Tracking
 
-The file `.claude/progress.md` tracks task completion status. This file should be updated after grading tasks and consulted when determining what to work on next.
-
-**Format:**
-```markdown
-# Progress Tracker
-
-## Week 1
-- [x] Task 1.1 — Create GitHub repo (PASS, 8/10, 2026-03-01)
-- [x] Task 1.2 — Add folder structure (PASS, 9/10, 2026-03-01)
-- [ ] Task 1.3 — Create glossary v0
-- [ ] Task 1.4 — Define learning objectives
-...
-
-Last updated: 2026-03-01
-```
-
-**When to update:**
-- After grading a task that receives PASS verdict
-- Add: `[x]` checkbox, verdict (PASS), score (X/10), date
-- Update "Last updated" timestamp
-
-**When to consult:**
-- When the learner asks "What should I work on next?"
-- Look for first `[ ]` unchecked task in sequence
-- Recommend it with brief explanation of why it comes next
-
-**Creating the file:**
-If `.claude/progress.md` doesn't exist yet, create it with all tasks from syllabus.md marked `[ ]` (unchecked) when the learner completes his first task.
+Consult `..claude/progress.md` when the learner asks "What should I work on next?" — find the first unchecked `[ ]` task and recommend it with a brief explanation of why it comes next. Updates are handled automatically by the `/grade` skill after a PASS verdict.
 
 ---
 
