@@ -101,6 +101,13 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 
 ### Books
 
+**[B13]** Forrest, Matthew. 2023. "Spatial SQL: A Practical Approach to Modern GIS Using SQL." Accessed 2026-03-03. <https://locatepress.com/book/spatial-sql>
+
+- **Type:** Book
+- **Why relevant:** Practical introduction to PostGIS geometry types, spatial joins, and spatial indexing — primary reading for Task 2.8 spatial primer notes, used in place of D3/D4 for direct book-based discussion.
+
+---
+
 **[B1]** Kimball, Ralph, and Margy Ross. 2013. "The Data Warehouse Toolkit: The Definitive Guide to Dimensional Modeling (3rd ed.)." Accessed 2026-02-28. <https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/books/data-warehouse-dw-toolkit/>
 
 - **Type:** Book
@@ -194,3 +201,4 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 | --- | --- | --- |
 | 2026-02-28 | Initial format defined; D1 and D2 added (Task 2.2) | Farid |
 | 2026-02-28 | Starter resource set added: B1-B5, B10, D3-D4, D8-D11, R1-R2, V1-V5 (Task 2.4) | Farid |
+| 2026-03-03 | Added B13 (Spatial SQL, Forrest) — used as primary reading for Task 2.8 | Farid |

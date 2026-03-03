@@ -20,6 +20,7 @@ All resources are referenced by ID throughout the syllabus. Use this file to res
 | B10 | PostGIS in Action (3rd ed.) | Leo S. Hsu, Regina O. Obe | https://www.manning.com/books/postgis-in-action-third-edition | Spatial types/functions, performance, real-world GIS tasks in PostGIS. Core for map-ready DB thinking. |
 | B11 | The Art of PostgreSQL | Dimitri Fontaine | https://theartofpostgresql.com/ | Advanced SQL thinking & query design in Postgres. |
 | B12 | Architecture Patterns with Python | Harry Percival, Bob Gregory | https://books.apple.com/us/book/architecture-patterns-with-python/ | When to use patterns/OOP; testing as design tool. Read later, after basics. |
+| B13 | Spatial SQL: A Practical Approach to Modern GIS Using SQL | Matthew Forrest | https://locatepress.com/book/spatial-sql | Practical PostGIS: geometry types, spatial joins, spatial indexing. Used for Task 2.8 spatial primer. |
 
 ---
 

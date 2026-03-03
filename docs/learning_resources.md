@@ -38,6 +38,7 @@ Resources are referenced using IDs from [`claude/resources.md`](../claude/resour
 
 **Why this matters for this project:** The project includes spatial datasets (e.g., planning district boundaries, zoning polygons) in shapefile and GeoJSON formats. PostGIS extends Postgres with spatial data types and functions, enabling spatial joins (e.g., assigning a permit address to a planning district), area calculations (e.g., land-only square miles per district), and geometry validation. Understanding how spatial data differs from tabular data — and why spatial indexes matter for query performance — is critical before writing any pipeline.
 
+- **[B13]** [Spatial SQL (Forrest)](https://locatepress.com/book/spatial-sql) — Practical introduction to PostGIS geometry types, spatial joins, and spatial indexing — used as primary reading for Task 2.8 (sections 3.4, 2.1–2.2, 3.5).
 - **[D3]** [PostGIS Manual: Introduction](https://postgis.net/docs/manual-2.5/postgis_introduction.html) — Conceptual introduction to PostGIS and spatial types — prerequisite reading before working with planning district or zoning polygon geometries.
 - **[D4]** [PostGIS FAQ: Spatial Indexes](https://postgis.net/documentation/faq/spatial-indexes/) — Explains how spatial indexes work and why they matter for query performance — foundational before writing any spatial join queries.
 - **[B10]** [PostGIS in Action (3rd ed.)](https://www.manning.com/books/postgis-in-action-third-edition) — Core reference for PostGIS spatial types, functions, and spatial joins — required before writing geometry-aware queries for district boundary assignment.
@@ -107,3 +108,4 @@ Full citations for all resources listed above are in [`docs/bibliography.md`](./
 | --- | --- | --- |
 | 2026-02-28 | Initial skeleton created (Task 2.1) | Farid |
 | 2026-02-28 | Starter resource set populated (Task 2.4) | Farid |
+| 2026-03-03 | Added B13 (Spatial SQL) to GIS/PostGIS section (Task 2.8) | Farid |
