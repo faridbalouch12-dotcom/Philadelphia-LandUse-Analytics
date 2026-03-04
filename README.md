@@ -37,7 +37,53 @@ District Change is defined by the change in permits of buildings (buildings gett
 - sql/ (optional ad-hoc queries, debugging). 
 ## Month-1 deliverables (v0)
 
-By the end of Month 1, this repo will contain a runnable, end-to-end MVP slice (ingest -> model -> explore) with the following artifacts:
+By the end of Month 1, I'll have a complete documentation package for your warehouse. No code yet, just comprehensive design artifacts with a repo structure thatlooks like this:
+philly-data-warehouse/
+├── README.md
+├── .gitignore
+├── CONTRIBUTING.md
+├── docs/
+│   ├── glossary.md
+│   ├── problem_statement.md
+│   ├── success_criteria.md
+│   ├── dataset_catalog.md
+│   ├── grain_spec.md
+│   ├── dimension_specs.md
+│   ├── metric_definitions.md
+│   ├── erd.md (or .png)
+│   ├── dataflow_diagram.md (or .png)
+│   ├── assumptions_log.md
+│   ├── style_guide.md
+│   ├── repo_settings_applied.md
+│   ├── week1_recap.md
+│   ├── week2_recap.md
+│   ├── week3_recap.md
+│   ├── month1_recap.md
+│   ├── knowledge_gaps.md
+│   └── month2_plan.md
+├── notes/
+│   ├── kimball_grain_notes.md
+│   ├── kimball_dimensions_notes.md
+│   ├── kimball_scd_notes.md
+│   ├── acs_period_estimates_notes.md
+│   ├── postgis_spatial_notes.md
+│   └── [other reading notes]
+├── assets/
+│   ├── concept_map_week1.png
+│   ├── concept_map_month1.png
+│   └── [diagrams, screenshots]
+├── books/
+│   ├── kimball_data_warehouse_toolkit.pdf
+│   └── [other reference PDFs]
+├── .claude/
+│   ├── syllabus.md
+│   ├── rubrics.md
+│   ├── resources.md
+│   ├── progress.md
+│   └── CLAUDE.md
+└── templates/
+    ├── memo_template.md
+    └── notes_template.md
 
 1) **Reproducible local environment**
 - `docker/` (or root) includes a working `docker-compose.yml` that starts **Postgres** and **Metabase** (and any supporting services) successfully.
