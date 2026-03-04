@@ -224,3 +224,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Glossary:** [`docs/glossary.md`](./docs/glossary.md)
 - **MVP datasets:** [`docs/03_mvp_datasets.md`](./docs/03_mvp_datasets.md)
 - **Data access notes:** [`docs/04_data_access_notes.md`](./docs/04_data_access_notes.md)
+- **Assumptions log:** [`docs/assumptions_log.md`](./docs/assumptions_log.md)

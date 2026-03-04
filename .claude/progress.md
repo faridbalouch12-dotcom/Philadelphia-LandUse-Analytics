@@ -40,7 +40,7 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [x] Task 3.4 — Create glossary (v0) (PASS, 10/10, 2026-03-03)
 - [x] Task 3.5 — List MVP datasets + rationale (PASS, 10/10, 2026-03-03)
 - [x] Task 3.6 — Draft data access notes (PASS, 10/10, 2026-03-03)
-- [ ] Task 3.7 — Start assumptions log
+- [x] Task 3.7 — Start assumptions log (PASS, 8/10, 2026-03-03)
 - [ ] Task 3.10 — Create decision log
 
 ## Week 1 — Day 4: GitHub Workflow Infrastructure
@@ -137,5 +137,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 ---
 
 **Last updated:** 2026-03-03
-
 
