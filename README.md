@@ -222,3 +222,5 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **cookiecutter-data-science patterns:** [`notes/ref_patterns_cookiecutter_ds.md`](./notes/ref_patterns_cookiecutter_ds.md)
 - **jaffle-shop patterns:** [`notes/ref_patterns_jaffle_shop.md`](./notes/ref_patterns_jaffle_shop.md)
 - **Glossary:** [`docs/glossary.md`](./docs/glossary.md)
+- **MVP datasets:** [`docs/03_mvp_datasets.md`](./docs/03_mvp_datasets.md)
+- **Data access notes:** [`docs/04_data_access_notes.md`](./docs/04_data_access_notes.md)
