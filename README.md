@@ -204,6 +204,7 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 
 - **Scope memo:** [`docs/00_scope_memo.md`](./docs/00_scope_memo.md)
 - **Problem statement:** [`docs/01_problem_statement.md`](./docs/01_problem_statement.md)
+- **Month-1 success criteria:** [`docs/02_success_criteria.md`](./docs/02_success_criteria.md)
 - **Docs Index:** [`docs/README.md`](./docs/README.md)
 - **Style guide:** [`docs/style_guide.md`](./docs/style_guide.md)
 - **Repo settings checklist:** [`docs/repo_settings_checklist.md`](./docs/repo_settings_checklist.md)
@@ -220,3 +221,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Missing Semester Git notes:** [`notes/missing_semester_git_notes.md`](./notes/missing_semester_git_notes.md)
 - **cookiecutter-data-science patterns:** [`notes/ref_patterns_cookiecutter_ds.md`](./notes/ref_patterns_cookiecutter_ds.md)
 - **jaffle-shop patterns:** [`notes/ref_patterns_jaffle_shop.md`](./notes/ref_patterns_jaffle_shop.md)
+- **Glossary:** [`docs/glossary.md`](./docs/glossary.md)
