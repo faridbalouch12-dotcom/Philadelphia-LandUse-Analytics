@@ -202,6 +202,7 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 
 ## Links to docs index
 
+- **Scope memo:** [`docs/00_scope_memo.md`](./docs/00_scope_memo.md)
 - **Docs Index:** [`docs/README.md`](./docs/README.md)
 - **Style guide:** [`docs/style_guide.md`](./docs/style_guide.md)
 - **Repo settings checklist:** [`docs/repo_settings_checklist.md`](./docs/repo_settings_checklist.md)
