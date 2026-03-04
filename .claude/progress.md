@@ -45,8 +45,8 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ## Week 1 — Day 4: GitHub Workflow Infrastructure
 
-- [ ] Task 4.2 — Add PR template
-- [ ] Task 4.9 — Update docs navigation map
+- [x] Task 4.2 — Add PR template (PASS, 9/10, 2026-03-03)
+- [x] Task 4.9 — Update docs navigation map (PASS, 10/10, 2026-03-03)
 
 ## Week 1 — Day 5: Policies & Week-1 Close
 
