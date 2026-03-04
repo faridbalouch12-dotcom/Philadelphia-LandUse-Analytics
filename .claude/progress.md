@@ -35,7 +35,7 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 ## Week 1 — Day 3: Conceptual Design
 
 - [x] Task 3.1 — Draft scope memo (v1) (PASS, 10/10, 2026-03-03)
-- [ ] Task 3.2 — Write problem statement
+- [x] Task 3.2 — Write problem statement (PASS, 9/10, 2026-03-03)
 - [ ] Task 3.3 — Define Month-1 success criteria
 - [ ] Task 3.4 — Create glossary (v0)
 - [ ] Task 3.5 — List MVP datasets + rationale
@@ -137,3 +137,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 ---
 
 **Last updated:** 2026-03-03
+
