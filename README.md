@@ -233,3 +233,8 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Land-area denominator policy:** [`docs/policies/land_area_denominator_policy.md`](./docs/policies/land_area_denominator_policy.md)
 - **ACS usage policy:** [`docs/policies/acs_usage_policy.md`](./docs/policies/acs_usage_policy.md)
 - **Limitations register:** [`docs/limitations_register.md`](./docs/limitations_register.md)
+- **L&I permits metadata summary:** [`docs/source_catalog/li_permits_metadata_summary.md`](./docs/source_catalog/li_permits_metadata_summary.md)
+- **L&I permits source catalog:** [`docs/source_catalog/li_permits.md`](./docs/source_catalog/li_permits.md)
+- **L&I permits feasibility checklist:** [`docs/feasibility/li_permits_feasibility.md`](./docs/feasibility/li_permits_feasibility.md)
+- **L&I permits critical fields dictionary:** [`docs/data_dictionary/li_permits_critical_fields.md`](./docs/data_dictionary/li_permits_critical_fields.md)
+- **Planning Districts metadata summary:** [`docs/source_catalog/planning_districts_metadata_summary.md`](./docs/source_catalog/planning_districts_metadata_summary.md)

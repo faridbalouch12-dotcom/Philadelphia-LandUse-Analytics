@@ -61,17 +61,17 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ## Week 2 — Dataset Cataloging
 
-- [ ] Task 6.1 — Review dataset metadata: Planning Districts
+- [x] Task 6.1 — Review dataset metadata: Planning Districts (PASS, 8/10, 2026-03-05)
 - [ ] Task 6.2 — Source catalog entry: Planning Districts
 - [ ] Task 6.3 — Feasibility checklist: Planning Districts
 - [ ] Task 6.4 — Critical fields dictionary: Planning Districts
 - [ ] Task 6.5 — Land-only area evidence note
 - [ ] Task 6.6 — Update limitations register (district spine)
 - [ ] Task 6.7 — Resource note: GIS boundaries & CRS
-- [ ] Task 7.1 — Review dataset metadata: L&I permits
-- [ ] Task 7.2 — Source catalog entry: L&I permits
-- [ ] Task 7.3 — Feasibility checklist: L&I permits
-- [ ] Task 7.4 — Critical fields dictionary: L&I permits
+- [x] Task 7.1 — Review dataset metadata: L&I permits (PASS, 9/10, 2026-03-05)
+- [x] Task 7.2 — Source catalog entry: L&I permits (PASS, 10/10, 2026-03-05)
+- [x] Task 7.3 — Feasibility checklist: L&I permits (PASS, 10/10, 2026-03-05)
+- [x] Task 7.4 — Critical fields dictionary: L&I permits (PASS, 10/10, 2026-03-05)
 - [ ] Task 7.5 — Permit category grouping decision memo
 - [ ] Task 7.6 — Permits geocoding risk note
 - [ ] Task 7.7 — Update learning resources (permits/open data)
