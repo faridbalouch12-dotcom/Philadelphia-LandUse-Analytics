@@ -230,3 +230,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Feasibility checklist template:** [`docs/templates/feasibility_checklist.md`](./docs/templates/feasibility_checklist.md)
 - **Data dictionary template:** [`docs/templates/data_dictionary_template.md`](./docs/templates/data_dictionary_template.md)
 - **Feature vs rollup policy:** [`docs/policies/feature_vs_rollup_policy.md`](./docs/policies/feature_vs_rollup_policy.md)
+- **Land-area denominator policy:** [`docs/policies/land_area_denominator_policy.md`](./docs/policies/land_area_denominator_policy.md)
