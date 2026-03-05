@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-02-28
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-05
 **Status:** Draft
 
 ---
@@ -175,7 +175,31 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 
 ### Datasets
 
-*Entries to be added in Task 3.5 and beyond.*
+**[S1]** City of Philadelphia / ArcGIS. n.d. "Planning Districts (Feature Layer)." Accessed 2026-03-05. <https://catalog.data.gov/dataset/planning-districts-6a446>
+
+- **Type:** Dataset
+- **Why relevant:** District spine for all rollup metrics; provides the 18-district geometry used to compute land-only area and assign permit, zoning, and ACS records to a district.
+
+---
+
+**[S2]** OpenDataPhilly. n.d. "L&I Building and Zoning Permits." Accessed 2026-03-05. <https://opendataphilly.org/datasets/licenses-and-inspections-building-and-zoning-permits/>
+
+- **Type:** Dataset
+- **Why relevant:** Primary physical change time series (2007+); requires event-date selection, geocoding quality checks, and category mapping before use in district-month rollups.
+
+---
+
+**[S3]** City of Philadelphia / ArcGIS. n.d. "Zoning Base Districts (vintages)." Accessed 2026-03-05. <https://catalog.data.gov/dataset/zoning-base-districts>
+
+- **Type:** Dataset
+- **Why relevant:** Annual zoning snapshots used for year-to-year churn and composition metrics; schema consistency across vintages must be validated before comparing years.
+
+---
+
+**[S4]** U.S. Census Bureau. n.d. "American Community Survey 5-Year Data." Accessed 2026-03-05. <https://data.census.gov/>
+
+- **Type:** Dataset
+- **Why relevant:** ACS demographic context at tract level — 5-year estimates only, non-overlapping periods only, per the ACS usage policy; used for district-level income and tenure proxies.
 
 ---
 
@@ -202,3 +226,4 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 | 2026-02-28 | Initial format defined; D1 and D2 added (Task 2.2) | Farid |
 | 2026-02-28 | Starter resource set added: B1-B5, B10, D3-D4, D8-D11, R1-R2, V1-V5 (Task 2.4) | Farid |
 | 2026-03-03 | Added B13 (Spatial SQL, Forrest) — used as primary reading for Task 2.8 | Farid |
+| 2026-03-05 | Added S1, S2, S3, S4 dataset entries (Task 5.9) | Farid |

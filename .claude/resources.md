@@ -56,6 +56,7 @@ All resources are referenced by ID throughout the syllabus. Use this file to res
 | S1 | Planning Districts (Feature Layer) | City of Philadelphia / ArcGIS | https://catalog.data.gov/dataset/planning-districts-6a446 | District spine (18 districts). Use land-only area from this. |
 | S2 | L&I Building and Zoning Permits | OpenDataPhilly | https://opendataphilly.org/datasets/licenses-and-inspections-building-and-zoning-permits/ | Primary physical change time series (2007+). Very large dataset; note cadence. |
 | S3 | Zoning Base Districts (vintages) | City of Philadelphia / ArcGIS | https://catalog.data.gov/dataset/zoning-base-districts | Zoning snapshots by year for year-to-year churn/composition. Check schema consistency across years. |
+| S4 | American Community Survey 5-Year Data (data.census.gov) | U.S. Census Bureau | https://data.census.gov/ | ACS demographic context at tract level. Use 5-year estimates only; non-overlapping periods only. |
 
 ---
 
