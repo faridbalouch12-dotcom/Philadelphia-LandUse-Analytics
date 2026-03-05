@@ -37,7 +37,9 @@ District Change is defined by the change in permits of buildings (buildings gett
 - sql/ (optional ad-hoc queries, debugging). 
 ## Month-1 deliverables (v0)
 
-By the end of Month 1, I'll have a complete documentation package for your warehouse. No code yet, just comprehensive design artifacts with a repo structure thatlooks like this:
+By the end of Month 1, I'll have a complete documentation package for your warehouse. No code yet, just comprehensive design artifacts with a repo structure that looks like this:
+
+```
 philly-data-warehouse/
 ├── README.md
 ├── .gitignore
@@ -84,6 +86,7 @@ philly-data-warehouse/
 └── templates/
     ├── memo_template.md
     └── notes_template.md
+```
 
 1) **Reproducible local environment**
 - `docker/` (or root) includes a working `docker-compose.yml` that starts **Postgres** and **Metabase** (and any supporting services) successfully.
