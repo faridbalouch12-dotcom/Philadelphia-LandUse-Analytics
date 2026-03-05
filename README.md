@@ -74,9 +74,6 @@ philly-data-warehouse/
 │   ├── concept_map_week1.png
 │   ├── concept_map_month1.png
 │   └── [diagrams, screenshots]
-├── books/
-│   ├── kimball_data_warehouse_toolkit.pdf
-│   └── [other reference PDFs]
 ├── .claude/
 │   ├── syllabus.md
 │   ├── rubrics.md
