@@ -226,3 +226,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Data access notes:** [`docs/04_data_access_notes.md`](./docs/04_data_access_notes.md)
 - **Assumptions log:** [`docs/assumptions_log.md`](./docs/assumptions_log.md)
 - **Decision log:** [`docs/decision_log.md`](./docs/decision_log.md)
+- **Source catalog template:** [`docs/templates/source_catalog_template.md`](./docs/templates/source_catalog_template.md)
