@@ -8,16 +8,16 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ## Week 1 — Setup & Foundations
 
-- [ ] Task 1.1 — Create GitHub repo
-- [ ] Task 1.2 — Add baseline folder structure
-- [ ] Task 1.3 — Add .gitignore + data policy
-- [ ] Task 1.4 — Write README (v0)
-- [ ] Task 1.5 — Create Docs Index
-- [ ] Task 1.6 — Add contribution workflow
-- [ ] Task 1.7 — Add doc style guide
-- [ ] Task 1.8 — Add doc templates
-- [ ] Task 1.9 — Add repo settings checklist
-- [ ] Task 1.10 — Configure branch protection evidence
+- [x] Task 1.1 — Create GitHub repo (PASS, 10/10, 2026-03-04)
+- [x] Task 1.2 — Add baseline folder structure (PASS, 10/10, 2026-03-04)
+- [x] Task 1.3 — Add .gitignore + data policy (PASS, 10/10, 2026-03-04)
+- [x] Task 1.4 — Write README (v0) (PASS, 10/10, 2026-03-04)
+- [x] Task 1.5 — Create Docs Index (PASS, 10/10, 2026-03-04)
+- [x] Task 1.6 — Add contribution workflow (PASS, 10/10, 2026-03-04)
+- [x] Task 1.7 — Add doc style guide (PASS, 9/10, 2026-03-04)
+- [x] Task 1.8 — Add doc templates (PASS, 10/10, 2026-03-04)
+- [x] Task 1.9 — Add repo settings checklist (PASS, 10/10, 2026-03-04)
+- [x] Task 1.10 — Configure branch protection evidence (PASS, 10/10, 2026-03-04)
 
 ## Week 1 — Day 2: Learning Library
 
