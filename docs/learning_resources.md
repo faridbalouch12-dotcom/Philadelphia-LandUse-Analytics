@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-02-28
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-05
 **Status:** Draft
 
 ---
@@ -88,11 +88,10 @@ Resources are referenced using IDs from [`claude/resources.md`](../claude/resour
 
 **Why this matters for this project:** The entire project is anchored to Philadelphia-specific open datasets: planning district boundaries, L&I building permits, zoning base districts, and ACS demographic context. Understanding what datasets are available (via OpenDataPhilly and related portals), where they live, how to access them (API vs. bulk download), and what their attributes mean is the prerequisite for every modeling and metric decision made in Month 1.
 
-*Resources to be populated in Task 3.5 and beyond:*
-
-- <!-- S1: placeholder -->
-- <!-- S2: placeholder -->
-- <!-- S3: placeholder -->
+- **[S1]** [Planning Districts (Feature Layer) — City of Philadelphia / ArcGIS](https://catalog.data.gov/dataset/planning-districts-6a446) — District spine for all rollup metrics; provides the 18-district geometry used to compute land-only area and assign all permit/zoning/ACS records to a district.
+- **[S2]** [L&I Building and Zoning Permits — OpenDataPhilly](https://opendataphilly.org/datasets/licenses-and-inspections-building-and-zoning-permits/) — Primary physical change time series (2007+); very large dataset requiring careful event-date selection, geocoding quality checks, and category mapping before use in district-month rollups.
+- **[S3]** [Zoning Base Districts (vintages) — City of Philadelphia / ArcGIS](https://catalog.data.gov/dataset/zoning-base-districts) — Annual zoning snapshots used for year-to-year churn and composition metrics; schema consistency across vintages must be validated before comparing years.
+- **[S4]** [American Community Survey 5-Year Data — U.S. Census Bureau (data.census.gov)](https://data.census.gov/) — ACS demographic context at tract level; 5-year estimates only, non-overlapping periods only, per the [ACS usage policy](./policies/acs_usage_policy.md).
 
 ---
 
@@ -109,3 +108,4 @@ Full citations for all resources listed above are in [`docs/bibliography.md`](./
 | 2026-02-28 | Initial skeleton created (Task 2.1) | Farid |
 | 2026-02-28 | Starter resource set populated (Task 2.4) | Farid |
 | 2026-03-03 | Added B13 (Spatial SQL) to GIS/PostGIS section (Task 2.8) | Farid |
+| 2026-03-05 | Populated Philly datasets section with S1, S2, S3, S4 (Task 5.9) | Farid |
