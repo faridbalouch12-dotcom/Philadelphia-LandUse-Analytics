@@ -51,7 +51,7 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 ## Week 1 — Day 5: Policies & Week-1 Close
 
 - [x] Task 5.1 — Create source catalog template (PASS, 9/10, 2026-03-04)
-- [ ] Task 5.2 — Create feasibility checklist template
+- [x] Task 5.2 — Create feasibility checklist template (PASS, 9/10, 2026-03-04)
 - [ ] Task 5.3 — Create data dictionary template
 - [ ] Task 5.4 — Draft feature vs rollup policy
 - [ ] Task 5.5 — Draft land-area denominator policy

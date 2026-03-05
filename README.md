@@ -227,3 +227,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Assumptions log:** [`docs/assumptions_log.md`](./docs/assumptions_log.md)
 - **Decision log:** [`docs/decision_log.md`](./docs/decision_log.md)
 - **Source catalog template:** [`docs/templates/source_catalog_template.md`](./docs/templates/source_catalog_template.md)
+- **Feasibility checklist template:** [`docs/templates/feasibility_checklist.md`](./docs/templates/feasibility_checklist.md)
