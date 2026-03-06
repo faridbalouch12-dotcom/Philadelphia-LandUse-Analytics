@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spatial Matching — Audit Field & Distance Fallback</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 32px 24px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 32px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 24px;
+      max-width: 1100px;
+    }
+
+    /* ── MAP PANEL ── */
+    .map-panel {
+      background: #1e2330;
+      border: 1px solid #2d3448;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .panel-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+
+    svg#map {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* districts */
+    .district {
+      stroke: #4a5568;
+      stroke-width: 1.5;
+      cursor: default;
+      transition: opacity 0.15s;
+    }
+
+    /* permit points */
+    .permit {
+      cursor: pointer;
+      transition: r 0.1s;
+    }
+    .permit:hover { r: 8; }
+
+    /* distance lines */
+    .dist-line {
+      stroke-dasharray: 5 3;
+      stroke-width: 1.5;
+      opacity: 0.6;
+    }
+
+    /* tooltip */
+    #tooltip {
+      position: fixed;
+      background: #1e2330;
+      border: 1px solid #3b4660;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 100;
+      max-width: 220px;
+      line-height: 1.6;
+    }
+
+    #tooltip strong { color: #f8fafc; }
+    #tooltip .method-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    /* ── RIGHT COLUMN ── */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* legend */
+    .legend-panel {
+      background: #1e2330;
+      border: 1px solid #2d3448;
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+    }
+    .legend-item:last-child { margin-bottom: 0; }
+
+    .dot {
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dash-line {
+      width: 28px;
+      height: 2px;
+      border-top: 2px dashed;
+      flex-shrink: 0;
+    }
+
+    /* audit table */
+    .table-panel {
+      background: #1e2330;
+      border: 1px solid #2d3448;
+      border-radius: 12px;
+      padding: 18px 20px;
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+    }
+
+    thead th {
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: left;
+      padding: 0 8px 8px 0;
+      border-bottom: 1px solid #2d3448;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #1a1f2e;
+      transition: background 0.1s;
+    }
+    tbody tr:hover { background: #252c3d; }
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody td {
+      padding: 7px 8px 7px 0;
+      color: #94a3b8;
+      vertical-align: middle;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pip    { background: #14532d; color: #4ade80; }
+    .addr   { background: #1e3a5f; color: #60a5fa; }
+    .geo    { background: #3b1f5e; color: #c084fc; }
+    .dist   { background: #431407; color: #fb923c; }
+    .unmap  { background: #3f1f1f; color: #f87171; }
+
+    /* cascade panel */
+    .cascade-panel {
+      background: #1e2330;
+      border: 1px solid #2d3448;
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+
+    .cascade-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+    }
+    .cascade-step:last-child { margin-bottom: 0; }
+
+    .step-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-body { line-height: 1.5; }
+    .step-label { font-weight: 600; color: #e2e8f0; }
+    .step-desc  { color: #64748b; font-size: 0.75rem; }
+
+    .arrow-down {
+      text-align: center;
+      color: #3b4660;
+      font-size: 0.9rem;
+      margin: -4px 0 -4px 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Spatial Matching — Audit Field &amp; Distance Fallback</h1>
+<p class="subtitle">Illustrative explainer · Philadelphia L&amp;I Permits → Planning Districts</p>
+
+<div class="layout">
+
+  <!-- MAP -->
+  <div class="map-panel">
+    <div class="panel-title">Geographic View — hover permits for detail</div>
+    <svg id="map" viewBox="0 0 520 440" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Districts (simplified irregular polygons) -->
+      <polygon class="district" fill="#1a2540"
+        points="30,30 180,25 190,130 150,160 60,155 25,100"/>
+      <text x="100" y="95" fill="#475569" font-size="11" text-anchor="middle" font-weight="600">Northwest</text>
+
+      <polygon class="district" fill="#1a2a40"
+        points="180,25 320,20 330,110 190,130"/>
+      <text x="252" y="75" fill="#475569" font-size="11" text-anchor="middle" font-weight="600">North</text>
+
+      <polygon class="district" fill="#1f2840"
+        points="320,20 490,30 500,140 335,145 330,110"/>
+      <text x="410" y="88" fill="#475569" font-size="11" text-anchor="middle" font-weight="600">Northeast</text>
+
+      <polygon class="district" fill="#1a2538"
+        points="25,100 60,155 150,160 155,270 40,275 20,185"/>
+      <text x="88" y="215" fill="#475569" font-size="11" text-anchor="middle" font-weight="600">West</text>
+
+      <polygon class="district" fill="#1e2b42"
+        points="150,160 190,130 330,110 335,145 340,260 155,270"/>
+      <text x="245" y="205" fill="#475569" font-size="11" text-anchor="middle" font-weight="600">Center City</text>
+
+      <polygon class="district" fill="#1a2640"
+        points="335,145 500,140 505,280 345,285 340,260"/>
+      <text x="420" y="215" fill="#475569" font-size="11" text-anchor="middle" font-weight="600">Far Northeast</text>
+
+      <polygon class="district" fill="#1c2540"
+        points="40,275 155,270 160,390 35,395"/>
+      <text x="98" y="335" fill="#475569" font-size="11" text-anchor="middle" font-weight="600">Southwest</text>
+
+      <polygon class="district" fill="#202c42"
+        points="155,270 340,260 345,285 350,400 160,390"/>
+      <text x="252" y="340" fill="#475569" font-size="11" text-anchor="middle" font-weight="600">South</text>
+
+      <polygon class="district" fill="#1e2840"
+        points="345,285 505,280 510,410 350,400"/>
+      <text x="428" y="348" fill="#475569" font-size="11" text-anchor="middle" font-weight="600">Southeast</text>
+
+      <!-- ── DISTANCE FALLBACK LINES ── -->
+      <!-- Permit near NW/West boundary → nearest point on boundary -->
+      <line class="dist-line" stroke="#fb923c" x1="52" y1="180" x2="42" y2="165"/>
+      <!-- Permit near Center City/South boundary -->
+      <line class="dist-line" stroke="#fb923c" x1="248" y1="268" x2="248" y2="262"/>
+      <!-- Permit outside Far Northeast -->
+      <line class="dist-line" stroke="#fb923c" x1="508" y1="200" x2="500" y2="200"/>
+
+      <!-- ── PERMIT POINTS ── -->
+
+      <!-- point-in-polygon (green) — clearly inside districts -->
+      <circle class="permit" cx="100" cy="80" r="6" fill="#22c55e" filter="url(#glow)"
+        data-id="P-00112" data-method="point_in_polygon" data-dist="—" data-district="Northwest" data-lat="40.0521" data-lng="-75.1843"/>
+      <circle class="permit" cx="258" cy="65" r="6" fill="#22c55e" filter="url(#glow)"
+        data-id="P-00234" data-method="point_in_polygon" data-dist="—" data-district="North" data-lat="40.0389" data-lng="-75.1412"/>
+      <circle class="permit" cx="420" cy="75" r="6" fill="#22c55e" filter="url(#glow)"
+        data-id="P-00341" data-method="point_in_polygon" data-dist="—" data-district="Northeast" data-lat="40.0711" data-lng="-75.0521"/>
+      <circle class="permit" cx="80" cy="230" r="6" fill="#22c55e" filter="url(#glow)"
+        data-id="P-00445" data-method="point_in_polygon" data-dist="—" data-district="West" data-lat="39.9801" data-lng="-75.2014"/>
+      <circle class="permit" cx="245" cy="200" r="6" fill="#22c55e" filter="url(#glow)"
+        data-id="P-00512" data-method="point_in_polygon" data-dist="—" data-district="Center City" data-lat="39.9512" data-lng="-75.1623"/>
+      <circle class="permit" cx="420" cy="200" r="6" fill="#22c55e" filter="url(#glow)"
+        data-id="P-00603" data-method="point_in_polygon" data-dist="—" data-district="Far Northeast" data-lat="40.0821" data-lng="-74.9987"/>
+      <circle class="permit" cx="100" cy="340" r="6" fill="#22c55e" filter="url(#glow)"
+        data-id="P-00718" data-method="point_in_polygon" data-dist="—" data-district="Southwest" data-lat="39.9201" data-lng="-75.1955"/>
+      <circle class="permit" cx="250" cy="340" r="6" fill="#22c55e" filter="url(#glow)"
+        data-id="P-00829" data-method="point_in_polygon" data-dist="—" data-district="South" data-lat="39.9102" data-lng="-75.1631"/>
+      <circle class="permit" cx="430" cy="355" r="6" fill="#22c55e" filter="url(#glow)"
+        data-id="P-00932" data-method="point_in_polygon" data-dist="—" data-district="Southeast" data-lat="39.9215" data-lng="-75.0432"/>
+
+      <!-- address match (blue) -->
+      <circle class="permit" cx="165" cy="143" r="6" fill="#60a5fa" filter="url(#glow)"
+        data-id="P-01044" data-method="address_match" data-dist="—" data-district="Northwest" data-lat="40.0102" data-lng="-75.1750"/>
+      <circle class="permit" cx="340" cy="130" r="6" fill="#60a5fa" filter="url(#glow)"
+        data-id="P-01158" data-method="address_match" data-dist="—" data-district="Northeast" data-lat="40.0421" data-lng="-75.0871"/>
+      <circle class="permit" cx="160" cy="265" r="6" fill="#60a5fa" filter="url(#glow)"
+        data-id="P-01267" data-method="address_match" data-dist="—" data-district="Center City" data-lat="39.9355" data-lng="-75.1720"/>
+
+      <!-- geocode match (purple) -->
+      <circle class="permit" cx="330" cy="260" r="6" fill="#c084fc" filter="url(#glow)"
+        data-id="P-01375" data-method="geocode_match" data-dist="—" data-district="Center City" data-lat="39.9401" data-lng="-75.1122"/>
+      <circle class="permit" cx="190" cy="130" r="6" fill="#c084fc" filter="url(#glow)"
+        data-id="P-01489" data-method="geocode_match" data-dist="—" data-district="North" data-lat="40.0214" data-lng="-75.1589"/>
+
+      <!-- distance fallback (orange) — near boundaries, with lines already drawn -->
+      <circle class="permit" cx="52" cy="180" r="6" fill="#fb923c" filter="url(#glow)"
+        data-id="P-01502" data-method="distance_fallback" data-dist="18m" data-district="West" data-lat="39.9712" data-lng="-75.2051"/>
+      <circle class="permit" cx="248" cy="268" r="6" fill="#fb923c" filter="url(#glow)"
+        data-id="P-01618" data-method="distance_fallback" data-dist="9m" data-district="Center City" data-lat="39.9341" data-lng="-75.1598"/>
+      <circle class="permit" cx="508" cy="200" r="6" fill="#fb923c" filter="url(#glow)"
+        data-id="P-01724" data-method="distance_fallback" data-dist="6m" data-district="Far Northeast" data-lat="40.0614" data-lng="-74.9901"/>
+
+      <!-- unmapped (red) — far from any boundary -->
+      <circle class="permit" cx="10" cy="380" r="6" fill="#f87171" filter="url(#glow)"
+        data-id="P-01835" data-method="unmapped" data-dist="2.1km" data-district="—" data-lat="39.9001" data-lng="-75.2801"/>
+    </svg>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+
+    <!-- LEGEND -->
+    <div class="legend-panel">
+      <div class="panel-title">Legend — match_method values</div>
+
+      <div class="legend-item">
+        <div class="dot" style="background:#22c55e"></div>
+        <span><strong style="color:#4ade80">point_in_polygon</strong> — coordinates fall inside district boundary</span>
+      </div>
+      <div class="legend-item">
+        <div class="dot" style="background:#60a5fa"></div>
+        <span><strong style="color:#60a5fa">address_match</strong> — matched via geocoded address string</span>
+      </div>
+      <div class="legend-item">
+        <div class="dot" style="background:#c084fc"></div>
+        <span><strong style="color:#c084fc">geocode_match</strong> — matched via permit geocode field</span>
+      </div>
+      <div class="legend-item">
+        <div class="dot" style="background:#fb923c"></div>
+        <span><strong style="color:#fb923c">distance_fallback</strong> — assigned to nearest boundary</span>
+      </div>
+      <div class="legend-item" style="margin-top:2px">
+        <div class="dash-line" style="border-color:#fb923c"></div>
+        <span style="color:#64748b; font-size:0.78rem">distance to nearest boundary point</span>
+      </div>
+      <div class="legend-item">
+        <div class="dot" style="background:#f87171"></div>
+        <span><strong style="color:#f87171">unmapped</strong> — exceeds distance threshold → manual review</span>
+      </div>
+    </div>
+
+    <!-- AUDIT TABLE -->
+    <div class="table-panel">
+      <div class="panel-title">Sample audit field output</div>
+      <table>
+        <thead>
+          <tr>
+            <th>permit_id</th>
+            <th>district</th>
+            <th>match_method</th>
+            <th>dist_m</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>P-00112</td><td>Northwest</td>
+            <td><span class="badge pip">point_in_polygon</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>P-01044</td><td>Northwest</td>
+            <td><span class="badge addr">address_match</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>P-01489</td><td>North</td>
+            <td><span class="badge geo">geocode_match</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>P-01502</td><td>West</td>
+            <td><span class="badge dist">distance_fallback</span></td>
+            <td>18</td>
+          </tr>
+          <tr>
+            <td>P-01618</td><td>Center City</td>
+            <td><span class="badge dist">distance_fallback</span></td>
+            <td>9</td>
+          </tr>
+          <tr>
+            <td>P-01724</td><td>Far Northeast</td>
+            <td><span class="badge dist">distance_fallback</span></td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td>P-01835</td><td>—</td>
+            <td><span class="badge unmap">unmapped</span></td>
+            <td>2,100</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CASCADE -->
+    <div class="cascade-panel">
+      <div class="panel-title">Matching cascade</div>
+
+      <div class="cascade-step">
+        <div class="step-num" style="background:#14532d; color:#4ade80">1</div>
+        <div class="step-body">
+          <div class="step-label">Point-in-polygon (lat/lng)</div>
+          <div class="step-desc">Coordinates fall inside a district polygon. Primary method.</div>
+        </div>
+      </div>
+      <div class="arrow-down">↓ if fails</div>
+
+      <div class="cascade-step">
+        <div class="step-num" style="background:#1e3a5f; color:#60a5fa">2</div>
+        <div class="step-body">
+          <div class="step-label">Address match</div>
+          <div class="step-desc">Geocode the address string, retry point-in-polygon.</div>
+        </div>
+      </div>
+      <div class="arrow-down">↓ if fails</div>
+
+      <div class="cascade-step">
+        <div class="step-num" style="background:#3b1f5e; color:#c084fc">3</div>
+        <div class="step-body">
+          <div class="step-label">Geocode field match</div>
+          <div class="step-desc">Use permit-supplied geocode field, retry point-in-polygon.</div>
+        </div>
+      </div>
+      <div class="arrow-down">↓ if fails</div>
+
+      <div class="cascade-step">
+        <div class="step-num" style="background:#431407; color:#fb923c">4</div>
+        <div class="step-body">
+          <div class="step-label">Distance fallback</div>
+          <div class="step-desc">Assign to district with nearest boundary point. Flag distance in audit field.</div>
+        </div>
+      </div>
+      <div class="arrow-down">↓ if &gt; threshold</div>
+
+      <div class="cascade-step">
+        <div class="step-num" style="background:#3f1f1f; color:#f87171">!</div>
+        <div class="step-body">
+          <div class="step-label">Unmapped → manual review</div>
+          <div class="step-desc">Distance exceeds threshold. Flagged for investigation.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOOLTIP -->
+<div id="tooltip"></div>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+
+  const methodColors = {
+    point_in_polygon: { bg: '#14532d', color: '#4ade80' },
+    address_match:    { bg: '#1e3a5f', color: '#60a5fa' },
+    geocode_match:    { bg: '#3b1f5e', color: '#c084fc' },
+    distance_fallback:{ bg: '#431407', color: '#fb923c' },
+    unmapped:         { bg: '#3f1f1f', color: '#f87171' },
+  };
+
+  document.querySelectorAll('.permit').forEach(p => {
+    p.addEventListener('mousemove', e => {
+      const m = p.dataset.method;
+      const c = methodColors[m] || {};
+      const distRow = p.dataset.dist !== '—'
+        ? `<br><span style="color:#64748b">boundary dist:</span> <strong>${p.dataset.dist}</strong>`
+        : '';
+      tooltip.innerHTML = `
+        <strong>${p.dataset.id}</strong>
+        <span class="method-badge" style="background:${c.bg};color:${c.color}">${m}</span>
+        <br>
+        <span style="color:#64748b">district:</span> <strong>${p.dataset.district}</strong>
+        ${distRow}
+        <br>
+        <span style="color:#64748b">lat/lng:</span> ${p.dataset.lat}, ${p.dataset.lng}
+      `;
+      tooltip.style.opacity = '1';
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top  = (e.clientY - 10) + 'px';
+    });
+    p.addEventListener('mouseleave', () => {
+      tooltip.style.opacity = '0';
+    });
+  });
+</script>
+</body>
+</html>
