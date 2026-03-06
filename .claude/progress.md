@@ -62,9 +62,9 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 ## Week 2 — Dataset Cataloging
 
 - [x] Task 6.1 — Review dataset metadata: Planning Districts (PASS, 8/10, 2026-03-05)
-- [ ] Task 6.2 — Source catalog entry: Planning Districts
-- [ ] Task 6.3 — Feasibility checklist: Planning Districts
-- [ ] Task 6.4 — Critical fields dictionary: Planning Districts
+- [x] Task 6.2 — Source catalog entry: Planning Districts (PASS, 10/10, 2026-03-05)
+- [x] Task 6.3 — Feasibility checklist: Planning Districts (PASS, 10/10, 2026-03-05)
+- [x] Task 6.4 — Critical fields dictionary: Planning Districts (PASS, 10/10, 2026-03-05)
 - [ ] Task 6.5 — Land-only area evidence note
 - [ ] Task 6.6 — Update limitations register (district spine)
 - [ ] Task 6.7 — Resource note: GIS boundaries & CRS
@@ -75,17 +75,17 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [ ] Task 7.5 — Permit category grouping decision memo
 - [ ] Task 7.6 — Permits geocoding risk note
 - [ ] Task 7.7 — Update learning resources (permits/open data)
-- [ ] Task 8.1 — Review dataset metadata: Zoning base districts
-- [ ] Task 8.2 — Source catalog entry: Zoning base districts
-- [ ] Task 8.3 — Feasibility checklist: Zoning base districts
-- [ ] Task 8.4 — Critical fields dictionary: Zoning base districts
+- [x] Task 8.1 — Review dataset metadata: Zoning base districts (PASS, 10/10, 2026-03-05)
+- [x] Task 8.2 — Source catalog entry: Zoning base districts (PASS, 10/10, 2026-03-05)
+- [x] Task 8.3 — Feasibility checklist: Zoning base districts (PASS, 10/10, 2026-03-05)
+- [x] Task 8.4 — Critical fields dictionary: Zoning base districts (PASS, 10/10, 2026-03-05)
 - [ ] Task 8.5 — Zoning last-5-years window memo
 - [ ] Task 8.6 — Year-to-year comparability plan (draft)
 - [ ] Task 8.7 — Update limitations register (zoning)
-- [ ] Task 9.1 — ACS methodology summary
-- [ ] Task 9.2 — Source catalog entry: ACS context
-- [ ] Task 9.3 — Feasibility checklist: ACS context
-- [ ] Task 9.4 — Critical fields dictionary: ACS context
+- [x] Task 9.1 — ACS methodology summary (PASS, 9/10, 2026-03-05)
+- [x] Task 9.2 — Source catalog entry: ACS context (PASS, 10/10, 2026-03-05)
+- [x] Task 9.3 — Feasibility checklist: ACS context (PASS, 9/10, 2026-03-05)
+- [x] Task 9.4 — Critical fields dictionary: ACS context (PASS, 9/10, 2026-03-05)
 - [ ] Task 9.5 — Boundary alignment note (ACS → Districts)
 - [ ] Task 9.6 — Uncertainty messaging note (MOE-aware)
 - [ ] Task 9.7 — Update learning resources (ACS additions)
@@ -136,4 +136,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-05
+**Last updated:** 2026-03-05 (Task 6.2)
