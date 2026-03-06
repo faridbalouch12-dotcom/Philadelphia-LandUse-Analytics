@@ -249,3 +249,7 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Zoning source catalog:** [`docs/source_catalog/zoning_base_districts.md`](./docs/source_catalog/zoning_base_districts.md)
 - **Zoning feasibility checklist:** [`docs/feasibility/zoning_feasibility.md`](./docs/feasibility/zoning_feasibility.md)
 - **Zoning critical fields dictionary:** [`docs/data_dictionary/zoning_critical_fields.md`](./docs/data_dictionary/zoning_critical_fields.md)
+- **Land-only area evidence note:** [`docs/feasibility/land_only_area_note.md`](./docs/feasibility/land_only_area_note.md)
+- **GIS boundaries & CRS notes:** [`notes/gis_boundaries_crs_notes.md`](./notes/gis_boundaries_crs_notes.md)
+- **Permit category grouping memo:** [`docs/decisions/permit_category_grouping_memo.md`](./docs/decisions/permit_category_grouping_memo.md)
+- **SQL Antipatterns Ch. 9 & 11 notes:** [`notes/sql_antipatterns_b5_notes.md`](./notes/sql_antipatterns_b5_notes.md)

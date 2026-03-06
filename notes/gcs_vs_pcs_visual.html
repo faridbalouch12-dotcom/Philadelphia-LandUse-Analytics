@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GCS vs PCS — Visual Explainer</title>
+  <style>
+    body { font-family: Georgia, serif; background: #1a1a2e; color: #eee; padding: 40px; max-width: 960px; margin: auto; }
+    h1 { color: #e2b96f; text-align: center; margin-bottom: 4px; }
+    h2 { color: #7ec8e3; border-bottom: 1px solid #333; padding-bottom: 6px; margin-top: 48px; }
+    h3 { color: #a8d8a8; }
+    p  { line-height: 1.7; color: #ccc; }
+    .diagram-row { display: flex; gap: 40px; margin: 24px 0; flex-wrap: wrap; }
+    .diagram-box { flex: 1; min-width: 280px; background: #16213e; border: 1px solid #333; border-radius: 10px; padding: 20px; }
+    svg text { font-family: monospace; }
+    .label { font-size: 13px; color: #aaa; margin-top: 10px; text-align: center; font-style: italic; }
+    .key-point { background: #0f3460; border-left: 4px solid #e2b96f; padding: 12px 16px; border-radius: 4px; margin: 16px 0; }
+    .key-point span { color: #e2b96f; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th { background: #0f3460; color: #7ec8e3; padding: 10px; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #333; color: #ccc; }
+    tr:hover td { background: #16213e; }
+    code { background: #0f3460; padding: 2px 6px; border-radius: 3px; color: #a8d8a8; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<h1>Geographic vs Projected Coordinate Systems</h1>
+<p style="text-align:center; color:#888;">A visual explainer for the Philadelphia Land Use project</p>
+
+<!-- =========================================================
+     PART 1: THE CORE PROBLEM
+     ========================================================= -->
+<h2>1. The Core Problem: Earth is a bumpy sphere</h2>
+<p>
+  Earth isn't flat — it's roughly a sphere (technically an <em>oblate spheroid</em>, slightly squashed at the poles).
+  Any map is a lie. The question is: <em>what kind of lie do you want to tell?</em>
+  The two coordinate system families represent two different answers to that question.
+</p>
+
+<!-- =========================================================
+     PART 2: GCS — the curved surface
+     ========================================================= -->
+<h2>2. Geographic Coordinate System (GCS) — staying on the sphere</h2>
+<p>
+  A GCS does <strong>not</strong> flatten the earth. It describes locations using angles measured from
+  the center of the earth to a point on its surface. Those angles are <strong>latitude</strong> and <strong>longitude</strong>.
+</p>
+
+<div class="diagram-row">
+  <div class="diagram-box">
+    <svg width="100%" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Globe outline -->
+      <ellipse cx="150" cy="130" rx="110" ry="110" fill="none" stroke="#7ec8e3" stroke-width="2"/>
+      <!-- Equator -->
+      <ellipse cx="150" cy="130" rx="110" ry="22" fill="none" stroke="#e2b96f" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <!-- Latitude lines -->
+      <ellipse cx="150" cy="93"  rx="95"  ry="18" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <ellipse cx="150" cy="167" rx="95"  ry="18" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <ellipse cx="150" cy="60"  rx="65"  ry="12" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <ellipse cx="150" cy="200" rx="65"  ry="12" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- Prime meridian (vertical line, curved) -->
+      <path d="M150,20 Q160,130 150,240" fill="none" stroke="#e2b96f" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <!-- Longitude lines -->
+      <path d="M150,20 Q200,130 150,240" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <path d="M150,20 Q100,130 150,240" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <path d="M150,20 Q240,100 240,130 Q240,160 150,240" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- A point on the globe (roughly Philadelphia-ish) -->
+      <circle cx="195" cy="93" r="6" fill="#ff6b6b"/>
+      <!-- Center of earth -->
+      <circle cx="150" cy="130" r="4" fill="#e2b96f"/>
+      <!-- Lat angle arc -->
+      <path d="M150,130 L150,93" stroke="#a8d8a8" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <path d="M150,130 L195,93" stroke="#ff6b6b" stroke-width="1.5"/>
+      <!-- Labels -->
+      <text x="198" y="88"  fill="#ff6b6b"   font-size="11">Point P</text>
+      <text x="155" y="125" fill="#e2b96f"   font-size="10">center</text>
+      <text x="155" y="108" fill="#a8d8a8"   font-size="10">lat angle</text>
+      <text x="60"  y="135" fill="#e2b96f"   font-size="11">Equator</text>
+      <text x="152" y="17"  fill="#e2b96f"   font-size="11">Prime</text>
+      <text x="148" y="28"  fill="#e2b96f"   font-size="11">Meridian</text>
+    </svg>
+    <p class="label">GCS: location described as angles from Earth's center. The surface stays curved.</p>
+  </div>
+
+  <div class="diagram-box">
+    <h3 style="margin-top:0">How to read lat/lon</h3>
+    <p><strong>Latitude</strong> = how far north/south from the equator (0° at equator, 90° at poles)</p>
+    <p><strong>Longitude</strong> = how far east/west from the Prime Meridian (0° at Greenwich, ±180° max)</p>
+    <p>Philadelphia is at approximately:</p>
+    <p style="text-align:center; font-size:18px; color:#ff6b6b;"><code>39.95° N, 75.17° W</code></p>
+    <div class="key-point">
+      <span>Key insight:</span> These are <em>angles</em>, measured in degrees.
+      A "degree" near the equator covers ~69 miles. A "degree" near the poles covers much less —
+      because the longitude lines converge. So degrees are <strong>not linear units</strong>.
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     PART 3: PCS — the flattened surface
+     ========================================================= -->
+<h2>3. Projected Coordinate System (PCS) — flattening onto a plane</h2>
+<p>
+  A PCS <em>projects</em> the curved surface onto a flat plane using a mathematical transformation.
+  Now every location has an (x, y) in linear units — typically meters or feet.
+  The tradeoff: something always gets distorted (shape, area, distance, or direction).
+</p>
+
+<div class="diagram-row">
+  <div class="diagram-box">
+    <svg width="100%" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Flat grid -->
+      <!-- vertical lines -->
+      <line x1="40"  y1="30" x2="40"  y2="220" stroke="#333" stroke-width="1"/>
+      <line x1="90"  y1="30" x2="90"  y2="220" stroke="#333" stroke-width="1"/>
+      <line x1="140" y1="30" x2="140" y2="220" stroke="#333" stroke-width="1"/>
+      <line x1="190" y1="30" x2="190" y2="220" stroke="#333" stroke-width="1"/>
+      <line x1="240" y1="30" x2="240" y2="220" stroke="#333" stroke-width="1"/>
+      <!-- horizontal lines -->
+      <line x1="30" y1="50"  x2="260" y2="50"  stroke="#333" stroke-width="1"/>
+      <line x1="30" y1="100" x2="260" y2="100" stroke="#333" stroke-width="1"/>
+      <line x1="30" y1="150" x2="260" y2="150" stroke="#333" stroke-width="1"/>
+      <line x1="30" y1="200" x2="260" y2="200" stroke="#333" stroke-width="1"/>
+      <!-- Axes -->
+      <line x1="30" y1="220" x2="270" y2="220" stroke="#7ec8e3" stroke-width="2"/>
+      <line x1="30" y1="220" x2="30"  y2="20"  stroke="#7ec8e3" stroke-width="2"/>
+      <!-- Axis labels -->
+      <text x="255" y="235" fill="#7ec8e3" font-size="12">X (East)</text>
+      <text x="5"   y="18"  fill="#7ec8e3" font-size="12">Y</text>
+      <text x="2"   y="30"  fill="#7ec8e3" font-size="10">(North)</text>
+      <!-- Origin -->
+      <text x="33" y="235" fill="#888" font-size="10">0,0</text>
+      <!-- A point -->
+      <circle cx="190" cy="100" r="6" fill="#ff6b6b"/>
+      <text x="196" y="95" fill="#ff6b6b" font-size="11">Point P</text>
+      <!-- Dashed lines to axes -->
+      <line x1="190" y1="100" x2="190" y2="220" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="190" y1="100" x2="30"  y2="100" stroke="#a8d8a8" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- Coordinate labels -->
+      <text x="175" y="235" fill="#ff6b6b" font-size="10">x = 2,694,000 ft</text>
+      <text x="32"  y="97"  fill="#a8d8a8" font-size="10">y = 234,000 ft</text>
+    </svg>
+    <p class="label">PCS: location described as (x, y) in linear units (feet or meters) on a flat grid.</p>
+  </div>
+
+  <div class="diagram-box">
+    <h3 style="margin-top:0">Why linear units matter for area</h3>
+    <p>In a PCS, every grid cell is the same size. So calculating area is simple:</p>
+    <p style="text-align:center; color:#a8d8a8; font-size:15px;"><code>Area = width × height</code><br>(in feet² or meters²)</p>
+    <p>In a GCS, grid cells are <em>not</em> the same size — they shrink as you go toward the poles. So this:</p>
+    <p style="text-align:center; color:#ff6b6b; font-size:15px;"><code>Area = Δlat × Δlon</code><br>gives you nonsense</p>
+    <div class="key-point">
+      <span>For your project:</span> When you calculate land-only area in sq mi for each planning district,
+      you need a <strong>projected CRS with linear units</strong>. Using raw lat/lon will give you wrong numbers.
+      Pennsylvania uses <code>EPSG:2272</code> (State Plane PA South, feet) for this reason.
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     PART 4: The "orange peel" problem
+     ========================================================= -->
+<h2>4. The Orange Peel Problem — why distortion is unavoidable</h2>
+<p>
+  Imagine peeling an orange and trying to press the skin flat. You can't do it without tearing or stretching it.
+  The same is true for any map projection — something always gets sacrificed.
+</p>
+
+<div class="diagram-row">
+  <div class="diagram-box" style="text-align:center;">
+    <svg width="100%" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Orange (sphere) -->
+      <circle cx="80" cy="90" r="60" fill="#e2b96f" stroke="#c9883a" stroke-width="2"/>
+      <!-- Peel segments on sphere -->
+      <path d="M80,30 Q95,90 80,150" fill="none" stroke="#c9883a" stroke-width="1.5"/>
+      <path d="M80,30 Q65,90 80,150" fill="none" stroke="#c9883a" stroke-width="1.5"/>
+      <path d="M80,30 Q110,60 130,90 Q110,120 80,150" fill="none" stroke="#c9883a" stroke-width="1.5"/>
+      <path d="M80,30 Q50,60 30,90 Q50,120 80,150" fill="none" stroke="#c9883a" stroke-width="1.5"/>
+      <text x="80" y="94" fill="#5a3000" font-size="13" text-anchor="middle" font-weight="bold">Earth</text>
+      <!-- Arrow -->
+      <line x1="155" y1="90" x2="185" y2="90" stroke="#7ec8e3" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="160" y="82" fill="#7ec8e3" font-size="10">project</text>
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#7ec8e3"/>
+        </marker>
+      </defs>
+      <!-- Flat peel segments -->
+      <path d="M200,20 Q205,90 200,160" fill="#e2b96f" stroke="#c9883a" stroke-width="1.5"/>
+      <path d="M200,20 Q220,90 200,160" fill="#e2b96f" stroke="#c9883a" stroke-width="1.5"/>
+      <path d="M215,25 Q235,90 215,155" fill="#e2b96f" stroke="#c9883a" stroke-width="1.5"/>
+      <path d="M230,32 Q248,90 230,148" fill="#e2b96f" stroke="#c9883a" stroke-width="1.5"/>
+      <path d="M245,42 Q260,90 245,138" fill="#e2b96f" stroke="#c9883a" stroke-width="1.5"/>
+      <text x="228" y="94" fill="#5a3000" font-size="11" text-anchor="middle">gaps!</text>
+    </svg>
+    <p class="label">Flattening a sphere always creates gaps, tears, or distortions.</p>
+  </div>
+
+  <div class="diagram-box">
+    <h3 style="margin-top:0">Common projections & their tradeoffs</h3>
+    <table>
+      <tr><th>Projection</th><th>Preserves</th><th>Sacrifices</th></tr>
+      <tr><td>Mercator</td><td>Angles (navigation)</td><td>Area (Greenland looks huge)</td></tr>
+      <tr><td>Equal-Area (e.g. Albers)</td><td>Area</td><td>Shape (countries look squished)</td></tr>
+      <tr><td>State Plane (EPSG:2272)</td><td>Local accuracy</td><td>Accuracy far from zone</td></tr>
+      <tr><td>Web Mercator (EPSG:3857)</td><td>Tile rendering speed</td><td>Area, distance accuracy</td></tr>
+    </table>
+    <div class="key-point">
+      <span>For Philly:</span> <code>EPSG:2272</code> (PA State Plane South) is the standard for
+      local GIS work — it minimizes distortion for the Philadelphia region specifically.
+      <code>EPSG:4326</code> (WGS84) is the global GCS (raw lat/lon) — fine for storage, bad for area calculations.
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     PART 5: Summary
+     ========================================================= -->
+<h2>5. Summary — which to use when</h2>
+<table>
+  <tr><th>Situation</th><th>Use</th><th>Why</th></tr>
+  <tr><td>Storing raw coordinates / sharing data</td><td>GCS (EPSG:4326)</td><td>Universal, no projection assumptions</td></tr>
+  <tr><td>Calculating area in sq mi</td><td>PCS (EPSG:2272)</td><td>Linear units, minimal local distortion</td></tr>
+  <tr><td>Spatial joins (point-in-polygon)</td><td>PCS (same for all layers)</td><td>All layers must be in same CRS</td></tr>
+  <tr><td>Web maps / tile rendering</td><td>Web Mercator (EPSG:3857)</td><td>What tile servers expect</td></tr>
+  <tr><td>Storing in PostGIS</td><td>GCS (EPSG:4326) recommended</td><td>PostGIS can reproject on the fly with ST_Transform()</td></tr>
+</table>
+
+<p style="color:#888; font-size:12px; text-align:center; margin-top:40px;">
+  Generated for Philadelphia Land Use Analytics — GIS foundations, Task 6.7
+</p>
+
+</body>
+</html>

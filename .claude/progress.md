@@ -65,14 +65,14 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [x] Task 6.2 — Source catalog entry: Planning Districts (PASS, 10/10, 2026-03-05)
 - [x] Task 6.3 — Feasibility checklist: Planning Districts (PASS, 10/10, 2026-03-05)
 - [x] Task 6.4 — Critical fields dictionary: Planning Districts (PASS, 10/10, 2026-03-05)
-- [ ] Task 6.5 — Land-only area evidence note
-- [ ] Task 6.6 — Update limitations register (district spine)
-- [ ] Task 6.7 — Resource note: GIS boundaries & CRS
+- [x] Task 6.5 — Land-only area evidence note (PASS, 10/10, 2026-03-05)
+- [x] Task 6.6 — Update limitations register (district spine) (PASS, 10/10, 2026-03-05)
+- [x] Task 6.7 — Resource note: GIS boundaries & CRS (PASS, 9/10, 2026-03-05)
 - [x] Task 7.1 — Review dataset metadata: L&I permits (PASS, 9/10, 2026-03-05)
 - [x] Task 7.2 — Source catalog entry: L&I permits (PASS, 10/10, 2026-03-05)
 - [x] Task 7.3 — Feasibility checklist: L&I permits (PASS, 10/10, 2026-03-05)
 - [x] Task 7.4 — Critical fields dictionary: L&I permits (PASS, 10/10, 2026-03-05)
-- [ ] Task 7.5 — Permit category grouping decision memo
+- [x] Task 7.5 — Permit category grouping decision memo (PASS, 10/10, 2026-03-06)
 - [ ] Task 7.6 — Permits geocoding risk note
 - [ ] Task 7.7 — Update learning resources (permits/open data)
 - [x] Task 8.1 — Review dataset metadata: Zoning base districts (PASS, 10/10, 2026-03-05)
@@ -136,4 +136,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-05 (Task 6.2)
+**Last updated:** 2026-03-06 (Task 7.5)

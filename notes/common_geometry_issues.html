@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Common Geometry Validity Issues</title>
+  <style>
+    body { font-family: Georgia, serif; background: #1a1a2e; color: #eee; padding: 40px; max-width: 1000px; margin: auto; }
+    h1 { color: #e2b96f; text-align: center; }
+    h2 { color: #7ec8e3; border-bottom: 1px solid #333; padding-bottom: 6px; margin-top: 48px; }
+    h3 { color: #a8d8a8; }
+    p  { line-height: 1.7; color: #ccc; }
+    .diagram-row { display: flex; gap: 32px; margin: 24px 0; flex-wrap: wrap; }
+    .diagram-box { flex: 1; min-width: 260px; background: #16213e; border: 1px solid #333; border-radius: 10px; padding: 20px; }
+    .label { font-size: 13px; color: #aaa; margin-top: 8px; text-align: center; font-style: italic; }
+    .key-point { background: #0f3460; border-left: 4px solid #e2b96f; padding: 12px 16px; border-radius: 4px; margin: 16px 0; }
+    .key-point span { color: #e2b96f; font-weight: bold; }
+    .danger { background: #3a0f0f; border-left: 4px solid #ff6b6b; padding: 12px 16px; border-radius: 4px; margin: 16px 0; }
+    .danger span { color: #ff6b6b; font-weight: bold; }
+    .good { background: #0f3a1a; border-left: 4px solid #a8d8a8; padding: 12px 16px; border-radius: 4px; margin: 16px 0; }
+    .good span { color: #a8d8a8; font-weight: bold; }
+    code { background: #0f3460; padding: 2px 6px; border-radius: 3px; color: #a8d8a8; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th { background: #0f3460; color: #7ec8e3; padding: 10px; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #333; color: #ccc; }
+    .issue-header { color: #ff6b6b; font-size: 16px; font-weight: bold; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+
+<h1>Common Geometry Validity Issues</h1>
+<p style="text-align:center; color:#888;">Philadelphia Land Use Analytics — Task 6.7 visual supplement</p>
+<p style="text-align:center; color:#aaa;">
+  Context: we're joining <strong>permit points</strong> (L&I data) onto <strong>planning district polygons</strong>
+  using point-in-polygon spatial joins. Geometry validity issues in either layer break this process.
+</p>
+
+<!-- =========================================================
+     ISSUE 1: SELF-INTERSECTING POLYGON
+     ========================================================= -->
+<h2>Issue 1 — Self-Intersecting Polygon (Bowtie)</h2>
+
+<div class="diagram-row">
+  <div class="diagram-box" style="text-align:center;">
+    <h3 style="margin-top:0; color:#a8d8a8;">Valid polygon</h3>
+    <svg width="100%" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Valid polygon -->
+      <polygon points="40,140 120,30 200,140"
+               fill="rgba(126,200,227,0.2)" stroke="#7ec8e3" stroke-width="2.5"/>
+      <!-- Permit point inside -->
+      <circle cx="120" cy="110" r="6" fill="#ff6b6b"/>
+      <text x="130" y="108" fill="#ff6b6b" font-size="11">permit</text>
+      <!-- Check mark -->
+      <text x="50" y="170" fill="#a8d8a8" font-size="12">Inside = TRUE</text>
+      <!-- Vertices labeled -->
+      <circle cx="40"  cy="140" r="4" fill="#7ec8e3"/>
+      <circle cx="120" cy="30"  r="4" fill="#7ec8e3"/>
+      <circle cx="200" cy="140" r="4" fill="#7ec8e3"/>
+      <text x="22"  y="155" fill="#7ec8e3" font-size="10">A</text>
+      <text x="116" y="24"  fill="#7ec8e3" font-size="10">B</text>
+      <text x="204" y="155" fill="#7ec8e3" font-size="10">C</text>
+    </svg>
+    <p class="label">Simple closed ring — boundary never crosses itself. "Inside" is unambiguous.</p>
+  </div>
+
+  <div class="diagram-box" style="text-align:center;">
+    <h3 style="margin-top:0; color:#ff6b6b;">Self-intersecting polygon (bowtie)</h3>
+    <svg width="100%" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Bowtie: two triangles sharing a crossing point -->
+      <!-- Left triangle -->
+      <polygon points="30,30 120,110 30,160"
+               fill="rgba(255,107,107,0.15)" stroke="#ff6b6b" stroke-width="2.5"/>
+      <!-- Right triangle -->
+      <polygon points="210,30 120,110 210,160"
+               fill="rgba(255,107,107,0.15)" stroke="#ff6b6b" stroke-width="2.5"/>
+      <!-- The crossing point -->
+      <circle cx="120" cy="110" r="5" fill="#e2b96f"/>
+      <text x="126" y="108" fill="#e2b96f" font-size="10">self-intersection</text>
+      <!-- Permit point in the "middle" ambiguous zone -->
+      <circle cx="120" cy="70" r="6" fill="#fff"/>
+      <text x="126" y="68" fill="#fff" font-size="11">permit</text>
+      <!-- Question mark -->
+      <text x="30" y="174" fill="#ff6b6b" font-size="12">Inside = ???</text>
+    </svg>
+    <p class="label">The boundary crosses itself. Is the center region "inside" or not? PostGIS can't determine containment reliably.</p>
+  </div>
+</div>
+
+<div class="danger">
+  <span>Project impact:</span> If a planning district boundary has a self-intersection, PostGIS's <code>ST_Within()</code>
+  may return <code>NULL</code>, <code>FALSE</code>, or throw an error for permits that fall in the ambiguous zone.
+  Those permits go unassigned — silently dropped from district rollup counts.
+</div>
+
+<div class="good">
+  <span>Fix:</span> <code>ST_IsValid(geom)</code> returns FALSE for self-intersecting geometries.
+  <code>ST_MakeValid(geom)</code> attempts to repair them automatically (PostGIS 2.0+).
+</div>
+
+<!-- =========================================================
+     ISSUE 2: GAPS BETWEEN POLYGONS
+     ========================================================= -->
+<h2>Issue 2 — Gaps Between Adjacent Polygons</h2>
+
+<div class="diagram-row">
+  <div class="diagram-box" style="text-align:center;">
+    <h3 style="margin-top:0; color:#a8d8a8;">No gap — clean boundary</h3>
+    <svg width="100%" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- District A (left) -->
+      <polygon points="20,30 120,30 120,150 20,150"
+               fill="rgba(126,200,227,0.2)" stroke="#7ec8e3" stroke-width="2"/>
+      <text x="70" y="95" fill="#7ec8e3" font-size="11" text-anchor="middle">District A</text>
+      <!-- District B (right) -->
+      <polygon points="120,30 220,30 220,150 120,150"
+               fill="rgba(168,216,168,0.2)" stroke="#a8d8a8" stroke-width="2"/>
+      <text x="170" y="95" fill="#a8d8a8" font-size="11" text-anchor="middle">District B</text>
+      <!-- Shared edge highlight -->
+      <line x1="120" y1="30" x2="120" y2="150" stroke="#e2b96f" stroke-width="2.5"/>
+      <text x="120" y="170" fill="#e2b96f" font-size="10" text-anchor="middle">shared edge</text>
+      <!-- Permit on the boundary -->
+      <circle cx="120" cy="90" r="5" fill="#ff6b6b"/>
+    </svg>
+    <p class="label">Shared edge: every address falls in exactly one district.</p>
+  </div>
+
+  <div class="diagram-box" style="text-align:center;">
+    <h3 style="margin-top:0; color:#ff6b6b;">Gap between districts</h3>
+    <svg width="100%" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- District A (left, slightly smaller) -->
+      <polygon points="20,30 108,30 108,150 20,150"
+               fill="rgba(126,200,227,0.2)" stroke="#7ec8e3" stroke-width="2"/>
+      <text x="64" y="95" fill="#7ec8e3" font-size="11" text-anchor="middle">District A</text>
+      <!-- District B (right, slightly smaller) -->
+      <polygon points="132,30 220,30 220,150 132,150"
+               fill="rgba(168,216,168,0.2)" stroke="#a8d8a8" stroke-width="2"/>
+      <text x="176" y="95" fill="#a8d8a8" font-size="11" text-anchor="middle">District B</text>
+      <!-- Gap zone -->
+      <rect x="108" y="30" width="24" height="120" fill="rgba(255,107,107,0.1)" stroke="#ff6b6b" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <text x="120" y="82" fill="#ff6b6b" font-size="9" text-anchor="middle">gap</text>
+      <text x="120" y="94" fill="#ff6b6b" font-size="9" text-anchor="middle">zone</text>
+      <!-- Permit in the gap -->
+      <circle cx="120" cy="115" r="6" fill="#fff"/>
+      <text x="120" y="170" fill="#ff6b6b" font-size="10" text-anchor="middle">permit = unassigned</text>
+    </svg>
+    <p class="label">Permit address falls in the gap — not inside either district. Spatial join returns no match.</p>
+  </div>
+</div>
+
+<div class="danger">
+  <span>Project impact:</span> Permits at addresses along district boundary gaps get dropped from all district rollups.
+  This is especially risky for permits near known boundary revision areas or streets that run along district edges.
+  Your monthly permit counts will undercount, and the undercounting is geographically non-random (concentrated at boundaries).
+</div>
+
+<div class="good">
+  <span>Detection:</span> After the spatial join, count <code>WHERE district_id IS NULL</code>.
+  If non-trivial, investigate addresses geographically — they'll cluster at boundary gaps.
+  Document the rate in the limitations register.
+</div>
+
+<!-- =========================================================
+     ISSUE 3: OVERLAPPING POLYGONS
+     ========================================================= -->
+<h2>Issue 3 — Overlapping Polygons (Double-Counting)</h2>
+
+<div class="diagram-row">
+  <div class="diagram-box" style="text-align:center;">
+    <h3 style="margin-top:0; color:#ff6b6b;">Overlapping districts</h3>
+    <svg width="100%" viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- District A -->
+      <polygon points="20,40 160,40 160,160 20,160"
+               fill="rgba(126,200,227,0.2)" stroke="#7ec8e3" stroke-width="2"/>
+      <text x="70" y="105" fill="#7ec8e3" font-size="11" text-anchor="middle">District A</text>
+      <!-- District B (overlapping) -->
+      <polygon points="100,40 240,40 240,160 100,160"
+               fill="rgba(168,216,168,0.2)" stroke="#a8d8a8" stroke-width="2"/>
+      <text x="190" y="105" fill="#a8d8a8" font-size="11" text-anchor="middle">District B</text>
+      <!-- Overlap zone -->
+      <rect x="100" y="40" width="60" height="120" fill="rgba(226,185,111,0.3)" stroke="#e2b96f" stroke-width="1.5"/>
+      <text x="130" y="98"  fill="#e2b96f" font-size="10" text-anchor="middle">overlap</text>
+      <!-- Permit in overlap zone -->
+      <circle cx="130" cy="115" r="6" fill="#ff6b6b"/>
+      <text x="130" y="132" fill="#ff6b6b" font-size="9" text-anchor="middle">permit</text>
+      <!-- Arrow to both -->
+      <line x1="130" y1="115" x2="70"  y2="80" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="130" y1="115" x2="190" y2="80" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="130" y="180" fill="#ff6b6b" font-size="10" text-anchor="middle">assigned to BOTH districts</text>
+    </svg>
+    <p class="label">Permit in the overlap zone passes ST_Within() for both District A and B. It gets counted twice.</p>
+  </div>
+
+  <div class="diagram-box">
+    <h3 style="margin-top:0;">Why this is hard to catch</h3>
+    <p>Overlaps in Philadelphia planning district boundaries are unlikely for the <em>official</em> city shapefile, but can appear when:</p>
+    <ul style="color:#ccc; line-height:1.9;">
+      <li>Boundary data was edited manually and a vertex was dragged inward</li>
+      <li>Different vintages of the shapefile are accidentally mixed</li>
+      <li>A simplification algorithm was applied and introduced micro-overlaps</li>
+    </ul>
+    <div class="danger">
+      <span>Impact:</span> One permit appears in two districts' counts. Aggregated totals will be > actual permit count. Off by a small amount but geographically biased toward boundary areas.
+    </div>
+    <div class="good">
+      <span>Check:</span> After spatial join, <code>GROUP BY permit_id HAVING COUNT(*) > 1</code>.
+      Any permit assigned to more than one district reveals an overlap.
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     ISSUE 4: DUPLICATE VERTICES
+     ========================================================= -->
+<h2>Issue 4 — Duplicate Vertices</h2>
+
+<div class="diagram-row">
+  <div class="diagram-box" style="text-align:center;">
+    <svg width="100%" viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Normal polygon -->
+      <polygon points="40,140 130,30 220,140"
+               fill="rgba(126,200,227,0.15)" stroke="#7ec8e3" stroke-width="2"/>
+      <!-- Duplicate vertex highlighted -->
+      <circle cx="130" cy="30" r="5" fill="#7ec8e3"/>
+      <circle cx="133" cy="33" r="5" fill="#e2b96f" opacity="0.8"/>
+      <text x="140" y="25" fill="#e2b96f" font-size="10">duplicate vertex</text>
+      <text x="140" y="37" fill="#e2b96f" font-size="10">(same coord, listed twice)</text>
+      <!-- Vertices -->
+      <circle cx="40"  cy="140" r="4" fill="#7ec8e3"/>
+      <circle cx="220" cy="140" r="4" fill="#7ec8e3"/>
+    </svg>
+    <p class="label">Two consecutive boundary points at the exact same coordinate — a zero-length edge in the polygon ring.</p>
+  </div>
+
+  <div class="diagram-box">
+    <h3 style="margin-top:0;">Impact vs. Self-Intersections</h3>
+    <p>Duplicate vertices are the <em>mildest</em> validity issue:</p>
+    <table>
+      <tr><th>Issue</th><th>ST_IsValid()?</th><th>Breaks join?</th></tr>
+      <tr><td>Duplicate vertex</td><td>Usually TRUE</td><td>Rarely</td></tr>
+      <tr><td>Self-intersection</td><td>FALSE</td><td>Yes</td></tr>
+      <tr><td>Gap</td><td>N/A (inter-layer)</td><td>Yes (unassigned)</td></tr>
+      <tr><td>Overlap</td><td>N/A (inter-layer)</td><td>Yes (double-count)</td></tr>
+    </table>
+    <p>The real risk of duplicate vertices is their <strong>bigger cousin</strong> — the self-intersecting polygon.
+    A boundary that crosses itself creates ambiguous interior regions, which is what breaks point-in-polygon tests.</p>
+  </div>
+</div>
+
+<!-- =========================================================
+     SUMMARY
+     ========================================================= -->
+<h2>Summary — Pre-Flight Checks Before Spatial Joins</h2>
+<table>
+  <tr><th>Check</th><th>PostGIS Query</th><th>What to do if found</th></tr>
+  <tr><td>Self-intersections</td><td><code>SELECT id FROM districts WHERE NOT ST_IsValid(geom)</code></td><td>Run <code>ST_MakeValid()</code>, log in limitations register</td></tr>
+  <tr><td>Unassigned permits (gaps)</td><td><code>SELECT COUNT(*) FROM permits WHERE district_id IS NULL</code></td><td>Log rate in limitations register; flag if &gt; 1%</td></tr>
+  <tr><td>Double-assigned permits (overlaps)</td><td><code>SELECT permit_id, COUNT(*) FROM joined GROUP BY permit_id HAVING COUNT(*) &gt; 1</code></td><td>Deduplicate; investigate boundary source</td></tr>
+  <tr><td>Geometry declared</td><td><code>SELECT Find_SRID('public','districts','geom')</code></td><td>Assign SRID with <code>UpdateGeometrySRID()</code> if missing</td></tr>
+</table>
+
+<p style="color:#888; font-size:12px; text-align:center; margin-top:40px;">
+  Generated for Philadelphia Land Use Analytics — GIS foundations, Task 6.7
+</p>
+
+</body>
+</html>

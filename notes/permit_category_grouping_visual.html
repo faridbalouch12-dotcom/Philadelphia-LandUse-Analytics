@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Permit Category Grouping Architecture — Task 7.5</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8f9fa; padding: 36px; color: #222; max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 1.4em; color: #1a1a2e; margin-bottom: 4px; }
+    .subtitle { color: #666; font-size: 0.88em; margin-bottom: 36px; }
+    code { font-family: 'Consolas', monospace; background: #eee; padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
+
+    /* ── Mapping diagram ── */
+    .diagram { display: flex; align-items: flex-start; gap: 0; margin: 24px 0 40px; }
+    .col-label { font-size: 0.72em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 8px; text-align: center; }
+    .section-note { font-size: 0.73em; color: #999; margin-top: 8px; text-align: center; font-style: italic; }
+
+    .raw-col { width: 195px; }
+    .raw-value { background: #e8eaf6; border: 1px solid #9fa8da; border-radius: 6px; padding: 7px 10px; font-size: 0.78em; font-family: monospace; color: #283593; text-align: center; margin-bottom: 6px; }
+    .raw-new  { background: #fff3e0; border: 1.5px dashed #ff9800; color: #e65100; }
+
+    .arrow-col { width: 52px; display: flex; align-items: center; justify-content: center; padding-top: 32px; }
+    .arrow { font-size: 1.6em; color: #bbb; }
+
+    .lookup-col { width: 290px; }
+    .lookup-box { background: #fff; border: 2px solid #4caf50; border-radius: 10px; padding: 16px 18px; }
+    .lookup-title { font-weight: 700; font-size: 0.88em; color: #2e7d32; margin-bottom: 10px; font-family: monospace; }
+    .lookup-field { display: flex; gap: 8px; align-items: baseline; margin: 5px 0; font-size: 0.78em; }
+    .fn { font-family: monospace; background: #f1f8e9; border: 1px solid #c5e1a5; padding: 2px 7px; border-radius: 4px; color: #33691e; white-space: nowrap; }
+    .badge { font-weight: 700; font-size: 0.7em; padding: 1px 5px; border-radius: 3px; white-space: nowrap; }
+    .pk { background: #fff3e0; color: #e65100; }
+    .fk-target { background: #e3f2fd; color: #1565c0; }
+    .field-desc { color: #666; font-size: 0.88em; }
+    .catchall { background: #fff8e1; border: 1.5px dashed #ffa000; border-radius: 7px; padding: 9px 12px; font-size: 0.78em; margin-top: 12px; color: #e65100; line-height: 1.5; }
+    .catchall strong { display: block; margin-bottom: 3px; }
+
+    .canonical-col { width: 195px; }
+    .cgroup { border-radius: 8px; padding: 9px 12px; font-size: 0.82em; font-weight: 600; text-align: center; margin-bottom: 6px; }
+    .g1 { background: #e3f2fd; border: 1.5px solid #1976d2; color: #0d47a1; }
+    .g2 { background: #f3e5f5; border: 1.5px solid #7b1fa2; color: #4a148c; }
+    .g3 { background: #e8f5e9; border: 1.5px solid #388e3c; color: #1b5e20; }
+    .g4 { background: #fce4ec; border: 1.5px solid #c62828; color: #7f0000; }
+    .g-other { background: #fafafa; border: 1.5px dashed #9e9e9e; color: #757575; font-style: italic; }
+
+    /* ── Era timeline ── */
+    .era-box { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px 24px; margin-bottom: 36px; }
+    .era-box h2 { font-size: 1em; color: #333; margin: 0 0 14px; }
+    .era-row { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; }
+    .era { flex: 1; padding: 14px 18px; font-size: 0.82em; }
+    .hansen { background: #ffebee; }
+    .eclipse { background: #e8f5e9; }
+    .era-name { font-weight: 800; font-size: 0.88em; margin-bottom: 6px; }
+    .hansen .era-name { color: #b71c1c; }
+    .eclipse .era-name { color: #2e7d32; }
+    .era-val { font-family: monospace; margin: 3px 0; color: #555; font-size: 0.9em; }
+    .era-divider { width: 4px; background: linear-gradient(to bottom, #ef9a9a, #81c784); display: flex; align-items: center; justify-content: center; }
+    .mvp-badge { display: inline-block; background: #e8f5e9; border: 1px solid #81c784; border-radius: 10px; padding: 2px 10px; font-size: 0.75em; color: #2e7d32; font-weight: 700; margin-top: 8px; }
+    .era-note { font-size: 0.78em; color: #777; margin-top: 10px; line-height: 1.5; }
+
+    /* ── Risk cards ── */
+    .risks h2 { font-size: 1em; color: #1a1a2e; margin-bottom: 14px; }
+    .risk-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .risk-card { flex: 1; min-width: 230px; border-radius: 10px; padding: 16px 18px; }
+    .r1 { background: #fff3e0; border-left: 4px solid #f57c00; }
+    .r2 { background: #fce4ec; border-left: 4px solid #c62828; }
+    .r3 { background: #ede7f6; border-left: 4px solid #6a1b9a; }
+    .risk-id { font-weight: 800; font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; }
+    .r1 .risk-id { color: #e65100; }
+    .r2 .risk-id { color: #b71c1c; }
+    .r3 .risk-id { color: #4a148c; }
+    .risk-title { font-weight: 700; font-size: 0.88em; margin-bottom: 6px; color: #111; }
+    .risk-body { font-size: 0.79em; color: #444; line-height: 1.55; }
+    .risk-mit { margin-top: 9px; font-size: 0.77em; background: rgba(255,255,255,0.65); border-radius: 5px; padding: 7px 10px; color: #333; line-height: 1.5; }
+    .mit-label { font-weight: 700; color: #2e7d32; }
+    .distinguisher { margin-top: 7px; font-size: 0.77em; color: #666; font-style: italic; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 6px; }
+  </style>
+</head>
+<body>
+
+<h1>Permit Category Grouping Architecture</h1>
+<p class="subtitle">Task 7.5 — L&I Permits MVP &nbsp;|&nbsp; Primary field: <code>permittype</code> &nbsp;|&nbsp; Pattern: Lookup Table (B5 Ch. 11)</p>
+
+<!-- ── Mapping diagram ── -->
+<div class="diagram">
+
+  <div class="raw-col">
+    <div class="col-label">Raw <code>permittype</code> values<br>(ECLIPSE 5-yr window)</div>
+    <div class="raw-value">BUILDING</div>
+    <div class="raw-value">ZONING/USE REGISTRATION</div>
+    <div class="raw-value">ELECTRICAL</div>
+    <div class="raw-value">PLUMBING</div>
+    <div class="raw-value">MECHANICAL</div>
+    <div class="raw-value">DEMOLITION</div>
+    <div class="raw-value">… (14 total)</div>
+    <div class="raw-value raw-new">??? NEW VALUE (future)</div>
+    <div class="section-note">14 known values in 5-yr window.<br>New values possible at any time.</div>
+  </div>
+
+  <div class="arrow-col"><div class="arrow">→</div></div>
+
+  <div class="lookup-col">
+    <div class="col-label"><code>permit_category_groups</code><br>lookup table</div>
+    <div class="lookup-box">
+      <div class="lookup-title">permit_category_groups</div>
+      <div class="lookup-field">
+        <span class="fn">category_id</span>
+        <span class="badge pk">PK</span>
+        <span class="field-desc">surrogate key</span>
+      </div>
+      <div class="lookup-field">
+        <span class="fn">raw_permittype</span>
+        <span class="badge fk-target">FK target</span>
+        <span class="field-desc">raw string from source</span>
+      </div>
+      <div class="lookup-field">
+        <span class="fn">canonical_group</span>
+        <span class="field-desc">mapped stable bucket</span>
+      </div>
+      <div class="lookup-field">
+        <span class="fn">active</span>
+        <span class="field-desc">BOOLEAN — retire without delete</span>
+      </div>
+      <div class="lookup-field">
+        <span class="fn">notes</span>
+        <span class="field-desc">mapping rationale</span>
+      </div>
+      <div class="catchall">
+        <strong>⚠ Unmapped / Other catch-all</strong>
+        Any <code>raw_permittype</code> with no matching row → assigned to <em>"Other/Unmapped"</em>.<br>
+        Pipeline never breaks. Unknown values stay visible, not silently dropped.<br>
+        Monitor share per load — alert if &gt; 1%.
+      </div>
+    </div>
+    <div class="section-note">Values stored as <strong>data</strong>, not schema.<br>No ENUM. No CHECK constraint.<br><em>"Use data when validating against a fluid set of values."</em> — B5 Ch. 11</div>
+  </div>
+
+  <div class="arrow-col"><div class="arrow">→</div></div>
+
+  <div class="canonical-col">
+    <div class="col-label">Canonical groups<br>(composition metric)</div>
+    <div class="cgroup g1">Building</div>
+    <div class="cgroup g2">Zoning / Use</div>
+    <div class="cgroup g3">Mechanical / Trade</div>
+    <div class="cgroup g4">Demolition</div>
+    <div class="cgroup g-other">Other / Unmapped</div>
+    <div class="section-note">Stable buckets used in<br>district composition metric.<br>New values absorbed by catch-all,<br>not lost.</div>
+  </div>
+
+</div>
+
+<!-- ── Era timeline ── -->
+<div class="era-box">
+  <h2>System Era Context — Risk R2: HANSEN → ECLIPSE Label Mismatch</h2>
+  <div class="era-row">
+    <div class="era hansen">
+      <div class="era-name">HANSEN era (pre-2020)</div>
+      <div class="era-val">"ZP_ZONING"</div>
+      <div class="era-val">"BP_BUILDING"</div>
+      <div class="era-val">"EL_ELECTRICAL"</div>
+      <div style="font-size:0.8em;color:#888;margin-top:6px;">Prefixed naming convention.<br>Same real-world concepts, different labels.</div>
+    </div>
+    <div class="era-divider"></div>
+    <div class="era eclipse">
+      <div class="era-name">ECLIPSE era (2020 → present)</div>
+      <div class="era-val">"ZONING/USE REGISTRATION"</div>
+      <div class="era-val">"BUILDING"</div>
+      <div class="era-val">"ELECTRICAL"</div>
+      <div><span class="mvp-badge">✓ MVP 5-yr window is 100% ECLIPSE</span></div>
+    </div>
+  </div>
+  <p class="era-note">
+    <strong>Why this matters for the lookup table:</strong> If historical extension beyond 2021 is attempted, HANSEN values must be added as separate rows in <code>permit_category_groups</code>, each mapped to the same canonical group as their ECLIPSE equivalent. The lookup table handles this gracefully — no schema change required, just new rows. Without this mapping, a query spanning eras would show e.g. "ZP_ZONING" and "ZONING/USE REGISTRATION" as two separate category buckets in the composition metric — doubling apparent zoning activity.
+  </p>
+</div>
+
+<!-- ── Risk cards ── -->
+<div class="risks">
+  <h2>The 3 Category Grouping Risks</h2>
+  <div class="risk-row">
+
+    <div class="risk-card r1">
+      <div class="risk-id">R1 — Value Emergence</div>
+      <div class="risk-title">New <code>permittype</code> values appear mid-pipeline</div>
+      <div class="risk-body">
+        The city introduces a new permit type in the source system. If categories are hardcoded as ENUM or CHECK constraints, ingestion throws an error and the pipeline stops. If the new value is simply unhandled, permits silently disappear from counts — no error, no warning, just missing data in the composition metric.
+      </div>
+      <div class="risk-mit">
+        <span class="mit-label">Mitigation:</span> Lookup table with <em>Unmapped/Other</em> catch-all. Every unknown value is captured, not dropped. Monitor unmapped share per monthly load; alert if &gt; 1%. Update lookup table when new values are confirmed.
+      </div>
+      <div class="distinguisher">Likelihood: Low (5-yr ECLIPSE window is stable). Impact: High if unhandled.</div>
+    </div>
+
+    <div class="risk-card r2">
+      <div class="risk-id">R2 — Cross-Era Label Mismatch</div>
+      <div class="risk-title">HANSEN → ECLIPSE transition creates phantom category splits</div>
+      <div class="risk-body">
+        The same real-world permit type is labeled differently across source system eras. <code>"ZP_ZONING"</code> (HANSEN) and <code>"ZONING/USE REGISTRATION"</code> (ECLIPSE) describe the same thing. Without explicit cross-era mapping, they appear as two separate categories — artificially splitting composition and inflating category counts in any cross-era query.
+      </div>
+      <div class="risk-mit">
+        <span class="mit-label">Mitigation:</span> Document known cross-era label pairs. Apply canonical mapping in staging before any cross-era join. The lookup table accepts both raw values as separate rows pointing to the same canonical group.
+      </div>
+      <div class="distinguisher">Unlike R3, this is a <em>known, one-time, documented</em> transition — not ongoing drift. Low risk for MVP (5-yr window is 100% ECLIPSE).</div>
+    </div>
+
+    <div class="risk-card r3">
+      <div class="risk-id">R3 — Silent Label Drift</div>
+      <div class="risk-title">Incremental <code>typeofwork</code> relabeling creates phantom trends</div>
+      <div class="risk-body">
+        Unlike the HANSEN→ECLIPSE transition (documented, one-time), <code>typeofwork</code> label drift happens silently and continuously with no announcement. <code>"Alterations"</code> becomes <code>"Addition/Alteration"</code> — same real-world activity, different string. Composition charts show a new category appearing and an old one shrinking. It looks like a real trend in building activity, but it is just relabeling.
+      </div>
+      <div class="risk-mit">
+        <span class="mit-label">Mitigation:</span> Exclude <code>typeofwork</code> from primary MVP grouping entirely. If introduced in a later phase: unmapped catch-all + monthly drift monitoring. Compare <code>typeofwork</code> distribution year-over-year to detect relabeling events.
+      </div>
+      <div class="distinguisher">Unlike R2, this is <em>continuous, undocumented, and unannounced</em> — the hardest type of drift to catch without monitoring.</div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

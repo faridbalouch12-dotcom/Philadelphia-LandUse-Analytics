@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SQL Antipatterns B5 — Ch. 9 & Ch. 11 Visual Notes</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; padding: 36px; color: #222; max-width: 1080px; margin: 0 auto; }
+    h1 { font-size: 1.5em; color: #1a1a2e; margin-bottom: 4px; }
+    .subtitle { color: #777; font-size: 0.88em; margin-bottom: 40px; }
+    h2 { font-size: 1.15em; color: #1a1a2e; border-bottom: 2px solid #e0e0e0; padding-bottom: 6px; margin-top: 48px; margin-bottom: 20px; }
+    h3 { font-size: 0.95em; color: #444; margin: 20px 0 10px; }
+    code { font-family: 'Consolas', monospace; background: #eee; padding: 1px 5px; border-radius: 3px; font-size: 0.88em; }
+    .tag { display: inline-block; font-size: 0.7em; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 8px; vertical-align: middle; }
+    .bad  { background: #ffebee; color: #b71c1c; border: 1px solid #ef9a9a; }
+    .good { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .quote { background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 18px; margin: 20px 0; font-style: italic; font-size: 0.9em; color: #555; border-radius: 0 8px 8px 0; }
+
+    /* ── Shared comparison layout ── */
+    .compare { display: flex; gap: 16px; margin: 16px 0 28px; flex-wrap: wrap; }
+    .panel { flex: 1; min-width: 280px; border-radius: 10px; padding: 18px 20px; }
+    .panel-anti { background: #fff5f5; border: 1.5px solid #ef9a9a; }
+    .panel-good { background: #f1f8e9; border: 1.5px solid #a5d6a7; }
+    .panel h4 { margin: 0 0 12px; font-size: 0.88em; }
+    .panel-anti h4 { color: #b71c1c; }
+    .panel-good h4 { color: #2e7d32; }
+    pre { margin: 0; font-family: 'Consolas', monospace; font-size: 0.78em; line-height: 1.6; white-space: pre-wrap; }
+    .anti-code { color: #c62828; }
+    .good-code { color: #1b5e20; }
+    .neutral { color: #444; }
+
+    /* ── Problem pills ── */
+    .problems { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+    .pill { font-size: 0.75em; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+    .pill-bad  { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+    .pill-good { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+
+    /* ── Recognition signs ── */
+    .signs { background: #fff3e0; border: 1px solid #ffe082; border-radius: 8px; padding: 14px 18px; margin: 16px 0; }
+    .signs h4 { font-size: 0.82em; color: #e65100; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .signs ul { margin: 0; padding-left: 18px; }
+    .signs li { font-size: 0.82em; color: #555; margin: 4px 0; font-style: italic; }
+
+    /* ── Karwin quote card ── */
+    .karwin { background: #1a1a2e; color: #fff; border-radius: 10px; padding: 20px 24px; margin: 32px 0; text-align: center; }
+    .karwin .k-text { font-size: 1.05em; font-style: italic; margin-bottom: 8px; line-height: 1.6; }
+    .karwin .k-label { font-size: 0.75em; color: #aaa; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* ── Project application ── */
+    .project-box { background: #e8eaf6; border: 1.5px solid #9fa8da; border-radius: 10px; padding: 18px 22px; margin: 16px 0; }
+    .project-box h4 { font-size: 0.88em; color: #283593; margin: 0 0 12px; }
+    .project-box pre { font-size: 0.78em; color: #1a237e; }
+
+    /* ── Root cause diagram ── */
+    .root-diagram { display: flex; align-items: center; justify-content: center; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+    .root-box { text-align: center; padding: 14px 20px; border-radius: 10px; font-size: 0.82em; font-weight: 600; min-width: 160px; }
+    .root-data { background: #e3f2fd; border: 2px solid #1976d2; color: #0d47a1; }
+    .root-schema { background: #ffebee; border: 2px solid #c62828; color: #7f0000; }
+    .root-arrow { font-size: 1.8em; color: #bbb; padding: 0 12px; }
+    .root-label { font-size: 0.72em; font-weight: 400; margin-top: 4px; color: #666; }
+    .root-center { background: #fff3e0; border: 2px solid #f57c00; color: #e65100; }
+
+    /* ── SCD extension note ── */
+    .scd-note { background: #f3e5f5; border: 1.5px solid #ce93d8; border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 0.82em; }
+    .scd-note h4 { color: #6a1b9a; margin: 0 0 8px; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+
+<h1>SQL Antipatterns — Ch. 9 & Ch. 11 Visual Notes</h1>
+<p class="subtitle">[B5] Karwin · Chapters read for Task 7.5 — Permit Category Grouping Decision</p>
+
+<!-- ── Root cause shared by both chapters ── -->
+<h2>The Shared Root Cause</h2>
+<p style="font-size:0.88em;color:#555;margin-bottom:16px;">Both antipatterns are the same mistake in different clothes: a <strong>data value</strong> leaks into the <strong>schema</strong> and becomes a structural object. When the data changes, the schema has to change too — and schema changes are expensive, risky, and often disruptive.</p>
+
+<div class="root-diagram">
+  <div class="root-box root-data">
+    Data values<br>
+    <div class="root-label">year, category, status<br>— should live as rows</div>
+  </div>
+  <div class="root-arrow">→</div>
+  <div class="root-box root-schema">
+    Become schema objects<br>
+    <div class="root-label">table names, column names,<br>ENUM values, CHECK constraints</div>
+  </div>
+  <div class="root-arrow">→</div>
+  <div class="root-box root-center">
+    Schema must change<br>when data changes<br>
+    <div class="root-label">DDL ops, downtime, ETL,<br>broken pipelines</div>
+  </div>
+</div>
+
+<div class="karwin">
+  <div class="k-text">"Use metadata when validating against a fixed set of values.<br>Use data when validating against a fluid set of values."</div>
+  <div class="k-label">— Bill Karwin, SQL Antipatterns Ch. 11, p. 138</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Chapter 9 — Metadata Tribbles <span class="tag bad">Antipattern</span></h2>
+<p style="font-size:0.88em;color:#555;">Objective: improve performance by keeping tables small. Mistaken approach: split one table into many using a data value (year, category) as the split key.</p>
+
+<h3>Form 1: Spawning Tables</h3>
+<div class="compare">
+  <div class="panel panel-anti">
+    <h4>✗ Antipattern — Table per year</h4>
+    <pre class="anti-code">CREATE TABLE Permits_2021 ( ... );
+CREATE TABLE Permits_2022 ( ... );
+CREATE TABLE Permits_2023 ( ... );
+-- January 2024: pipeline fails.
+-- Permits_2024 doesn't exist yet.</pre>
+    <div class="problems">
+      <span class="pill pill-bad">Schema changes when data changes</span>
+      <span class="pill pill-bad">FK impossible — which table?</span>
+      <span class="pill pill-bad">UNION grows every year</span>
+      <span class="pill pill-bad">Update anomaly on date correction</span>
+    </div>
+  </div>
+  <div class="panel panel-good">
+    <h4>✓ Solution — One table, year is a value</h4>
+    <pre class="good-code">CREATE TABLE Permits (
+    permit_id   SERIAL PRIMARY KEY,
+    permittype  TEXT,
+    issue_date  DATE,   -- year extracted here
+    district_id INT
+);
+
+-- Year is just EXTRACT(YEAR FROM issue_date)
+-- No new table needed. Ever.</pre>
+    <div class="problems">
+      <span class="pill pill-good">One FK target for all dependents</span>
+      <span class="pill pill-good">Date correction = simple UPDATE</span>
+      <span class="pill pill-good">New year = zero schema change</span>
+    </div>
+  </div>
+</div>
+
+<h3>Form 2: Spawning Columns</h3>
+<div class="compare">
+  <div class="panel panel-anti">
+    <h4>✗ Antipattern — Column per year</h4>
+    <pre class="anti-code">CREATE TABLE DistrictMetrics (
+    district_id        INT,
+    permit_count_2021  INT,
+    permit_count_2022  INT,
+    permit_count_2023  INT
+    -- ALTER TABLE every January
+);</pre>
+    <div class="problems">
+      <span class="pill pill-bad">ALTER TABLE each new year</span>
+      <span class="pill pill-bad">New column = schema change</span>
+      <span class="pill pill-bad">Aggregating across years = complex</span>
+    </div>
+  </div>
+  <div class="panel panel-good">
+    <h4>✓ Solution — Year as a dimension column</h4>
+    <pre class="good-code">CREATE TABLE fct_district_month (
+    district_id   INT,
+    year_month    DATE,  -- 2022-03-01
+    permit_count  INT,
+    PRIMARY KEY (district_id, year_month)
+);
+
+-- New month = new ROW, not new column.</pre>
+    <div class="problems">
+      <span class="pill pill-good">New period = INSERT, not ALTER TABLE</span>
+      <span class="pill pill-good">Any date range query is trivial</span>
+    </div>
+  </div>
+</div>
+
+<div class="signs">
+  <h4>🔍 How to recognize Metadata Tribbles</h4>
+  <ul>
+    <li>"We need a table per [data value]..."</li>
+    <li>"We forgot to create the new year's table."</li>
+    <li>"How do I query a table name dynamically?"</li>
+    <li>"How do I search many tables at once? They all have the same columns."</li>
+    <li>"Adding a column means I have to update 5 tables."</li>
+  </ul>
+</div>
+
+<h3>Solutions for large tables</h3>
+<div class="compare">
+  <div class="panel panel-good">
+    <h4>✓ Horizontal partitioning (rows)</h4>
+    <pre class="good-code">CREATE TABLE Permits (
+    permit_id   SERIAL PRIMARY KEY,
+    issue_date  DATE
+) PARTITION BY HASH (
+    EXTRACT(YEAR FROM issue_date)
+) PARTITIONS 4;
+-- Still one logical table.
+-- DB manages physical split.</pre>
+    <p style="font-size:0.8em;color:#555;margin-top:8px;">Use when: table grows very large and queries are mostly date-filtered. The partition is invisible to SQL — you still query <code>Permits</code>, not <code>Permits_2022</code>.</p>
+  </div>
+  <div class="panel panel-good">
+    <h4>✓ Vertical partitioning (columns)</h4>
+    <pre class="good-code">-- Main table: lean, fixed-width cols
+CREATE TABLE Permits (
+    permit_id   SERIAL PRIMARY KEY,
+    issue_date  DATE,
+    district_id INT
+);
+
+-- Dependent table: bulky/rare columns
+CREATE TABLE PermitDetails (
+    permit_id   INT PRIMARY KEY
+        REFERENCES Permits(permit_id),
+    description TEXT   -- rarely queried
+);</pre>
+    <p style="font-size:0.8em;color:#555;margin-top:8px;">Use when: some columns are very large (TEXT, BLOB) and rarely needed. Keeps the main table fast for the 90% of queries that don't need the bulky data.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Chapter 11 — 31 Flavors <span class="tag bad">Antipattern</span></h2>
+<p style="font-size:0.88em;color:#555;">Objective: restrict a column to a known set of valid values. Mistaken approach: encode those values in the column definition itself.</p>
+
+<div class="compare">
+  <div class="panel panel-anti">
+    <h4>✗ Antipattern — Values baked into schema</h4>
+    <pre class="anti-code">-- CHECK constraint
+CREATE TABLE Permits (
+    permittype VARCHAR(20)
+        CHECK (permittype IN (
+            'BUILDING',
+            'ELECTRICAL',
+            'PLUMBING'
+        ))
+);
+
+-- Or ENUM (MySQL)
+CREATE TABLE Permits (
+    permittype ENUM(
+        'BUILDING',
+        'ELECTRICAL',
+        'PLUMBING'
+    )
+);</pre>
+    <div class="problems">
+      <span class="pill pill-bad">New value = ALTER TABLE + possible downtime</span>
+      <span class="pill pill-bad">Retiring old value = historical data problem</span>
+      <span class="pill pill-bad">Querying valid values = parse INFORMATION_SCHEMA</span>
+      <span class="pill pill-bad">App code list drifts out of sync</span>
+      <span class="pill pill-bad">Not portable across DB brands</span>
+    </div>
+  </div>
+  <div class="panel panel-good">
+    <h4>✓ Solution — Lookup table with FK</h4>
+    <pre class="good-code">CREATE TABLE PermitTypes (
+    permittype  VARCHAR(50) PRIMARY KEY,
+    active      BOOLEAN NOT NULL DEFAULT TRUE,
+    notes       TEXT
+);
+
+INSERT INTO PermitTypes VALUES
+    ('BUILDING', TRUE, NULL),
+    ('ELECTRICAL', TRUE, NULL),
+    ('PLUMBING', TRUE, NULL);
+
+CREATE TABLE Permits (
+    permit_id   SERIAL PRIMARY KEY,
+    permittype  VARCHAR(50),
+    FOREIGN KEY (permittype)
+        REFERENCES PermitTypes(permittype)
+        ON UPDATE CASCADE
+);</pre>
+    <div class="problems">
+      <span class="pill pill-good">New value = INSERT (no DDL)</span>
+      <span class="pill pill-good">Retire value = SET active = FALSE</span>
+      <span class="pill pill-good">Query valid values = simple SELECT</span>
+      <span class="pill pill-good">No app code sync problem</span>
+    </div>
+  </div>
+</div>
+
+<h3>The "Adding a New Flavor" problem in detail</h3>
+<div class="compare">
+  <div class="panel panel-anti">
+    <h4>✗ Adding a value with ENUM</h4>
+    <pre class="anti-code">-- Must redefine the entire column.
+-- Some DBs require ETL (dump → redefine → reload).
+ALTER TABLE Permits
+MODIFY COLUMN permittype
+    ENUM('BUILDING', 'ELECTRICAL',
+         'PLUMBING', 'NEW_TYPE');
+-- Risk: table locked during ALTER.
+-- Risk: you must know the current list exactly.</pre>
+  </div>
+  <div class="panel panel-good">
+    <h4>✓ Adding a value with lookup table</h4>
+    <pre class="good-code">-- One row. No DDL. No downtime.
+INSERT INTO PermitTypes (permittype)
+    VALUES ('NEW_TYPE');
+
+-- Done. The FK now accepts the new value.</pre>
+  </div>
+</div>
+
+<div class="compare">
+  <div class="panel panel-anti">
+    <h4>✗ Retiring an old value</h4>
+    <pre class="anti-code">-- Remove 'PLUMBING' from ENUM:
+ALTER TABLE Permits
+MODIFY COLUMN permittype
+    ENUM('BUILDING', 'ELECTRICAL');
+-- Problem: what happens to rows where
+-- permittype = 'PLUMBING'?
+-- Historical data is now broken.</pre>
+  </div>
+  <div class="panel panel-good">
+    <h4>✓ Retiring an old value</h4>
+    <pre class="good-code">-- Soft-delete: mark inactive.
+UPDATE PermitTypes
+SET active = FALSE
+WHERE permittype = 'PLUMBING';
+
+-- Historical rows still have a valid FK.
+-- Active UI only shows active values:
+SELECT permittype FROM PermitTypes
+WHERE active = TRUE;</pre>
+  </div>
+</div>
+
+<div class="signs">
+  <h4>🔍 How to recognize 31 Flavors</h4>
+  <ul>
+    <li>"We have to take the database offline to add a new choice to the menu."</li>
+    <li>"The status column can only have these values — we shouldn't need to revise this list." (<em>Shouldn't need to ≠ can't.</em>)</li>
+    <li>"The list in the application code got out of sync with the database — again."</li>
+    <li>"How do I get the list of valid values for this column?" (Answer: parse INFORMATION_SCHEMA. Red flag.)</li>
+  </ul>
+</div>
+
+<div class="scd-note">
+  <h4>Extension: SCD Type 2 for lookup tables (beyond Karwin)</h4>
+  <p>When the valid value itself changes over time and you need to track history (e.g., a FIPS county code gets reassigned), the lookup table can be extended to SCD Type 2:</p>
+  <pre style="margin-top:8px;font-family:monospace;font-size:0.82em;color:#4a148c;">CREATE TABLE CountyFIPS (
+    surrogate_id  SERIAL PRIMARY KEY,  -- stable internal key
+    fips_code     VARCHAR(5),          -- the business key (may change)
+    county_name   TEXT,
+    valid_from    DATE NOT NULL,
+    valid_to      DATE,                -- NULL = currently active
+    active        BOOLEAN NOT NULL DEFAULT TRUE
+);</pre>
+  <p style="margin-top:8px;font-size:0.82em;color:#555;">This handles the case where <code>fips_code = '42001'</code> is reassigned: the old row gets a <code>valid_to</code> date and <code>active = FALSE</code>; the new mapping gets a new row. Historical permit records joined via <code>surrogate_id</code> still resolve correctly.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Project Application — Philly Warehouse</h2>
+
+<div class="project-box">
+  <h4>Ch. 9 applied: don't spawn permit tables or metric columns</h4>
+  <pre>-- Wrong: li_permits_2021, li_permits_2022, li_permits_2023
+-- Wrong: permit_count_2021, permit_count_2022 in district rollups
+
+-- Right: one stg_li_permits table, issue_date is the year column
+-- Right: one fct_district_month table, year_month is the grain</pre>
+</div>
+
+<div class="project-box">
+  <h4>Ch. 11 applied: lookup table for permit category groups</h4>
+  <pre>-- Wrong: permittype ENUM('BUILDING', 'ELECTRICAL', ...) -- breaks on new L&I category
+-- Wrong: CHECK (permittype IN ('BUILDING', ...))        -- same problem
+
+-- Right: permit_category_groups lookup table
+--   raw_permittype (FK target) → canonical_group → active
+--   Unmapped catch-all: any unknown value → 'Other/Unmapped'
+--   HANSEN→ECLIPSE handled: 'ZP_ZONING' and 'ZONING/USE REGISTRATION'
+--     both map to same canonical_group as separate rows</pre>
+</div>
+
+</body>
+</html>
