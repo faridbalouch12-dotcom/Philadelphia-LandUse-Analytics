@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-02-28
-**Last Updated:** 2026-03-05
+**Last Updated:** 2026-03-06
 **Status:** Draft
 
 ---
@@ -92,6 +92,10 @@ Resources are referenced using IDs from [`claude/resources.md`](../claude/resour
 - **[S2]** [L&I Building and Zoning Permits — OpenDataPhilly](https://opendataphilly.org/datasets/licenses-and-inspections-building-and-zoning-permits/) — Primary physical change time series (2007+); very large dataset requiring careful event-date selection, geocoding quality checks, and category mapping before use in district-month rollups.
 - **[S3]** [Zoning Base Districts (vintages) — City of Philadelphia / ArcGIS](https://catalog.data.gov/dataset/zoning-base-districts) — Annual zoning snapshots used for year-to-year churn and composition metrics; schema consistency across vintages must be validated before comparing years.
 - **[S4]** [American Community Survey 5-Year Data — U.S. Census Bureau (data.census.gov)](https://data.census.gov/) — ACS demographic context at tract level; 5-year estimates only, non-overlapping periods only, per the [ACS usage policy](./policies/acs_usage_policy.md).
+- **[D16]** [OpenDataPhilly — About](https://opendataphilly.org/about/) — Context on the portal that hosts L&I permits and other Philly datasets; explains how datasets are published, maintained, and licensed.
+- **[D17]** [ArcGIS REST API — Feature Service (Esri)](https://developers.arcgis.com/rest/services-reference/enterprise/feature-service/) — Reference for FeatureServer endpoints used to access planning district boundaries (S1) and zoning base districts (S3); covers field querying and pagination.
+- **[D19]** [CARTO User Manual: PostgreSQL Connections](https://docs.carto.com/carto-user-manual/connections/postgresql) — Documents the PostgreSQL connection interface for CARTO-hosted datasets; relevant to the L&I permits Carto SQL API access method.
+- **[D20]** [CARTO SQL API Documentation](https://carto.com/developers/sql-api/) — Reference for querying CARTO-hosted datasets via SQL over HTTP; the access method used to pull L&I permits data.
 
 ---
 
@@ -109,3 +113,4 @@ Full citations for all resources listed above are in [`docs/bibliography.md`](./
 | 2026-02-28 | Starter resource set populated (Task 2.4) | Farid |
 | 2026-03-03 | Added B13 (Spatial SQL) to GIS/PostGIS section (Task 2.8) | Farid |
 | 2026-03-05 | Populated Philly datasets section with S1, S2, S3, S4 (Task 5.9) | Farid |
+| 2026-03-06 | Added D16, D17, D19, D20 to Philly datasets section — permits/open data access references (Task 7.7) | Farid |
