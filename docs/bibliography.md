@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-02-28
-**Last Updated:** 2026-03-05
+**Last Updated:** 2026-03-06
 **Status:** Draft
 
 ---
@@ -96,6 +96,13 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 
 - **Type:** Documentation
 - **Why relevant:** Authoritative definitions for primary keys, unique constraints, and foreign keys — directly informs schema modeling policies for this warehouse.
+
+---
+
+**[D12]** CARTO. n.d. "CARTO User Manual: PostgreSQL Connections." Accessed 2026-03-06. <https://docs.carto.com/carto-user-manual/connections/postgresql>
+
+- **Type:** Documentation
+- **Why relevant:** Covers how to configure a PostgreSQL connection in CARTO — directly relevant to accessing the L&I permits dataset via the Carto SQL API endpoint used in the source catalog.
 
 ---
 
@@ -227,3 +234,4 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 | 2026-02-28 | Starter resource set added: B1-B5, B10, D3-D4, D8-D11, R1-R2, V1-V5 (Task 2.4) | Farid |
 | 2026-03-03 | Added B13 (Spatial SQL, Forrest) — used as primary reading for Task 2.8 | Farid |
 | 2026-03-05 | Added S1, S2, S3, S4 dataset entries (Task 5.9) | Farid |
+| 2026-03-06 | Added D12 (CARTO PostgreSQL Connections docs) — cited in L&I permits source catalog | Farid |
