@@ -106,6 +106,13 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 
 ---
 
+**[D13]** CARTO. n.d. "CARTO SQL API Documentation." Accessed 2026-03-06. <https://carto.com/developers/sql-api/>
+
+- **Type:** Documentation
+- **Why relevant:** Reference for querying CARTO-hosted datasets via SQL over HTTP — the access method used to pull L&I permits data as documented in the source catalog.
+
+---
+
 ### Books
 
 **[B13]** Forrest, Matthew. 2023. "Spatial SQL: A Practical Approach to Modern GIS Using SQL." Accessed 2026-03-03. <https://locatepress.com/book/spatial-sql>
@@ -235,3 +242,4 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 | 2026-03-03 | Added B13 (Spatial SQL, Forrest) — used as primary reading for Task 2.8 | Farid |
 | 2026-03-05 | Added S1, S2, S3, S4 dataset entries (Task 5.9) | Farid |
 | 2026-03-06 | Added D12 (CARTO PostgreSQL Connections docs) — cited in L&I permits source catalog | Farid |
+| 2026-03-06 | Added D13 (CARTO SQL API docs) — access method reference for L&I permits source catalog | Farid |
