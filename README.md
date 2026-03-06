@@ -236,6 +236,7 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **L&I permits metadata summary:** [`docs/source_catalog/li_permits_metadata_summary.md`](./docs/source_catalog/li_permits_metadata_summary.md)
 - **L&I permits source catalog:** [`docs/source_catalog/li_permits.md`](./docs/source_catalog/li_permits.md)
 - **L&I permits feasibility checklist:** [`docs/feasibility/li_permits_feasibility.md`](./docs/feasibility/li_permits_feasibility.md)
+- **Permits geocoding risk note:** [`docs/feasibility/permits_geocoding_risk_note.md`](./docs/feasibility/permits_geocoding_risk_note.md)
 - **L&I permits critical fields dictionary:** [`docs/data_dictionary/li_permits_critical_fields.md`](./docs/data_dictionary/li_permits_critical_fields.md)
 - **Planning Districts metadata summary:** [`docs/source_catalog/planning_districts_metadata_summary.md`](./docs/source_catalog/planning_districts_metadata_summary.md)
 - **Planning Districts source catalog:** [`docs/source_catalog/planning_districts.md`](./docs/source_catalog/planning_districts.md)

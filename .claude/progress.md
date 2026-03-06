@@ -73,7 +73,7 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [x] Task 7.3 — Feasibility checklist: L&I permits (PASS, 10/10, 2026-03-05)
 - [x] Task 7.4 — Critical fields dictionary: L&I permits (PASS, 10/10, 2026-03-05)
 - [x] Task 7.5 — Permit category grouping decision memo (PASS, 10/10, 2026-03-06)
-- [ ] Task 7.6 — Permits geocoding risk note
+- [x] Task 7.6 — Permits geocoding risk note (PASS, 10/10, 2026-03-06)
 - [ ] Task 7.7 — Update learning resources (permits/open data)
 - [x] Task 8.1 — Review dataset metadata: Zoning base districts (PASS, 10/10, 2026-03-05)
 - [x] Task 8.2 — Source catalog entry: Zoning base districts (PASS, 10/10, 2026-03-05)
@@ -136,4 +136,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-06 (Task 7.5)
+**Last updated:** 2026-03-06 (Task 7.6)
