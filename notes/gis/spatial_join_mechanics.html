@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spatial Join Mechanics — Philadelphia LandUse Analytics</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 24px;
+      color: #222;
+      line-height: 1.7;
+    }
+    h1 { font-size: 1.8rem; border-bottom: 2px solid #333; padding-bottom: 8px; }
+    h2 { font-size: 1.3rem; margin-top: 2.5rem; color: #1a1a6e; }
+    h3 { font-size: 1.05rem; margin-top: 1.5rem; color: #444; }
+    code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+    .callout {
+      background: #f0f4ff;
+      border-left: 4px solid #1a1a6e;
+      padding: 12px 16px;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .warning {
+      background: #fff8e1;
+      border-left: 4px solid #f0a500;
+      padding: 12px 16px;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    svg text { font-family: monospace; }
+    .diagram-wrap {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .diagram-caption {
+      font-size: 0.88rem;
+      color: #555;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+    }
+    th { background: #1a1a6e; color: white; padding: 8px 12px; text-align: left; }
+    td { padding: 7px 12px; border-bottom: 1px solid #ddd; }
+    tr:nth-child(even) { background: #f9f9f9; }
+  </style>
+</head>
+<body>
+
+<h1>Spatial Join Mechanics</h1>
+<p>
+  This document explains the two spatial joins used in the Philadelphia LandUse
+  Analytics MVP — how they work mechanically, what data they connect, and
+  concrete examples of what the output looks like.
+</p>
+
+<!-- ================================================================== -->
+<h2>Join 1 — Permits (Points) → Planning Districts (Polygons)</h2>
+<p>
+  <strong>Purpose:</strong> Assign each permit record to the planning district
+  it falls within, so permit activity can be aggregated at the district level.
+</p>
+<p>
+  <strong>Join type:</strong> Point-in-polygon spatial join.
+</p>
+
+<h3>How it works</h3>
+<p>
+  Each permit in the L&I dataset has a geocoded latitude/longitude coordinate.
+  Each planning district is a polygon. The join tests whether each permit point
+  falls inside any planning district polygon. If it does, the permit inherits
+  that district's identifier.
+</p>
+
+<div class="diagram-wrap">
+  <svg width="620" height="260" viewBox="0 0 620 260">
+    <!-- Planning district polygons -->
+    <rect x="40" y="40" width="180" height="180" fill="#dce8ff" stroke="#1a1a6e" stroke-width="2"/>
+    <text x="130" y="135" text-anchor="middle" font-size="13" fill="#1a1a6e">District A</text>
+
+    <rect x="240" y="40" width="180" height="180" fill="#d4edda" stroke="#1a6e2a" stroke-width="2"/>
+    <text x="330" y="135" text-anchor="middle" font-size="13" fill="#1a6e2a">District B</text>
+
+    <rect x="440" y="40" width="140" height="180" fill="#fde8d8" stroke="#a03000" stroke-width="2"/>
+    <text x="510" y="135" text-anchor="middle" font-size="13" fill="#a03000">District C</text>
+
+    <!-- Permit points -->
+    <!-- District A points -->
+    <circle cx="90"  cy="80"  r="7" fill="#1a1a6e"/>
+    <circle cx="150" cy="120" r="7" fill="#1a1a6e"/>
+    <circle cx="110" cy="170" r="7" fill="#1a1a6e"/>
+
+    <!-- District B points -->
+    <circle cx="280" cy="90"  r="7" fill="#1a6e2a"/>
+    <circle cx="360" cy="150" r="7" fill="#1a6e2a"/>
+
+    <!-- District C point -->
+    <circle cx="490" cy="110" r="7" fill="#a03000"/>
+    <circle cx="520" cy="170" r="7" fill="#a03000"/>
+
+    <!-- Legend -->
+    <circle cx="50" cy="240" r="7" fill="#555"/>
+    <text x="65" y="245" font-size="12" fill="#333">Permit (geocoded point)</text>
+    <rect x="220" y="233" width="16" height="16" fill="#dce8ff" stroke="#1a1a6e" stroke-width="1.5"/>
+    <text x="242" y="245" font-size="12" fill="#333">Planning district polygon</text>
+  </svg>
+  <div class="diagram-caption">
+    Each colored point is a permit. Each permit is tested against all district
+    polygons. The permit inherits the district it lands in.
+  </div>
+</div>
+
+<h3>Concrete example</h3>
+<table>
+  <thead>
+    <tr>
+      <th>permit_id</th>
+      <th>address</th>
+      <th>lat</th>
+      <th>lon</th>
+      <th>permit_type</th>
+      <th>→ district_id (after join)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>P-100</td><td>123 Main St</td><td>39.951</td><td>-75.162</td><td>BUILDING</td><td>Lower North</td></tr>
+    <tr><td>P-101</td><td>456 Broad St</td><td>39.943</td><td>-75.168</td><td>ZONING</td><td>Lower North</td></tr>
+    <tr><td>P-102</td><td>789 Ridge Ave</td><td>39.970</td><td>-75.175</td><td>BUILDING</td><td>North</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <strong>Output grain:</strong> one row per permit, with <code>district_id</code>
+  attached. Downstream, these are aggregated to
+  <code>(district_id, month, permit_type)</code> for metric calculation.
+</div>
+
+<div class="warning">
+  <strong>Risk:</strong> Permits with missing or failed geocoding will not match
+  any district polygon and will be dropped from district-level metrics. Track
+  the unmatched share as a data quality metric.
+</div>
+
+<!-- ================================================================== -->
+<h2>Join 2 — Zoning Polygons → Planning Districts (Polygons)</h2>
+<p>
+  <strong>Purpose:</strong> Compute what share of each planning district's land
+  area belongs to each zoning classification, for each vintage year.
+</p>
+<p>
+  <strong>Join type:</strong> Polygon overlay (intersection), with
+  area-weighted aggregation.
+</p>
+
+<h3>How it works</h3>
+<p>
+  Zoning polygons and planning district polygons are overlaid. Where a zoning
+  polygon crosses a district boundary, it is clipped to the intersection. The
+  area of each clipped piece is calculated. These area pieces are then
+  aggregated by <code>(district_id, vintage_year, zoning_code)</code> to compute
+  the total land area of each zoning class per district per year.
+</p>
+
+<div class="diagram-wrap">
+  <svg width="620" height="300" viewBox="0 0 620 300">
+
+    <!-- Planning district boundary -->
+    <rect x="60" y="30" width="500" height="220" fill="none" stroke="#1a1a6e" stroke-width="3" stroke-dasharray="8,4"/>
+    <text x="310" y="22" text-anchor="middle" font-size="13" fill="#1a1a6e" font-weight="bold">Planning District Boundary</text>
+
+    <!-- Zoning polygon 1 — fully inside -->
+    <rect x="80" y="60" width="160" height="130" fill="#c8e6c9" fill-opacity="0.7" stroke="#2e7d32" stroke-width="2"/>
+    <text x="160" y="120" text-anchor="middle" font-size="12" fill="#2e7d32">RSA-5</text>
+    <text x="160" y="136" text-anchor="middle" font-size="11" fill="#2e7d32">100% inside</text>
+
+    <!-- Zoning polygon 2 — partially inside, crosses boundary -->
+    <rect x="300" y="50" width="260" height="140" fill="#fff9c4" fill-opacity="0.7" stroke="#f9a825" stroke-width="2"/>
+    <text x="430" y="115" text-anchor="middle" font-size="12" fill="#b45000">CMX-2</text>
+    <text x="430" y="131" text-anchor="middle" font-size="11" fill="#b45000">crosses boundary →</text>
+    <text x="430" y="147" text-anchor="middle" font-size="11" fill="#b45000">only intersection counted</text>
+
+    <!-- Clip indicator -->
+    <line x1="560" y1="50" x2="560" y2="190" stroke="#1a1a6e" stroke-width="3" stroke-dasharray="8,4"/>
+
+    <!-- Zoning polygon 3 — bottom -->
+    <rect x="80" y="200" width="420" height="40" fill="#fce4ec" fill-opacity="0.7" stroke="#c62828" stroke-width="2"/>
+    <text x="290" y="225" text-anchor="middle" font-size="12" fill="#c62828">ICMX — Industrial (fully inside)</text>
+
+    <!-- Area labels -->
+    <text x="310" y="275" text-anchor="middle" font-size="12" fill="#555">
+      Area of each intersection piece → aggregated by (district, year, zoning_code)
+    </text>
+  </svg>
+  <div class="diagram-caption">
+    Zoning polygons are clipped to district boundaries. Only the area inside the
+    district counts. A polygon that crosses a boundary contributes area to both
+    districts proportionally.
+  </div>
+</div>
+
+<h3>Concrete example — area aggregation</h3>
+<p>
+  After intersection, the raw output looks like:
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>district_id</th>
+      <th>vintage_year</th>
+      <th>zoning_code</th>
+      <th>intersection_area_sqft</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Lower North</td><td>2022</td><td>RSA-5</td><td>4,200,000</td></tr>
+    <tr><td>Lower North</td><td>2022</td><td>CMX-2</td><td>980,000</td></tr>
+    <tr><td>Lower North</td><td>2022</td><td>ICMX</td><td>650,000</td></tr>
+    <tr><td>Lower North</td><td>2023</td><td>RSA-5</td><td>4,050,000</td></tr>
+    <tr><td>Lower North</td><td>2023</td><td>CMX-2</td><td>980,000</td></tr>
+    <tr><td>Lower North</td><td>2023</td><td>CMX-4</td><td>150,000</td></tr>
+    <tr><td>Lower North</td><td>2023</td><td>ICMX</td><td>500,000</td></tr>
+  </tbody>
+</table>
+
+<p>
+  From this, zoning composition shares are computed per district per year:
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>district_id</th>
+      <th>vintage_year</th>
+      <th>zoning_code</th>
+      <th>pct_of_district_area</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Lower North</td><td>2022</td><td>RSA-5</td><td>72.4%</td></tr>
+    <tr><td>Lower North</td><td>2022</td><td>CMX-2</td><td>16.9%</td></tr>
+    <tr><td>Lower North</td><td>2022</td><td>ICMX</td><td>11.2%</td></tr>
+    <tr><td>Lower North</td><td>2023</td><td>RSA-5</td><td>69.8%</td></tr>
+    <tr><td>Lower North</td><td>2023</td><td>CMX-2</td><td>16.9%</td></tr>
+    <tr><td>Lower North</td><td>2023</td><td>CMX-4</td><td>2.6%</td></tr>
+    <tr><td>Lower North</td><td>2023</td><td>ICMX</td><td>8.6%</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <strong>Churn detection:</strong> In this example, 150,000 sq ft of land
+  shifted from ICMX to CMX-4 between 2022 and 2023 — detectable by comparing
+  the two vintage years side by side. This is the year-to-year zoning churn
+  metric.
+</div>
+
+<div class="warning">
+  <strong>Risk — slivers:</strong> Tiny intersection fragments from polygon
+  boundary misalignment across vintages can appear as false zoning changes.
+  Apply a minimum area threshold (e.g., ignore intersections &lt; 500 sq ft)
+  before computing churn metrics.
+</div>
+
+<!-- ================================================================== -->
+<h2>Summary — The Two Joins Side by Side</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Join 1: Permits → Districts</th>
+      <th>Join 2: Zoning → Districts</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Left layer</strong></td><td>Permit points (geocoded)</td><td>Zoning polygons (vintage)</td></tr>
+    <tr><td><strong>Right layer</strong></td><td>Planning district polygons</td><td>Planning district polygons</td></tr>
+    <tr><td><strong>Join type</strong></td><td>Point-in-polygon</td><td>Polygon intersection (overlay)</td></tr>
+    <tr><td><strong>Output unit</strong></td><td>Permit row + district_id</td><td>(district, year, zoning_code, area)</td></tr>
+    <tr><td><strong>Aggregation</strong></td><td>Count by (district, month, type)</td><td>Area share by (district, year, class)</td></tr>
+    <tr><td><strong>Answers</strong></td><td>Question 1 — physical change</td><td>Question 2 — regulatory change</td></tr>
+    <tr><td><strong>Key risk</strong></td><td>Ungeocoded permits dropped</td><td>Slivers inflate false churn</td></tr>
+  </tbody>
+</table>
+
+<hr/>
+<p style="font-size:0.82rem; color:#888;">
+  Philadelphia LandUse Analytics — Month 1 Documentation | Last updated: 2026-03-06
+</p>
+
+</body>
+</html>

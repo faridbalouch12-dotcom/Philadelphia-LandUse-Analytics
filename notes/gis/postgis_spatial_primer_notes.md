@@ -127,13 +127,13 @@ Spatial indexes are essential for any table involved in spatial relationship que
 - ACS Period Estimates Notes: [`acs_period_estimates_notes.md`](./acs_period_estimates_notes.md)
 
 **Project Documents:**
-- Docs folder: [`../docs/`](../docs/)
+- Docs folder: [`../../docs/`](../../docs/)
 
 ---
 
 ## References
 
-- **[B13]** Forrest, Matthew. 2023. "Spatial SQL: A Practical Approach to Modern GIS Using SQL." See [Bibliography](../docs/bibliography.md). Sections 3.4 (pp. 59–61), 2.1–2.2 (pp. 157–163), 3.5 (pp. 226–229).
+- **[B13]** Forrest, Matthew. 2023. "Spatial SQL: A Practical Approach to Modern GIS Using SQL." See [Bibliography](../../docs/bibliography.md). Sections 3.4 (pp. 59–61), 2.1–2.2 (pp. 157–163), 3.5 (pp. 226–229).
 
 ---
 

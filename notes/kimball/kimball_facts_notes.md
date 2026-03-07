@@ -113,13 +113,13 @@ A semi-additive fact can still be summed across *some* dimension meaningfully. M
 - ACS Period Estimates Notes: [`acs_period_estimates_notes.md`](./acs_period_estimates_notes.md) *(Task 2.7 — upcoming)*
 
 **Project Documents:**
-- Docs folder: [`../docs/`](../docs/)
+- Docs folder: [`../../docs/`](../../docs/)
 
 ---
 
 ## References
 
-- **[B1]** Kimball, R., & Ross, M. (2013). *The Data Warehouse Toolkit* (3rd ed.), Chapter 2, pp. 40–42. See [Resources](../..claude/resources.md).
+- **[B1]** Kimball, R., & Ross, M. (2013). *The Data Warehouse Toolkit* (3rd ed.), Chapter 2, pp. 40–42. See [Resources](../../.claude/resources.md).
 
 ---
 

@@ -298,8 +298,8 @@ CREATE TABLE permit_category_groups (
 ## Links
 
 **Related Documents:**
-- Permit category grouping memo: [`../docs/decisions/permit_category_grouping_memo.md`](../docs/decisions/permit_category_grouping_memo.md)
-- L&I permits critical fields dictionary: [`../docs/data_dictionary/li_permits_critical_fields.md`](../docs/data_dictionary/li_permits_critical_fields.md)
+- Permit category grouping memo: [`../../docs/decisions/permit_category_grouping_memo.md`](../../docs/decisions/permit_category_grouping_memo.md)
+- L&I permits critical fields dictionary: [`../../docs/data_dictionary/li_permits_critical_fields.md`](../../docs/data_dictionary/li_permits_critical_fields.md)
 - Permit category grouping visual: [`./sql_antipatterns_b5_visual.html`](./sql_antipatterns_b5_visual.html)
 
 **Related Notes:**

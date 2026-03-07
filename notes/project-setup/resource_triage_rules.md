@@ -89,8 +89,8 @@ This document defines the rules for evaluating source quality in this project. T
 
 ## References
 
-- **[D2]** U.S. Census Bureau. n.d. "Comparing ACS Data." See [Bibliography](../docs/bibliography.md).
-- **[D11]** PostgreSQL.org. n.d. "PostgreSQL Docs: Constraints (PK, UK, FK)." See [Bibliography](../docs/bibliography.md).
+- **[D2]** U.S. Census Bureau. n.d. "Comparing ACS Data." See [Bibliography](../../docs/bibliography.md).
+- **[D11]** PostgreSQL.org. n.d. "PostgreSQL Docs: Constraints (PK, UK, FK)." See [Bibliography](../../docs/bibliography.md).
 
 ---
 

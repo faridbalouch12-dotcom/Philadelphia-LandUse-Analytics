@@ -184,8 +184,8 @@ Before running district assignment in the pipeline, verify:
 - Kimball Grain Notes: [`kimball_grain_notes.md`](./kimball_grain_notes.md)
 
 **Project Documents:**
-- Planning Districts source catalog: [`../docs/source_catalog/planning_districts.md`](../docs/source_catalog/planning_districts.md)
-- Limitations register: [`../docs/limitations_register.md`](../docs/limitations_register.md)
+- Planning Districts source catalog: [`../../docs/source_catalog/planning_districts.md`](../../docs/source_catalog/planning_districts.md)
+- Limitations register: [`../../docs/limitations_register.md`](../../docs/limitations_register.md)
 
 ---
 

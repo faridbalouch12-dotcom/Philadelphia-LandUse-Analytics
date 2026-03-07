@@ -112,14 +112,14 @@ The `district_year` periodic snapshot table will store one ACS estimate per dist
 - Kimball Grain Notes: [`kimball_grain_notes.md`](./kimball_grain_notes.md)
 
 **Project Documents:**
-- Docs folder: [`../docs/`](../docs/)
+- Docs folder: [`../../docs/`](../../docs/)
 
 ---
 
 ## References
 
-- **[D1]** U.S. Census Bureau. 2022. "Period Estimates in the American Community Survey." See [Bibliography](../docs/bibliography.md).
-- **[D2]** U.S. Census Bureau. n.d. "Comparing ACS Data." See [Bibliography](../docs/bibliography.md).
+- **[D1]** U.S. Census Bureau. 2022. "Period Estimates in the American Community Survey." See [Bibliography](../../docs/bibliography.md).
+- **[D2]** U.S. Census Bureau. n.d. "Comparing ACS Data." See [Bibliography](../../docs/bibliography.md).
 
 ---
 

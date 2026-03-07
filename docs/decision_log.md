@@ -101,6 +101,18 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ---
 
+### D7. Add a zoning composition periodic snapshot fact table alongside the permits transaction fact table
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-07 |
+| **Decision** | The warehouse will have two fact tables: `fct_permits` (transaction fact table, one row per permit event) and `fct_district_year_zoning_composition` (periodic snapshot fact table, grain: one row = one zoning code × one planning district × one vintage year). |
+| **Alternatives** | (1) Model zoning as a slowly changing dimension (SCD Type 2) on the permits fact table. (2) Single fact table only, treating zoning composition as a derived metric computed at query time. |
+| **Rationale** | Permits and zoning answer two separate analytical questions — physical change over time (permits) and regulatory change over time (zoning). Zoning composition is a measurement (land area share by class per district per year), not descriptive context, so it belongs in a fact table rather than a dimension. An SCD Type 2 would track what a polygon's classification *is* over time, but cannot measure how much land area is in each class per district per year. A periodic snapshot is the correct Kimball pattern because the source data consists of annual state snapshots, not event transactions, and the metrics are semi-additive (can be summed across zoning codes within a district-year, but not across years). |
+| **Implications** | The warehouse now has two independent fact tables sharing conformed dimensions (district, date/vintage year). Metric specs, ERD, and the feature vs. rollup policy must all reflect two fact table paths. Zoning composition metrics are semi-additive and must not be summed across vintage years. |
+
+---
+
 ## References
 
 - **[B7]** The Pragmatic Programmer (20th Anniversary). See
@@ -121,3 +133,4 @@ and placeholder entries for decisions that have not actually been made yet.
 | Date       | Change description | Author |
 |------------|--------------------|--------|
 | 2026-03-03 | Initial draft      | Farid  |
+| 2026-03-07 | Added D7: two-fact-table design decision | Farid |

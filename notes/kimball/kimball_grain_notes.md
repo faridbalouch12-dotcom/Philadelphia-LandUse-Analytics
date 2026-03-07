@@ -144,13 +144,13 @@ The demographic figure fanned out across 12 rows and corrupts any aggregation th
 - Kimball Facts Notes: [`kimball_facts_notes.md`](./kimball_facts_notes.md) *(Task 2.6 — upcoming)*
 
 **Project Documents:**
-- Docs folder: [`../docs/`](../docs/)
+- Docs folder: [`../../docs/`](../../docs/)
 
 ---
 
 ## References
 
-- **[B1]** Kimball, R., & Ross, M. (2013). *The Data Warehouse Toolkit* (3rd ed.), Chapter 2, pp. 39–40. See [Resources](../..claude/resources.md).
+- **[B1]** Kimball, R., & Ross, M. (2013). *The Data Warehouse Toolkit* (3rd ed.), Chapter 2, pp. 39–40. See [Resources](../../.claude/resources.md).
 
 ---
 

@@ -50,7 +50,7 @@ This document lists the four MVP datasets selected for the Philadelphia district
 
 | Field | Detail |
 |-------|--------|
-| **Purpose** | The primary fact table for the warehouse. Tracks physical change activity across districts over time, enabling analysis of permit volume, composition, and density by district and month. |
+| **Purpose** | One of two fact tables in the warehouse. Tracks physical change activity across districts over time, enabling analysis of permit volume, composition, and density by district and month. See S3 for the second fact table. |
 | **Time coverage** | 2007–present |
 | **Cadence** | Updated daily |
 | **Geometry type** | Points (geocoded to permit addresses) |
@@ -71,7 +71,7 @@ This document lists the four MVP datasets selected for the Philadelphia district
 
 | Field | Detail |
 |-------|--------|
-| **Purpose** | Enables year-to-year zoning composition and churn analysis across districts. By comparing vintages, we can track how the zoning mix within each district has changed over time. |
+| **Purpose** | Source for the second fact table in the warehouse: a periodic snapshot (`fct_district_year_zoning_composition`) with grain one row = one zoning code × one planning district × one vintage year. Enables year-to-year zoning composition and churn analysis across districts. |
 | **Time coverage** | 2012–2025 (post new zoning code; pre-2012 vintage available but excluded from MVP) |
 | **Cadence** | Annual vintage snapshots available |
 | **Geometry type** | Polygons (zoning district boundaries) |
@@ -130,3 +130,4 @@ This document lists the four MVP datasets selected for the Philadelphia district
 | Date       | Change description | Author |
 |------------|--------------------|--------|
 | 2026-03-03 | Initial draft      | Farid  |
+| 2026-03-07 | Updated S2 and S3 purpose fields to reflect two-fact-table design (D7) | Farid |

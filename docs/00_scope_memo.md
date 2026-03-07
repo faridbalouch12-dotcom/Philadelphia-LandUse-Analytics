@@ -102,8 +102,9 @@ Month 1 is complete when the documentation package is **implementable** — mean
 Concretely, the following questions must be answerable from the docs alone:
 
 **Design questions (grain spec, ERD):**
-- What does one row in `permits_fact` represent?
-- What grain was considered and rejected, and why?
+- What does one row in `fct_permits` represent?
+- What does one row in `fct_district_year_zoning_composition` represent?
+- What grain was considered and rejected for each fact table, and why?
 - What are the relationships between tables, and what are the join keys?
 
 **Spec questions (data dictionaries, metric specs):**
@@ -162,3 +163,4 @@ Concretely, the following questions must be answerable from the docs alone:
 | Date | Change Description | Author |
 |------|--------------------|--------|
 | 2026-03-03 | Initial draft | Farid |
+| 2026-03-07 | Updated success criteria to reflect two fact tables (D7) | Farid |

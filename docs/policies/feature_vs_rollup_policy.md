@@ -91,6 +91,41 @@ A table where **one row represents an aggregate** at a higher grain intended for
 
 ---
 
+### Example B: Zoning polygons (feature-level) vs District-year zoning composition (rollup)
+
+#### B1) Zoning polygons — feature table
+**Grain:** 1 row = 1 zoning polygon in 1 vintage layer.
+**Purpose:** Spatial source of truth; supports map-first exploration and overlay QA.
+**Typical columns (conceptual):**
+- `objectid` + `vintage_year` (composite key)
+- `code`, `long_code`, `zoninggroup` (classification fields)
+- geometry (polygon)
+- assigned `district_id` (from polygon overlay with planning districts)
+- derived `intersection_area_sqft` (area of polygon clipped to district)
+
+**Example questions this supports**
+- "Show me all RSA-5 zoning polygons in District 9 in 2023."
+- "Which zoning polygons straddle district boundaries?"
+
+#### B2) District-year zoning composition — rollup table (periodic snapshot fact table)
+**Grain:** 1 row = 1 zoning code × 1 planning district × 1 vintage year.
+**Purpose:** District-first regulatory change tracking; enables composition and churn metrics.
+**Derived from:** zoning polygons feature table + district spine (for total district area).
+**Typical columns (conceptual):**
+- `district_id`
+- `vintage_year`
+- `zoning_code` (harmonized)
+- `area_sqft` (total intersection area for this code in this district-year)
+- `pct_district_area` (share of district land area — semi-additive fact)
+
+**Example questions this supports**
+- "What share of District 5's land area was residential in 2022 vs 2023?"
+- "Which districts saw the largest shift away from industrial zoning over 5 years?"
+
+**Note on semi-additivity:** `pct_district_area` can be summed across zoning codes within a single district-year (sums to ~100%), but must not be summed across vintage years — that operation is meaningless.
+
+---
+
 ## Additional guidance (recommended)
 
 ### Naming conventions (optional but recommended)
@@ -126,3 +161,4 @@ A table where **one row represents an aggregate** at a higher grain intended for
 | Date       | Change description | Author |
 |------------|--------------------|--------|
 | 2026-03-04 | Initial draft      | Farid  |
+| 2026-03-07 | Added Example B: zoning polygon feature table and district-year composition rollup (D7) | Farid |

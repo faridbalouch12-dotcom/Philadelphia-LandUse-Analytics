@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-05
-**Last Updated:** 2026-03-05
+**Last Updated:** 2026-03-06
 **Status:** Draft
 
 ---
@@ -13,9 +13,13 @@
   to track district-level zoning composition and zoning churn over time.
 - **What one row/feature represents:** One zoning polygon in one vintage layer.
 - **How this dataset is used in the project:**
+  - Answers **project question 2** independently: "How is zoning policy changing
+    year-to-year within each district?"
   - Feature-level zoning snapshot layer by year
   - District-year zoning composition rollups
   - Year-to-year zoning churn metrics (with strict comparability caveats)
+  - This dataset is **not** a join partner to the permits dataset for MVP;
+    permits and zoning answer separate questions via separate analytical paths.
 - **Primary consumers:** Both district-first rollups and map-first layers.
 
 ---
@@ -102,6 +106,11 @@
   - `pending`, `pendingbill`, `pendingbillurl`
   - `sunset_date`, `sunsetbillnum`, `sunsetbilllink`
   - `globalid`, edit-tracking fields (when present)
+- **Lookup table dependency:**
+  - Human-readable zoning descriptions (`code_description`) are not in the
+    polygon layer. They come from a separate `zoning_descriptions` lookup table
+    (OpenDataPhilly / ArcGIS FeatureServer), joined to the polygon layer via
+    `long_code`.
 - **High-risk fields (schema drift):**
   - Sunset and audit fields are not present in all vintages.
   - Field casing and system fields differ by layer.
@@ -170,3 +179,4 @@
 | Date       | Change description | Author |
 |------------|--------------------|--------|
 | 2026-03-05 | Initial draft      | Farid  |
+| 2026-03-06 | Clarified MVP role as question 2 independent path; added zoning_descriptions lookup table dependency note | Farid |
