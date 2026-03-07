@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-02-28
-**Last Updated:** 2026-03-05
+**Last Updated:** 2026-03-06
 **Status:** Draft
 
 ---
@@ -96,6 +96,34 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 
 - **Type:** Documentation
 - **Why relevant:** Authoritative definitions for primary keys, unique constraints, and foreign keys — directly informs schema modeling policies for this warehouse.
+
+---
+
+**[D16]** OpenDataPhilly. n.d. "OpenDataPhilly — About." Accessed 2026-03-06. <https://opendataphilly.org/about/>
+
+- **Type:** Documentation
+- **Why relevant:** Context on the OpenDataPhilly portal — how datasets are published, maintained, and accessed — directly relevant to evaluating L&I permits and other Philly datasets as reliable sources.
+
+---
+
+**[D17]** Esri. n.d. "ArcGIS REST API — Feature Service." Accessed 2026-03-06. <https://developers.arcgis.com/rest/services-reference/enterprise/feature-service/>
+
+- **Type:** Documentation
+- **Why relevant:** Reference for ArcGIS FeatureServer endpoints — the access method used for planning district boundaries (S1) and zoning base districts (S3); informs how to query fields and paginate large responses.
+
+---
+
+**[D19]** CARTO. n.d. "CARTO User Manual: PostgreSQL Connections." Accessed 2026-03-06. <https://docs.carto.com/carto-user-manual/connections/postgresql>
+
+- **Type:** Documentation
+- **Why relevant:** Covers how to configure a PostgreSQL connection in CARTO — directly relevant to accessing the L&I permits dataset via the Carto SQL API endpoint used in the source catalog.
+
+---
+
+**[D20]** CARTO. n.d. "CARTO SQL API Documentation." Accessed 2026-03-06. <https://carto.com/developers/sql-api/>
+
+- **Type:** Documentation
+- **Why relevant:** Reference for querying CARTO-hosted datasets via SQL over HTTP — the access method used to pull L&I permits data as documented in the source catalog.
 
 ---
 
@@ -227,3 +255,4 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 | 2026-02-28 | Starter resource set added: B1-B5, B10, D3-D4, D8-D11, R1-R2, V1-V5 (Task 2.4) | Farid |
 | 2026-03-03 | Added B13 (Spatial SQL, Forrest) — used as primary reading for Task 2.8 | Farid |
 | 2026-03-05 | Added S1, S2, S3, S4 dataset entries (Task 5.9) | Farid |
+| 2026-03-06 | Added D16 (OpenDataPhilly About), D17 (ArcGIS REST API Feature Service), D19 (CARTO PostgreSQL Connections), D20 (CARTO SQL API) — permits/open data access references (Task 7.7) | Farid |

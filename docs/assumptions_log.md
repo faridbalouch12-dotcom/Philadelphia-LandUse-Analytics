@@ -138,6 +138,17 @@ new assumptions introduced in later modeling or pipeline work.
 
 ---
 
+### A11. The spatial matching cascade will keep the unmapped permit rate at or below 5%
+
+| Field | Detail |
+|-------|--------|
+| **Statement** | The multi-attribute spatial matching cascade — point-in-polygon on lat/lng, address match, geocode match, and distance-based fallback — will keep the unmapped permit rate at or below 5%, low enough that district-level aggregations will not be materially skewed. |
+| **Rationale** | The cascade provides multiple independent matching paths. Even if point-in-polygon fails (e.g., coordinates fall just outside a boundary), lat/lng, address, and geocode fields should recover the majority of records. The distance-based fallback handles genuine boundary edge cases by assigning unmatched permits to the nearest district boundary. Each permit will carry a `match_method` audit field recording which path was used, enabling post-hoc QA of unmapped rates by district. |
+| **Validation plan** | After pipeline runs, compute unmapped rate by district using the `match_method` field. Flag any district exceeding 5% unmapped for manual review. Monitor for clustering of unmapped records in specific districts — a non-uniform distribution signals a systemic data quality issue rather than random noise. Analyze the distance distribution of fallback-matched permits to establish a maximum distance threshold beyond which records are flagged rather than assigned. |
+| **Impact if wrong** | Older districts with aging infrastructure and inconsistent address data are at higher risk of elevated unmapped rates. If the cascade fails disproportionately in those districts, permit activity will be systematically undercounted there, biasing district-level comparisons and potentially masking real development patterns in historically underinvested areas. |
+
+---
+
 ## Links
 
 **Related documents:**
