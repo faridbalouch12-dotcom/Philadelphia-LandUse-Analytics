@@ -42,3 +42,6 @@ __pycache__/
 
 .DS_Store
 Thumbs.db
+
+# Claude session notes (private, not for version control)
+notes/claude_sessions/

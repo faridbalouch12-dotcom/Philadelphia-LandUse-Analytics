@@ -79,19 +79,19 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [x] Task 8.2 — Source catalog entry: Zoning base districts (PASS, 10/10, 2026-03-05)
 - [x] Task 8.3 — Feasibility checklist: Zoning base districts (PASS, 10/10, 2026-03-05)
 - [x] Task 8.4 — Critical fields dictionary: Zoning base districts (PASS, 10/10, 2026-03-05)
-- [ ] Task 8.5 — Zoning last-5-years window memo
-- [ ] Task 8.6 — Year-to-year comparability plan (draft)
-- [ ] Task 8.7 — Update limitations register (zoning)
+- [x] Task 8.5 — Zoning last-5-years window memo (PASS, 9/10, 2026-03-08)
+- [x] Task 8.6 — Year-to-year comparability plan (draft) (PASS, 9/10, 2026-03-08)
+- [x] Task 8.7 — Update limitations register (zoning) (PASS, 10/10, 2026-03-08)
 - [x] Task 9.1 — ACS methodology summary (PASS, 9/10, 2026-03-05)
 - [x] Task 9.2 — Source catalog entry: ACS context (PASS, 10/10, 2026-03-05)
 - [x] Task 9.3 — Feasibility checklist: ACS context (PASS, 9/10, 2026-03-05)
 - [x] Task 9.4 — Critical fields dictionary: ACS context (PASS, 9/10, 2026-03-05)
-- [ ] Task 9.5 — Boundary alignment note (ACS → Districts)
-- [ ] Task 9.6 — Uncertainty messaging note (MOE-aware)
-- [ ] Task 9.7 — Update learning resources (ACS additions)
-- [ ] Task 10.1 — Update docs index (Week 2)
-- [ ] Task 10.4 — Limitations register hardening
-- [ ] Task 10.5 — Week-2 recap + Week-3 plan
+- [x] Task 9.5 — Boundary alignment note (ACS → Districts) (PASS, 9/10, 2026-03-08)
+- [x] Task 9.6 — Uncertainty messaging note (MOE-aware) (PASS, 9/10, 2026-03-08)
+- [x] Task 9.7 — Update learning resources (ACS additions) (PASS, 9/10, 2026-03-08)
+- [x] Task 10.1 — Update docs index (Week 2) (PASS, 10/10, 2026-03-08)
+- [x] Task 10.4 — Limitations register hardening (PASS, 9/10, 2026-03-08)
+- [x] Task 10.5 — Week-2 recap + Week-3 plan (PASS, 10/10, 2026-03-08)
 
 ## Week 3 — Data Modeling
 
@@ -136,4 +136,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-06 (Task 7.7)
+**Last updated:** 2026-03-08 (Task 10.5)

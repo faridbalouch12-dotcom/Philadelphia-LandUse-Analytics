@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-05
-**Last Updated:** 2026-03-05
+**Last Updated:** 2026-03-08
 **Status:** Draft
 
 ## Purpose
@@ -30,6 +30,13 @@ This register is informed by the MVP dataset risks, the problem statement scope 
 | L12 | Platform intentionally does not answer "drivers/attribution," amenities change, transit access change, or causal claims until later phases. | Medium | Users may expect explanations ("who caused this?") and deeper neighborhood detail; risk of over-promising. | Make out-of-scope explicit in the UI/docs; provide a backlog section for Phase 2+; restrict narratives to descriptive trends and context only. | Month 2 (messaging) / Month 6 (begin Phase 2 expansions) |
 | L13 | Natural key (`DIST_NUM`) for planning districts is listed in the official schema but absent from the GeoJSON extract; interim key (`objectid`) may not be stable across republishes of the dataset. | Medium | If `objectid` values change in a future dataset pull, joins between the staging table and warehouse dimensions will silently break or require a full reload. | Confirm `DIST_NUM` availability from the authoritative ArcGIS FeatureServer API in Month 2; use `DIST_NUM` as `district_id` if confirmed; document the chosen key in the decision log and update all downstream joins accordingly. | Month 2 |
 | L14 | CRS of the planning districts geometry layer is unconfirmed; land-only area cannot be reliably computed until the coordinate reference system is validated. | High | All density metrics (e.g., permits per sq mi) depend on `land_area_sqmi`; an incorrect CRS would produce wrong area values and systematically distort comparisons across all 18 districts. | Validate CRS from authoritative API metadata in Month 2 before computing `land_area_sqmi`; suppress all density metrics until area is confirmed; log the validated CRS in the decision log. | Month 2 |
+| L15 | Zoning code vocabulary drift: a `long_code` value present in one vintage may be absent in the next, and string comparison alone cannot distinguish a rename from a genuinely new classification without a spatial overlap audit. | High | YoY composition comparisons for affected district-year pairs may reflect vocabulary artifacts rather than actual rezoning activity; unresolved codes are conservatively treated as new classifications, which can inflate apparent category churn. | Apply `stg_zoning_code_crosswalk` for confirmed renames; tag affected fact rows with `vocab_stable = FALSE`; suppress causal YoY claims for flagged pairs; validate unresolved codes periodically against L&I/city planning ordinance records. | Month 2 (crosswalk build + flagging) / Month 3 (metric caveat enforcement) |
+| L16 | Zoning code definition change: a code string (e.g., `RSA-5`) may persist across all vintages but its regulatory meaning may have changed mid-window (e.g., density allowance revised by ordinance amendment), making cross-vintage `pct_district_area` comparisons misleading under the same label. | Medium | A user filtering on a specific code and comparing `pct_district_area` across years could draw incorrect conclusions about physical rezoning when the change reflects a regulatory redefinition rather than a geographic shift. | Monitor Philadelphia zoning ordinance amendment records; if a material definition change is confirmed, apply SCD Type 2 versioning to `dim_zoning_code` and surface the change date in dashboards; document any known amendments in the comparability plan. | Month 2 (initial audit) / Month 3 (metric caveat if needed) |
+| L17 | Broad category subcode-set instability: if a new subcode (e.g., `RSA-6`) is added to a broad category (`Residential`) in a later vintage, category-level YoY comparisons silently include an expanded code set, inflating or deflating totals without reflecting actual rezoning. | Medium | Trend lines for broad categories like "Residential" or "Commercial" may shift because the definition of the category changed, not because land was actually rezoned; this risk is invisible if only broad-category metrics are surfaced. | Audit the subcode set per broad category per vintage transition during Month 2 EDA; flag category comparisons where the subcode set differs; require subcode-set stability as a precondition for valid category-level YoY claims (per comparability plan). | Month 2 (subcode audit) / Month 3 (metric spec enforcement) |
+
+| L18 | ACS median income cannot be accurately aggregated from tract medians to district level: median is not an additive statistic, so area-weighted averaging of tract medians produces a biased approximation, not a true district median. | Medium | A "district median income" derived by averaging tract medians may misrepresent the district's true income distribution, particularly in mixed-income districts where tract distributions are skewed or bimodal. | Resolved by D10: the dashboard will not aggregate ACS indicators to district level; all ACS panels show tract-level distributions. Document this in the ACS income metric spec (Task 14.1). | Month 3 (metric spec) |
+| L19 | Aggregating ACS tract estimates to district level compounds statistical uncertainty: district-level figures are derived aggregations, not directly measured estimates, and carry higher effective uncertainty than any individual tract estimate. | Medium | District-level demographic indicators (income, tenure, etc.) may appear more precise than they are; users may treat them as directly comparable to published Census geographies when they are in fact modeled approximations. | Resolved by D10: no district-level ACS aggregates will be published on the dashboard; tract-level distributions surface the underlying data honestly. Standard disclaimer still required in tooltips and metric specs. | Month 3 (metric specs + disclaimer library) |
+| L20 | Some planning districts contain few census tracts, so district-context tract distributions are highly sensitive to a small number of tract values and MOEs. | Low | Users comparing district context may draw false equivalences between a district with 2-3 contributing tracts and one with 10+; apparent differences may reflect small-N instability rather than real demographic divergence. | Surface tract count prominently in ACS context views (e.g., "based on N tracts"); add a small-N caution flag for low-tract-count districts; avoid rank-style language for ACS context comparisons. | Month 3 (metric specs) / Month 6 (consider confidence bands) |
 
 ---
 
@@ -46,6 +53,7 @@ This register is informed by the MVP dataset risks, the problem statement scope 
 - ACS usage policy: [`docs/policies/acs_usage_policy.md`](./policies/acs_usage_policy.md)
 - Land-area denominator policy: [`docs/policies/land_area_denominator_policy.md`](./policies/land_area_denominator_policy.md)
 - Decision log: [`docs/decision_log.md`](./decision_log.md)
+- Zoning comparability plan: [`docs/zoning_comparability_plan_draft.md`](./zoning_comparability_plan_draft.md)
 
 ---
 
@@ -55,3 +63,9 @@ This register is informed by the MVP dataset risks, the problem statement scope 
 |------------|--------------------|--------|
 | 2026-03-05 | Initial draft      | Farid  |
 | 2026-03-05 | Added L13 (natural key uncertainty) and L14 (CRS unconfirmed) from Day 6 district spine catalog work | Farid  |
+| 2026-03-08 | Added L15 (zoning code vocabulary drift), L16 (code definition change risk), L17 (broad category subcode-set instability) from Task 8.7 | Farid  |
+| 2026-03-08 | Added L18 (ACS median income non-additivity) | Farid  |
+| 2026-03-08 | Added L19 (tract-to-district aggregation uncertainty) and L20 (low-tract-count district instability) from Task 10.4 hardening | Farid  |
+| 2026-03-08 | Updated L18 and L19 mitigations to reference D10 (tract-level dashboard presentation decision) | Farid  |
+| 2026-03-08 | Updated L20 wording/mitigation to align with D10 tract-distribution ACS presentation and small-N caution rules | Farid  |
+

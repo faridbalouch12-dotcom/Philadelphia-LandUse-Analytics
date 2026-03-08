@@ -1,25 +1,25 @@
-# Source Catalog — ACS Demographic Context (D1)
+# Source Catalog - ACS Demographic Context (D1)
 
 **Author:** Farid
 **Created:** 2026-03-05
-**Last Updated:** 2026-03-05
+**Last Updated:** 2026-03-08
 **Status:** Draft
 
 ---
 
 ## Overview
-**What it is:** ACS 5-year tract-level demographic, social, economic, and housing profile estimates (Data Profiles DP02–DP05).  
-**Project relevance:** Provides **district-level demographic context** to accompany permits (physical change) and zoning (regulatory change).  
-**Intended outputs:** tract staging table; district-level rollup table(s) by ACS period; optional tract map layer once joined to tract polygons.
+**What it is:** ACS 5-year tract-level demographic, social, economic, and housing profile estimates (Data Profiles DP02-DP05).  
+**Project relevance:** Provides planning-district context by showing tract-level ACS distributions alongside permits (physical change) and zoning (regulatory change).  
+**Intended outputs:** tract staging table; tract ACS mart with estimate + MOE columns; tract-to-district grouping metadata for dashboard context interactions; optional tract map layer once joined to tract polygons. No single-value district ACS KPI table is published for MVP dashboards.
 
 ---
 
 ## Access
-- **Primary source/host:** U.S. Census Bureau — Census Data API (ACS 5-year Data Profiles)
+- **Primary source/host:** U.S. Census Bureau - Census Data API (ACS 5-year Data Profiles)
 - **Access method(s):** HTTPS JSON API
 - **Preferred method for this project:** Pull all **Philadelphia County tracts** via `for=tract:*&in=state:42 county:101`
 - **Known limits:** API variable limits per request may require batching; API key recommended for reliability.
-- **Expected size / volume notes:** ~hundreds of tract rows × selected variables (manageable).
+- **Expected size / volume notes:** ~hundreds of tract rows x selected variables (manageable).
 
 **Base endpoint (example 2024 vintage):**
 - `https://api.census.gov/data/2024/acs/acs5/profile`
@@ -28,9 +28,9 @@
 
 ## Time Fields
 - **Candidate time fields:** None in-record.
-- **Canonical time for the project:** `acs_vintage_year` (from endpoint year) + `acs_period_label` (e.g., `2020–2024`).
+- **Canonical time for the project:** `acs_vintage_year` (from endpoint year) + `acs_period_label` (e.g., `2020-2024`).
 - **Time semantics:** 5-year **period estimate** (rolling multi-year average), not annual point estimate.
-- **Time coverage:** choose non-overlapping vintages for comparisons (e.g., 2015–2019 vs 2020–2024).
+- **Time coverage:** choose non-overlapping vintages for comparisons (e.g., 2015-2019 vs 2020-2024).
 - **Time granularity supported:** period/window only.
 
 ---
@@ -38,7 +38,7 @@
 ## Geometry
 - **Geometry type:** None returned by API (tabular).
 - **How geometry is obtained:** join to tract polygons (TIGER/Line or equivalent) using tract GEOID.
-- **Spatial linkage role:** tract→district overlay/crosswalk to aggregate tract estimates to planning districts.
+- **Spatial linkage role:** tract-to-district overlay/crosswalk for district interaction grouping and caveat tracking (not for publishing official single-value district ACS KPIs).
 
 ---
 
@@ -53,28 +53,30 @@
 - **Required identifiers:** `state`, `county`, `tract`, derived `geoid_tract`, `GEO_ID`
 - **Display:** `NAME` (display only)
 - **Measures:** curated variable pack (DP02/DP03/DP04/DP05 estimates)
+- **Uncertainty fields:** paired `*_moe` columns stored at tract grain in the ACS mart (per D8)
 
 ---
 
 ## Update Cadence
 - **Cadence:** annual release of new 5-year vintages.
 - **History changes:** values may be revised across releases; treat each vintage as a separate snapshot.
-- **Implication for the project:** demographic context will update annually at most.
+- **Implication for the project:** demographic context updates annually at most.
 
 ---
 
 ## Risks
 - Overlapping-window comparisons are invalid/noisy (consecutive 5-year releases share most years).
-- Tracts straddle planning district boundaries → district aggregation is approximate and depends on weighting.
+- Tracts straddle planning district boundaries; district context grouping is approximate and depends on weighting.
 - Many variables are non-additive (medians; rates/percentages without numerator/denominator counts).
-- MVP omits MOE; small differences should not be over-interpreted.
+- Raw MOEs are stored at tract grain, but aggregated MOE for derived district comparisons is not computed in MVP.
 
 ---
 
 ## Notes
-- Prefer **counts (…E)** for aggregation; recompute district rates from aggregated numerator/denominator.
-- Keep medians, but label any district-level medians as **approximate** unless computed from distributions.
-- Follow the project’s ACS usage policy and standard disclaimer language.
+- Prefer **counts (...E)** so tract distributions and future derived context summaries are interpretable.
+- Do not publish single-value district medians or percentages as official KPIs; use tract-level distributions (ranges, bins, tract counts) for district interactions.
+- Carry raw `*_moe` fields at tract level in the ACS mart (per D8) and use MOE-aware messaging in UI/docs.
+- Follow the project's ACS usage policy and standard disclaimer language.
 
 ---
 
@@ -100,3 +102,4 @@
 | Date       | Change description | Author |
 |------------|--------------------|--------|
 | 2026-03-05 | Initial draft      | Farid  |
+| 2026-03-08 | Aligned ACS source catalog with D8-D10: tract-level MOE storage and tract-distribution dashboard presentation (no single-value district ACS KPI) | Farid |

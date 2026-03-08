@@ -2,8 +2,8 @@
 
 **Author:** Farid
 **Created:** 2026-02-28
-**Last Updated:** 2026-03-03
-**Status:** Final
+**Last Updated:** 2026-03-08
+**Status:** Active
 
 ---
 
@@ -35,6 +35,7 @@ source file and gives a one-line summary of what that document is for.
 | [MVP datasets](./03_mvp_datasets.md) | Lists the four MVP datasets, why they were selected, and the main risks attached to each one. |
 | [Data access notes](./04_data_access_notes.md) | Records the chosen access method, cadence, and access constraints for each MVP dataset. |
 | [Glossary](./glossary.md) | Tracks working definitions for core warehouse, modeling, spatial, and ACS terminology. |
+| [Week 2 recap + Week 3 plan](./week2_recap.md) | Consolidates Week 2 outputs and defines the concrete task-by-task Week 3 execution plan. |
 
 ---
 
@@ -44,8 +45,10 @@ source file and gives a one-line summary of what that document is for.
 |----------|---------|
 | [Assumptions log](./assumptions_log.md) | Captures explicit assumptions that still need validation before they turn into hidden design bugs. |
 | [Decision log](./decision_log.md) | Records locked project decisions, the alternatives considered, and the implications of each choice. |
+| [Limitations register](./limitations_register.md) | Tracks known project limitations with severity, mitigation, and when each will be addressed. |
 | [Learning resources](./learning_resources.md) | Curated resource list for the Month 1 learning plan, tied to project needs. |
 | [Bibliography](./bibliography.md) | Standard reference list and citation source for learning notes and documentation artifacts. |
+| [Zoning comparability plan (draft)](./zoning_comparability_plan_draft.md) | Draft plan for detecting and handling year-to-year schema differences in zoning vintages. |
 
 ---
 
@@ -56,6 +59,58 @@ source file and gives a one-line summary of what that document is for.
 | [Repository settings checklist](./repo_settings_checklist.md) | Checklist of required GitHub repository settings and where to find them in the UI. |
 | [Repository settings applied](./repo_settings_applied.md) | Evidence record showing which GitHub repository settings were actually configured. |
 | [Data storage policy](./policies/data_storage_policy.md) | Rules for what data can and cannot be committed to the repository. |
+| [Feature vs rollup policy](./policies/feature_vs_rollup_policy.md) | Defines the distinction between feature layers and rollup tables and how each will be maintained. |
+| [Land area denominator policy](./policies/land_area_denominator_policy.md) | Locks the land-only area denominator convention (sq miles) for intensity metrics. |
+| [ACS usage policy](./policies/acs_usage_policy.md) | Defines what ACS data is used for in this project and what comparisons are prohibited. |
+
+---
+
+## Source catalogs
+
+| Document | Summary |
+|----------|---------|
+| [Planning Districts — metadata summary](./source_catalog/planning_districts_metadata_summary.md) | Quick-reference metadata summary for the Planning Districts boundary dataset. |
+| [Planning Districts — source catalog](./source_catalog/planning_districts.md) | Full source catalog entry: access, geometry, keys, cadence, risks, and links. |
+| [L&I Permits — metadata summary](./source_catalog/li_permits_metadata_summary.md) | Quick-reference metadata summary for the L&I permits dataset. |
+| [L&I Permits — source catalog](./source_catalog/li_permits.md) | Full source catalog entry: access, schema, time fields, location fields, and top risks. |
+| [Zoning Base Districts — metadata summary](./source_catalog/zoning_base_districts_metadata_summary.md) | Quick-reference metadata summary for the zoning base districts dataset. |
+| [Zoning Base Districts — source catalog](./source_catalog/zoning_base_districts.md) | Full source catalog entry: vintages, key fields, update policy, and comparability risks. |
+| [ACS Context — methodology summary](./source_catalog/acs_context_methodology_summary.md) | Summary of ACS methodology, period estimate definition, and overlap warning. |
+| [ACS Context — source catalog](./source_catalog/acs_context.md) | Full source catalog entry: estimate type, period label convention, geography level, and limitations. |
+
+---
+
+## Feasibility checklists
+
+| Document | Summary |
+|----------|---------|
+| [Planning Districts — feasibility](./feasibility/planning_districts_feasibility.md) | Feasibility assessment for using planning districts as the district spine. |
+| [L&I Permits — feasibility](./feasibility/li_permits_feasibility.md) | Feasibility assessment covering district assignability and monthly timestamp reliability. |
+| [Zoning — feasibility](./feasibility/zoning_feasibility.md) | Feasibility assessment covering class code consistency and year-to-year comparability unknowns. |
+| [ACS — feasibility](./feasibility/acs_feasibility.md) | Feasibility assessment listing supported contextual indicators and prohibited comparisons. |
+| [Land-only area evidence note](./feasibility/land_only_area_note.md) | Explains the land-only vs total area choice, unit convention, and where it feeds rollups. |
+| [Permits geocoding risk note](./feasibility/permits_geocoding_risk_note.md) | Defines expected geo fields, unassigned-rate metric, and how geocoding risk surfaces in dashboards. |
+| [ACS to district boundary alignment note](./feasibility/acs_to_district_alignment_note.md) | Covers overlay vs crosswalk approaches, slivers, MAUP, and planned sanity checks. |
+
+---
+
+## Data dictionaries
+
+| Document | Summary |
+|----------|---------|
+| [Planning Districts — critical fields](./data_dictionary/planning_districts_critical_fields.md) | Critical fields dictionary for the planning districts dataset. |
+| [L&I Permits — critical fields](./data_dictionary/li_permits_critical_fields.md) | Critical fields dictionary for the L&I permits dataset. |
+| [Zoning Base Districts — critical fields](./data_dictionary/zoning_critical_fields.md) | Critical fields dictionary for the zoning base districts dataset, including cross-vintage schema notes. |
+| [ACS Context — critical fields](./data_dictionary/acs_critical_fields.md) | Critical fields dictionary for ACS context indicators, including period label format and overlap warning. |
+
+---
+
+## Decisions
+
+| Document | Summary |
+|----------|---------|
+| [Permit category grouping memo](./decisions/permit_category_grouping_memo.md) | Records the chosen permit category grouping philosophy, field dependencies, and schema drift risks. |
+| [Zoning last-5-years window memo](./decisions/zoning_window_last5y.md) | Defines the MVP zoning vintage window (last 5 years) and the path to extending it later. |
 
 ---
 
@@ -65,6 +120,9 @@ source file and gives a one-line summary of what that document is for.
 |----------|---------|
 | [Memo template](./templates/memo_template.md) | Reusable template for formal project memos and structured design documents. |
 | [Notes template](./templates/notes_template.md) | Reusable template for reading notes, concept notes, and source-based summaries. |
+| [Source catalog template](./templates/source_catalog_template.md) | Reusable template for dataset source catalog entries. |
+| [Feasibility checklist template](./templates/feasibility_checklist.md) | Reusable template for dataset feasibility assessments. |
+| [Data dictionary template](./templates/data_dictionary_template.md) | Reusable template for critical fields data dictionaries. |
 | [Repository settings checklist template](./templates/repo_settings_checklist.md) | Reusable template for documenting GitHub repository configuration checks. |
 
 ---
@@ -76,3 +134,5 @@ source file and gives a one-line summary of what that document is for.
 | 2026-02-28 | Initial docs index created                          | Farid  |
 | 2026-03-01 | Added links, metadata, and template listings        | Farid  |
 | 2026-03-03 | Rebuilt index to cover all live docs with summaries | Farid  |
+| 2026-03-08 | Full Week 2 update: added source catalogs, feasibility, data dictionaries, decisions, policies, limitations register | Farid  |
+| 2026-03-08 | Added Week 2 recap + Week 3 plan link               | Farid  |

@@ -201,6 +201,13 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 
 ---
 
+**[V6]** Population Reference Bureau. n.d. "Data 101: The American Community Survey." Accessed 2026-03-08. <https://www.prb.org/resources/video-data-101-tutorials-on-the-american-community-survey/>
+
+- **Type:** Video
+- **Why relevant:** Short intro series covering ACS reliability and MOE concepts — practical companion to D2 for understanding when small differences between districts are statistically meaningful.
+
+---
+
 ### Datasets
 
 **[S1]** City of Philadelphia / ArcGIS. n.d. "Planning Districts (Feature Layer)." Accessed 2026-03-05. <https://catalog.data.gov/dataset/planning-districts-6a446>
@@ -256,3 +263,4 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 | 2026-03-03 | Added B13 (Spatial SQL, Forrest) — used as primary reading for Task 2.8 | Farid |
 | 2026-03-05 | Added S1, S2, S3, S4 dataset entries (Task 5.9) | Farid |
 | 2026-03-06 | Added D16 (OpenDataPhilly About), D17 (ArcGIS REST API Feature Service), D19 (CARTO PostgreSQL Connections), D20 (CARTO SQL API) — permits/open data access references (Task 7.7) | Farid |
+| 2026-03-08 | Added V6 (PRB Data 101 ACS) — ACS MOE and reliability reference (Task 9.7) | Farid |

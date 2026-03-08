@@ -53,6 +53,7 @@ Resources are referenced using IDs from [`claude/resources.md`](../claude/resour
 - **[D1]** [Period Estimates in the American Community Survey](https://www.census.gov/newsroom/blogs/random-samplings/2022/03/period-estimates-american-community-survey.html) — Explains how ACS multi-year period estimates are constructed and interpreted — required reading before using ACS data in any project metric.
 - **[D2]** [Comparing ACS Data](https://www.census.gov/programs-surveys/acs/guidance/comparing-acs-data.html) — Provides guidance on valid and invalid ACS comparisons across time periods — directly informs the ACS usage policy and caveat language for this project.
 - **[V5]** [Discovering the ACS: Guidance for Data Users](https://www.census.gov/library/video/2023/discovering-the-acs.html) — Census Bureau walkthrough of 1-year vs. 5-year estimates, MOE interpretation, and safe comparisons — supplements D1/D2 with worked examples.
+- **[V6]** [Data 101: The American Community Survey — Population Reference Bureau](https://www.prb.org/resources/video-data-101-tutorials-on-the-american-community-survey/) — Short intro series covering ACS reliability and MOE concepts — practical companion to D2 for understanding when small differences between districts are statistically meaningful.
 
 ---
 
@@ -114,3 +115,4 @@ Full citations for all resources listed above are in [`docs/bibliography.md`](./
 | 2026-03-03 | Added B13 (Spatial SQL) to GIS/PostGIS section (Task 2.8) | Farid |
 | 2026-03-05 | Populated Philly datasets section with S1, S2, S3, S4 (Task 5.9) | Farid |
 | 2026-03-06 | Added D16, D17, D19, D20 to Philly datasets section — permits/open data access references (Task 7.7) | Farid |
+| 2026-03-08 | Added V6 (PRB Data 101 ACS) to ACS section (Task 9.7) | Farid |

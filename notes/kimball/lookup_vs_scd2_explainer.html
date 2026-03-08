@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lookup Tables vs SCD Type 2 — What's the Difference?</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 48px 56px;
+      max-width: 1000px;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-size: 0.88rem;
+    }
+
+    h1 { font-size: 1.4rem; color: #9cdcfe; margin-bottom: 6px; }
+    h2 { font-size: 1.05rem; color: #dcdcaa; margin: 36px 0 12px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+    h3 { font-size: 0.9rem; color: #9cdcfe; margin: 20px 0 8px; }
+    p  { margin-bottom: 10px; color: #ccc; }
+
+    .subtitle { color: #6a9955; font-size: 0.78rem; margin-bottom: 36px; }
+
+    /* ── callout boxes ── */
+    .callout {
+      border-left: 3px solid #264f78;
+      background: #252526;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 0.82rem;
+    }
+    .callout.warn  { border-color: #c84b32; }
+    .callout.good  { border-color: #4ec9b0; }
+    .callout.quote { border-color: #dcdcaa; font-style: italic; color: #b8b8b8; }
+
+    .callout strong { color: #dcdcaa; font-style: normal; }
+
+    /* ── side-by-side comparison ── */
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .compare-box {
+      border: 1px solid #444;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .compare-box .header {
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .compare-box.lookup .header { background: #264f78; color: #9cdcfe; }
+    .compare-box.scd2   .header { background: #3a2020; color: #f48771; }
+
+    .compare-box .body {
+      padding: 12px 14px;
+      font-size: 0.78rem;
+      line-height: 1.9;
+    }
+
+    .compare-box .body .row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .label-col { color: #858585; min-width: 110px; }
+    .val-col   { color: #d4d4d4; }
+
+    /* ── tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.78rem;
+    }
+
+    th {
+      background: #252526;
+      color: #9cdcfe;
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid #444;
+    }
+
+    td {
+      padding: 7px 12px;
+      border-bottom: 1px solid #2d2d2d;
+      color: #ccc;
+      vertical-align: top;
+    }
+
+    tr:hover td { background: #252526; }
+
+    .good-cell { color: #4ec9b0; }
+    .bad-cell  { color: #f48771; }
+    .warn-cell { color: #dcdcaa; }
+
+    /* ── code blocks ── */
+    pre {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin: 12px 0;
+      overflow-x: auto;
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    .kw  { color: #569cd6; }  /* keyword */
+    .fn  { color: #dcdcaa; }  /* function/table name */
+    .str { color: #ce9178; }  /* string */
+    .cmt { color: #6a9955; }  /* comment */
+    .num { color: #b5cea8; }  /* number */
+    .col { color: #9cdcfe; }  /* column name */
+    .bad { color: #f48771; }  /* bad code highlight */
+    .ok  { color: #4ec9b0; }  /* good code highlight */
+
+    /* ── decision flowchart ── */
+    .flow {
+      background: #252526;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 24px 28px;
+      margin: 20px 0;
+      font-size: 0.8rem;
+    }
+
+    .flow-q  { color: #dcdcaa; font-weight: bold; margin-bottom: 10px; }
+    .flow-a  { display: flex; gap: 24px; margin: 8px 0 16px 16px; }
+    .flow-yes { color: #4ec9b0; }
+    .flow-no  { color: #f48771; }
+    .flow-result {
+      background: #1e1e1e;
+      border-left: 3px solid #264f78;
+      padding: 6px 12px;
+      margin-left: 16px;
+      color: #9cdcfe;
+    }
+
+    /* ── section divider ── */
+    hr { border: none; border-top: 1px solid #333; margin: 32px 0; }
+
+    /* ── pill tags ── */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      font-weight: bold;
+      margin-right: 6px;
+    }
+    .tag-kimball  { background: #264f78; color: #9cdcfe; }
+    .tag-anti     { background: #3a2020; color: #f48771; }
+    .tag-project  { background: #1e3a1e; color: #4ec9b0; }
+  </style>
+</head>
+<body>
+
+<h1>Lookup Tables vs SCD Type 2 — What's the Difference?</h1>
+<p class="subtitle">
+  Sources: Kimball Ch. 2 (pp. 40, 53–55) · SQL Antipatterns Ch. 11 (31 Flavors) · Zoning window decision memo
+</p>
+
+<p>These two patterns are often confused because they both involve a separate table that holds a set of valid values, and both are used in dimensional warehouses. But they solve completely different problems. Confusing them produces either an over-engineered dimension that doesn't need history, or a fragile constraint that breaks when data changes.</p>
+
+<div class="callout quote">
+  "Dimensions provide the 'who, what, where, when, why, and how' context surrounding a business process event." — Kimball, p. 40<br><br>
+  "Use metadata when validating against a fixed set of values. Use data when validating against a fluid set of values." — Karwin, SQL Antipatterns Ch. 11
+</div>
+
+<hr>
+
+<h2>1. The Core Distinction</h2>
+
+<div class="compare">
+
+  <div class="compare-box lookup">
+    <div class="header">Lookup Table (Reference Table)</div>
+    <div class="body">
+      <div class="row"><span class="label-col">Purpose</span><span class="val-col">Validate values; provide descriptions for codes</span></div>
+      <div class="row"><span class="label-col">Question answered</span><span class="val-col">"What does this code <em>mean</em>?"</span></div>
+      <div class="row"><span class="label-col">Tracks history?</span><span class="val-col">No — one row per code, always current</span></div>
+      <div class="row"><span class="label-col">When to use</span><span class="val-col">The code's <em>meaning</em> is stable; only the list of valid codes may grow</span></div>
+      <div class="row"><span class="label-col">Kimball name</span><span class="val-col">SCD Type 0 or Type 1 dimension</span></div>
+      <div class="row"><span class="label-col">Antipattern avoided</span><span class="val-col">31 Flavors — keeps valid values as rows, not in CHECK/ENUM</span></div>
+    </div>
+  </div>
+
+  <div class="compare-box scd2">
+    <div class="header">SCD Type 2 Dimension</div>
+    <div class="body">
+      <div class="row"><span class="label-col">Purpose</span><span class="val-col">Track how an entity's <em>attributes</em> changed over time</span></div>
+      <div class="row"><span class="label-col">Question answered</span><span class="val-col">"What did this entity <em>look like</em> at a point in time?"</span></div>
+      <div class="row"><span class="label-col">Tracks history?</span><span class="val-col">Yes — new row per change, with effective/expiry dates</span></div>
+      <div class="row"><span class="label-col">When to use</span><span class="val-col">The entity's <em>attributes</em> change and you need to report facts under the old and new profile separately</span></div>
+      <div class="row"><span class="label-col">Kimball name</span><span class="val-col">SCD Type 2 — "Add New Row"</span></div>
+      <div class="row"><span class="label-col">Antipattern avoided</span><span class="val-col">Overwriting history (Type 1) when historical accuracy matters</span></div>
+    </div>
+  </div>
+
+</div>
+
+<hr>
+
+<h2>2. What Kimball Actually Says About SCD Type 2</h2>
+
+<p>From Kimball Ch. 2, p. 54 (emphasis added):</p>
+
+<div class="callout quote">
+  "Type 2 changes <strong>add a new row in the dimension with the updated attribute values</strong>. This requires generalizing the primary key of the dimension beyond the natural or durable key because there will potentially be multiple dimension rows describing each member. When a new row is created for a dimension member, a new primary surrogate key is assigned and used as a foreign key in all fact tables from the moment of the update until a subsequent change creates a new dimension key and updated dimension row."
+</div>
+
+<p>Three required columns are added to every Type 2 dimension row:</p>
+<ol style="margin: 8px 0 16px 20px; color: #ccc; line-height: 2;">
+  <li><code>row_effective_date</code> — when this version of the row became active</li>
+  <li><code>row_expiration_date</code> — when it was superseded (NULL = current)</li>
+  <li><code>current_row_indicator</code> — boolean flag for the active version</li>
+</ol>
+
+<p>This is complex machinery. It only makes sense when you have a real entity with changing descriptive attributes — like a customer who moves cities, or an employee who changes departments.</p>
+
+<h3>What SCD Type 2 is NOT for</h3>
+
+<div class="callout warn">
+  <strong>SCD Type 2 is for entities whose descriptive attributes change.</strong> It is not for validating which values are currently permitted. It is not for tracking measurements. If you reach for Type 2 and you're not tracking an entity's changing profile, you're probably using the wrong tool.
+</div>
+
+<hr>
+
+<h2>3. What the 31 Flavors Antipattern Says</h2>
+
+<p>From Karwin, SQL Antipatterns Ch. 11: The mistake is encoding valid values in the column definition itself — baking data into schema.</p>
+
+<pre>
+<span class="cmt">-- ANTIPATTERN: valid values baked into CHECK constraint</span>
+<span class="kw">CREATE TABLE</span> <span class="fn">Permits</span> (
+    <span class="col">permittype</span> <span class="kw">VARCHAR</span>(<span class="num">20</span>)
+        <span class="bad">CHECK (permittype IN ('BUILDING', 'ELECTRICAL', 'PLUMBING'))</span>
+);
+
+<span class="cmt">-- ANTIPATTERN: ENUM bakes values into schema</span>
+<span class="kw">CREATE TABLE</span> <span class="fn">Permits</span> (
+    <span class="col">permittype</span> <span class="bad">ENUM('BUILDING', 'ELECTRICAL', 'PLUMBING')</span>
+);
+</pre>
+
+<p>The problem: when new values appear, you need a DDL operation — <code>ALTER TABLE</code> — to update the constraint. In some databases this locks the table. In all cases, it means <strong>data values are controlling your schema structure</strong>.</p>
+
+<h3>The correct fix: lookup table with FK</h3>
+
+<pre>
+<span class="cmt">-- CORRECT: valid values are rows in a reference table</span>
+<span class="kw">CREATE TABLE</span> <span class="fn">ZoningCodes</span> (
+    <span class="col">zoning_code</span>      <span class="kw">VARCHAR</span>(<span class="num">20</span>) <span class="kw">PRIMARY KEY</span>,
+    <span class="col">code_description</span> <span class="kw">TEXT</span>       <span class="kw">NOT NULL</span>,
+    <span class="col">broad_category</span>   <span class="kw">VARCHAR</span>(<span class="num">50</span>),
+    <span class="col">active</span>           <span class="kw">BOOLEAN</span>    <span class="kw">NOT NULL DEFAULT</span> <span class="kw">TRUE</span>
+);
+
+<span class="cmt">-- Adding a new zoning code: just INSERT — no DDL, no downtime</span>
+<span class="kw">INSERT INTO</span> <span class="fn">ZoningCodes</span> <span class="kw">VALUES</span> (<span class="str">'CMX-5'</span>, <span class="str">'Community Commercial Mixed-Use 5'</span>, <span class="str">'Commercial'</span>, <span class="kw">TRUE</span>);
+
+<span class="cmt">-- Retiring an old code: UPDATE — historical rows still valid</span>
+<span class="kw">UPDATE</span> <span class="fn">ZoningCodes</span> <span class="kw">SET</span> <span class="col">active</span> = <span class="kw">FALSE</span> <span class="kw">WHERE</span> <span class="col">zoning_code</span> = <span class="str">'OLD-CODE'</span>;
+</pre>
+
+<p>Karwin's rule: <em>"Use metadata when validating against a fixed set of values. Use data when validating against a fluid set of values."</em> Zoning codes are fluid — Philadelphia can add, rename, or retire them at any time. So they belong as rows, not in schema objects.</p>
+
+<hr>
+
+<h2>4. The Confusion: Where These Get Conflated</h2>
+
+<p>The confusion happens when someone asks: <em>"Zoning codes can change year to year — shouldn't I track that with SCD Type 2?"</em></p>
+
+<p>This sounds reasonable but mixes up two different questions:</p>
+
+<table>
+  <tr>
+    <th>Question</th>
+    <th>What's actually changing</th>
+    <th>Correct pattern</th>
+  </tr>
+  <tr>
+    <td>"What does RSA-5 <em>mean</em>?"</td>
+    <td>The code's description (stable — RSA-5 means the same thing in 2019 and 2025)</td>
+    <td class="good-cell">Lookup table (static)</td>
+  </tr>
+  <tr>
+    <td>"Which polygons are classified RSA-5 this year vs last year?"</td>
+    <td>Which land areas carry the RSA-5 label — a <em>measurement</em>, not a description</td>
+    <td class="good-cell">Periodic snapshot fact table</td>
+  </tr>
+  <tr>
+    <td>"Did Philadelphia rename RSA-4 to RSA-5 between vintages?"</td>
+    <td>The code <em>vocabulary</em> used in different source vintages</td>
+    <td class="good-cell">Crosswalk table (pipeline layer)</td>
+  </tr>
+  <tr>
+    <td>"RSA-5's meaning changed — I need to track the old and new definition"</td>
+    <td>The dimension entity's attributes changed over time</td>
+    <td class="warn-cell">SCD Type 2 (only if this actually happens)</td>
+  </tr>
+</table>
+
+<div class="callout">
+  <strong>The key test:</strong> Is what's changing a <em>descriptive attribute of an entity</em> (→ SCD Type 2), or is it a <em>measurement of how much of something exists</em> (→ fact table), or is it <em>which values are permitted</em> (→ lookup table)?
+</div>
+
+<hr>
+
+<h2>5. Why SCD Type 2 Was Rejected for Zoning Codes</h2>
+
+<p>Kimball is explicit (p. 40): <em>"Dimensions provide the descriptive context surrounding a business process event."</em> They describe — they do not measure.</p>
+
+<p>For <code>dim_zoning_code</code>, the question is: does the code's <em>descriptive context</em> change in a way that requires historical tracking?</p>
+
+<ul style="margin: 10px 0 16px 20px; color: #ccc; line-height: 2.2;">
+  <li>RSA-5 means "Residential Single Family Attached, density 5" — this is stable across vintages.</li>
+  <li>The <em>amount of land classified as RSA-5</em> changes year to year — but that's a measurement, not a dimension attribute.</li>
+  <li>Measurements belong in fact tables (<code>fct_district_year_zoning_composition</code>), not dimensions.</li>
+</ul>
+
+<div class="callout warn">
+  <strong>The error:</strong> Treating "zoning composition changed" as "the zoning code dimension changed." These are different things. Composition change → fact table. Attribute change → SCD Type 2. Code vocabulary change across source vintages → crosswalk in the pipeline.
+</div>
+
+<pre>
+<span class="cmt">-- WRONG: SCD Type 2 for zoning codes</span>
+<span class="bad">SELECT zoning_code, code_description, row_effective_date, row_expiry_date
+FROM dim_zoning_code
+WHERE current_row = TRUE;</span>
+<span class="cmt">-- This tracks when RSA-5's *description* changed. That almost never happens.
+-- And it still doesn't tell you how much land is RSA-5 this year vs last year.</span>
+
+<span class="cmt">-- CORRECT: static lookup + periodic snapshot fact</span>
+<span class="ok">SELECT f.vintage_year, f.district_id, f.zoning_code,
+       d.code_description, d.broad_category,
+       f.pct_district_area
+FROM fct_district_year_zoning_composition f
+JOIN dim_zoning_code d ON f.zoning_code = d.zoning_code
+WHERE f.district_id = 'D09'
+ORDER BY f.vintage_year, f.pct_district_area DESC;</span>
+<span class="cmt">-- dim_zoning_code provides static descriptive context.
+-- The fact table provides the measurement that changes year to year.</span>
+</pre>
+
+<hr>
+
+<h2>6. The Crosswalk: A Third Pattern That Isn't Either</h2>
+
+<p>When extending the zoning window to earlier vintages, a code naming difference may appear — e.g., the 2019 dataset uses <code>RSA-4</code> for what 2021+ calls <code>RSA-5</code>. This is neither a lookup table concern nor an SCD Type 2 concern. It's a <strong>pipeline crosswalk</strong>:</p>
+
+<pre>
+<span class="cmt">-- Crosswalk table: lives in the pipeline/staging layer, NOT in the warehouse</span>
+<span class="kw">CREATE TABLE</span> <span class="fn">stg_zoning_code_crosswalk</span> (
+    <span class="col">source_code</span>     <span class="kw">VARCHAR</span>(<span class="num">20</span>),   <span class="cmt">-- code as it appears in the vintage file</span>
+    <span class="col">vintage_year</span>    <span class="kw">INTEGER</span>,        <span class="cmt">-- which source vintage uses this name</span>
+    <span class="col">canonical_code</span>  <span class="kw">VARCHAR</span>(<span class="num">20</span>),   <span class="cmt">-- normalized code loaded into the warehouse</span>
+    <span class="col">notes</span>           <span class="kw">TEXT</span>
+);
+
+<span class="cmt">-- Example: 2019 used 'RSA-4' for what became 'RSA-5' in 2021+</span>
+<span class="kw">INSERT INTO</span> <span class="fn">stg_zoning_code_crosswalk</span> <span class="kw">VALUES</span>
+    (<span class="str">'RSA-4'</span>, <span class="num">2019</span>, <span class="str">'RSA-5'</span>, <span class="str">'Renamed in 2021 code revision'</span>);
+</pre>
+
+<p>The warehouse always sees <code>RSA-5</code>. The crosswalk is applied during the load step — it never appears in the presentation layer. This is how you extend the vintage window without rewriting metric queries.</p>
+
+<div class="callout good">
+  <strong>Three-layer separation:</strong><br>
+  Pipeline → <strong>crosswalk</strong> normalizes code vocabulary across source vintages<br>
+  Warehouse dim → <strong>lookup table</strong> provides stable descriptive context per code<br>
+  Warehouse fact → <strong>periodic snapshot</strong> measures land area share per code per district per year
+</div>
+
+<hr>
+
+<h2>7. Decision Flowchart</h2>
+
+<div class="flow">
+  <div class="flow-q">You have a set of values (e.g., zoning codes, permit types) that appear in your data. Which pattern do you use?</div>
+
+  <div class="flow-q" style="margin-top:16px;">Q1: Do you need to validate which values are currently permitted and provide descriptions for them?</div>
+  <div class="flow-a">
+    <span class="flow-yes">YES →</span>
+    <div>
+      <div class="flow-result">Lookup table with FK constraint</div>
+      <p style="margin: 6px 0 0 0; color: #858585; font-size: 0.76rem;">One row per valid code. Add new codes with INSERT. Retire with active = FALSE.</p>
+    </div>
+  </div>
+  <div class="flow-a">
+    <span class="flow-no">NO ↓</span>
+  </div>
+
+  <div class="flow-q">Q2: Does the entity have descriptive attributes that change over time, and do you need to report historical facts under the old profile?</div>
+  <div class="flow-a">
+    <span class="flow-yes">YES →</span>
+    <div>
+      <div class="flow-result">SCD Type 2 dimension — add new row per change with effective/expiry dates</div>
+      <p style="margin: 6px 0 0 0; color: #858585; font-size: 0.76rem;">E.g., a customer moved from Philadelphia to Pittsburgh — sales before the move belong to Philly, after to Pittsburgh.</p>
+    </div>
+  </div>
+  <div class="flow-a">
+    <span class="flow-no">NO ↓</span>
+  </div>
+
+  <div class="flow-q">Q3: Are you measuring <em>how much of something exists</em> at regular time intervals?</div>
+  <div class="flow-a">
+    <span class="flow-yes">YES →</span>
+    <div>
+      <div class="flow-result">Periodic snapshot fact table — one row per entity per time period</div>
+      <p style="margin: 6px 0 0 0; color: #858585; font-size: 0.76rem;">E.g., what share of district D09 is zoned RSA-5 in each vintage year?</p>
+    </div>
+  </div>
+  <div class="flow-a">
+    <span class="flow-no">NO ↓</span>
+  </div>
+
+  <div class="flow-q">Q4: Are you normalizing code names that differ across source vintages?</div>
+  <div class="flow-a">
+    <span class="flow-yes">YES →</span>
+    <div>
+      <div class="flow-result">Crosswalk table in the pipeline/staging layer — not a warehouse construct</div>
+      <p style="margin: 6px 0 0 0; color: #858585; font-size: 0.76rem;">Applied at load time; warehouse never sees the old vocabulary.</p>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<h2>8. Application to This Project</h2>
+
+<table>
+  <tr>
+    <th>Object</th>
+    <th>Pattern</th>
+    <th>Why</th>
+  </tr>
+  <tr>
+    <td><code>dim_zoning_code</code></td>
+    <td class="good-cell">Lookup table (static)</td>
+    <td>Code meanings are stable. Provides descriptions for fact table FK. New codes added with INSERT — no DDL.</td>
+  </tr>
+  <tr>
+    <td><code>fct_district_year_zoning_composition</code></td>
+    <td class="good-cell">Periodic snapshot fact</td>
+    <td>Measures land area share per code per district per year. Composition changes are measurements, not dimension attribute changes.</td>
+  </tr>
+  <tr>
+    <td>Vintage code crosswalk (Month 2)</td>
+    <td class="good-cell">Pipeline crosswalk</td>
+    <td>Normalizes pre-2021 code vocabulary before load. Lives in staging, not the warehouse.</td>
+  </tr>
+  <tr>
+    <td><code>dim_zoning_code</code> SCD Type 2</td>
+    <td class="bad-cell">Rejected</td>
+    <td>Code descriptions don't change. Composition change is a measurement, not a descriptive attribute change. Dimensions describe; fact tables measure. (Kimball p. 40)</td>
+  </tr>
+  <tr>
+    <td>CHECK/ENUM on zoning codes</td>
+    <td class="bad-cell">Rejected (31 Flavors)</td>
+    <td>Philadelphia can add/rename codes at any time. Baking them into the schema requires DDL for every change.</td>
+  </tr>
+</table>
+
+<hr>
+
+<p style="font-size: 0.75rem; color: #555; margin-top: 24px;">
+  Sources: Kimball, R. &amp; Ross, M. (2013). <em>The Data Warehouse Toolkit</em> (3rd ed.), Ch. 2, pp. 40, 53–55. ·
+  Karwin, B. (2010). <em>SQL Antipatterns</em>, Ch. 11. ·
+  See also: <a href="./warehouse_erd.html" style="color: #9cdcfe;">warehouse_erd.html</a> ·
+  <a href="../../docs/decisions/zoning_window_last5y.md" style="color: #9cdcfe;">zoning_window_last5y.md</a>
+</p>
+
+</body>
+</html>

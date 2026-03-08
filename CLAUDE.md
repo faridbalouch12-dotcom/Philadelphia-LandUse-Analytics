@@ -509,6 +509,35 @@ Format to follow (match whatever is already in the glossary):
 Do this proactively — don't wait to be asked.
 
 ---
+
+## Session Notes (claude_sessions)
+
+After every PASS grade — after the meta-learning question is asked and answered — write a session notes file to `notes/claude_sessions/`.
+
+**File naming:** `session_YYYY-MM-DD_task-X-Y.md` (e.g., `session_2026-03-08_task-8-7.md`)
+
+**This folder is gitignored.** It is a private working space, not a versioned deliverable.
+
+**Purpose:** A "what we learned today" recap that covers the full arc of the conversation — what was discussed, what concepts came up, how they connect to the project. Broader and more conversational than the formal notes folder (which is template-driven and project-specific). Both you and the learner can use this to review before upcoming tasks or revisit concepts.
+
+**What to include:**
+- Tasks completed this session and their scores
+- Key concepts discussed (not just the task deliverables — include tangents, confusions resolved, analogies used)
+- How the concepts connect to the broader project or upcoming work
+- The learner's meta-learning response (quote it or paraphrase it)
+- Links to relevant formal notes files where they exist (saves re-writing)
+- A "coming up next" section: the next task and any concepts worth priming for
+
+**What not to include:**
+- Verbatim conversation transcripts
+- Content that belongs in formal deliverable files
+- Speculative conclusions not confirmed in conversation
+
+**HTML companion files:** After writing the session notes file, ask: "Would you like a visual for [X]?" where X is a concept from the session that would be meaningfully clearer with a diagram, table comparison, or worked example. Only suggest this when a visual would genuinely add depth — not for every session. Name HTML files `session_YYYY-MM-DD_task-X-Y_[concept].html` in the same folder. The learner decides whether to say yes.
+
+**Tone:** Conversational. This is a shared working document, not a formal spec. Write it like notes a colleague left for both of you to revisit.
+
+---
 ## Hard Rules (Never Break These)
 
 - Never do the conceptual/decision-making work — design choices and rationale must come from the learner
