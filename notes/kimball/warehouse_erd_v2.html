@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Philly Data Warehouse — ERD v2</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: monospace;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 40px;
+      margin: 0;
+      min-width: 1200px;
+    }
+
+    h1 { font-size: 1.2rem; color: #9cdcfe; margin-bottom: 4px; }
+    p.subtitle { font-size: 0.8rem; color: #6a9955; margin-top: 0; margin-bottom: 40px; }
+
+    /* ── table box ── */
+    .table-box {
+      border: 1px solid #555;
+      border-radius: 4px;
+      min-width: 270px;
+      max-width: 300px;
+    }
+
+    .table-box .header {
+      padding: 6px 12px;
+      font-size: 0.76rem;
+      font-weight: bold;
+      border-bottom: 1px solid #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-box .fields {
+      padding: 6px 12px;
+      font-size: 0.73rem;
+      line-height: 1.9;
+    }
+
+    /* table types */
+    .table-box.dim    .header { background: #264f78; color: #9cdcfe; }
+    .table-box.fact   .header { background: #3a3a1e; color: #dcdcaa; }
+    .table-box.bridge .header { background: #2d3a2d; color: #b5cea8; }
+    .table-box.agg    .header { background: #3a2020; color: #f48771; }
+    .table-box.geo    .header { background: #2d2040; color: #c586c0; }
+
+    /* column type colours */
+    .pk       { color: #f8c555; }
+    .fk       { color: #ce9178; }
+    .fact-col { color: #4ec9b0; }
+    .attr     { color: #d4d4d4; }
+    .label    { color: #858585; font-size: 0.68rem; margin-left: 4px; }
+    .badge    { font-size: 0.62rem; font-weight: normal; color: #858585; border: 1px solid #444; border-radius: 3px; padding: 1px 5px; margin-left: 6px; }
+
+    /* ── layout grid ── */
+    .erd-layout {
+      display: grid;
+      grid-template-columns: 290px 60px 310px 60px 290px;
+      align-items: start;
+    }
+
+    .col-dims   { display: flex; flex-direction: column; gap: 20px; }
+    .col-facts  { display: flex; flex-direction: column; gap: 24px; }
+    .col-right  { display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── SVG connector layer ── */
+    .erd-wrapper {
+      position: relative;
+    }
+
+    svg#arrows {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    /* ── section labels ── */
+    .zone-label {
+      font-size: 0.65rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    /* ── relationships table ── */
+    .rel-section {
+      margin-top: 48px;
+      border-top: 1px solid #333;
+      padding-top: 20px;
+    }
+
+    .rel-section h2 {
+      font-size: 0.85rem;
+      color: #9cdcfe;
+      margin: 0 0 16px 0;
+      font-weight: normal;
+      letter-spacing: 0.04em;
+    }
+
+    table.rel-table {
+      border-collapse: collapse;
+      font-size: 0.73rem;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    table.rel-table th {
+      text-align: left;
+      color: #858585;
+      font-weight: normal;
+      border-bottom: 1px solid #333;
+      padding: 4px 16px 8px 0;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    table.rel-table td {
+      padding: 5px 16px 5px 0;
+      border-bottom: 1px solid #252526;
+      vertical-align: top;
+      color: #d4d4d4;
+    }
+
+    table.rel-table tr:last-child td { border-bottom: none; }
+
+    .rel-from  { color: #dcdcaa; }
+    .rel-to    { color: #9cdcfe; }
+    .rel-card  { color: #858585; }
+    .rel-key   { color: #ce9178; font-size: 0.68rem; }
+    .rel-eoy   { color: #555; font-size: 0.65rem; margin-left: 4px; }
+    .rel-note  { color: #555; font-size: 0.68rem; font-style: italic; }
+
+    .drawn-badge {
+      font-size: 0.6rem;
+      border: 1px solid #333;
+      border-radius: 2px;
+      padding: 1px 4px;
+      color: #555;
+      margin-left: 4px;
+    }
+    .drawn-badge.yes { border-color: #264f78; color: #4a7aa8; }
+
+    /* ── legend ── */
+    .legend {
+      margin-top: 32px;
+      font-size: 0.73rem;
+      color: #858585;
+      border-top: 1px solid #333;
+      padding-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .swatch { width: 12px; height: 12px; border-radius: 2px; }
+    .sw-dim    { background: #264f78; }
+    .sw-fact   { background: #3a3a1e; }
+    .sw-bridge { background: #2d3a2d; }
+    .sw-agg    { background: #3a2020; }
+    .sw-geo    { background: #2d2040; }
+
+    /* ── notes ── */
+    .notes-block {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 980px;
+    }
+    .note {
+      background: #252526;
+      border-left: 3px solid #264f78;
+      padding: 9px 14px;
+      font-size: 0.73rem;
+      color: #9cdcfe;
+    }
+    .note strong { color: #dcdcaa; }
+    .note.warn   { border-left-color: #ce9178; color: #ce9178; }
+    .note.green  { border-left-color: #4ec9b0; color: #4ec9b0; }
+  </style>
+</head>
+<body>
+
+<h1>Philly Data Warehouse — Entity Relationship Diagram <span style="color:#555;font-size:0.8rem">v2</span></h1>
+<p class="subtitle">Full schema · 9 entities · 12 relationships · Month 1 design · Source: docs/modeling/erd_text_draft.md</p>
+
+<div class="erd-wrapper">
+<div class="erd-layout">
+
+  <!-- COL 1: DIMENSIONS -->
+  <div class="col-dims">
+    <div class="zone-label">Conformed Dimensions</div>
+
+    <div class="table-box dim" id="dim_district">
+      <div class="header">dim_district <span class="badge">E1</span></div>
+      <div class="fields">
+        <div><span class="pk">PK</span> district_id <span class="label">varchar</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>district_name <span class="label">varchar</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>land_area_sqmi <span class="label">numeric</span></div>
+        <div style="color:#555;font-size:0.68rem;margin-top:4px">&nbsp;&nbsp;&nbsp;⚠ no geometry — see geo_district_boundaries</div>
+      </div>
+    </div>
+
+    <div class="table-box dim" id="dim_date">
+      <div class="header">dim_date <span class="badge">E2 · conformed</span></div>
+      <div class="fields">
+        <div><span class="pk">PK</span> date_key <span class="label">integer</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>full_date <span class="label">date</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>year <span class="label">integer</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>month <span class="label">integer</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>quarter <span class="label">integer</span></div>
+        <div style="color:#555;font-size:0.68rem;margin-top:4px">&nbsp;&nbsp;&nbsp;joined via EOY surrogate date keys</div>
+      </div>
+    </div>
+
+    <div class="table-box dim" id="dim_zoning">
+      <div class="header">dim_zoning <span class="badge">E3</span></div>
+      <div class="fields">
+        <div><span class="pk">PK</span> zoning_code <span class="label">varchar</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>zoning_label <span class="label">varchar</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>zoning_category <span class="label">varchar</span></div>
+        <div style="color:#555;font-size:0.68rem;margin-top:4px">&nbsp;&nbsp;&nbsp;⚠ assumed stable across vintages (MVP)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SPACER -->
+  <div></div>
+
+  <!-- COL 2: FACT TABLES -->
+  <div class="col-facts">
+    <div class="zone-label">Fact Tables</div>
+
+    <div class="table-box fact" id="fct_permits">
+      <div class="header">fct_permits <span class="badge">E4 · transaction fact</span></div>
+      <div class="fields">
+        <div><span class="pk">PK</span> permitnumber <span class="label">varchar</span></div>
+        <div><span class="fk">FK</span> district_id → dim_district</div>
+        <div><span class="fk">FK</span> permitissuedate → dim_date <span class="label">EOY</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>permittype <span class="label">varchar</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>point_geometry <span class="label">geometry(Point)</span></div>
+        <div><span class="fact-col">FCT</span> — count via aggregation</div>
+        <div style="color:#555;font-size:0.68rem;margin-top:4px">&nbsp;&nbsp;&nbsp;filtered: status = 'Issued' in staging</div>
+      </div>
+    </div>
+
+    <div class="table-box fact" id="fct_zoning">
+      <div class="header">fct_district_year_zoning_composition <span class="badge">E5 · snapshot</span></div>
+      <div class="fields">
+        <div><span class="fk">FK</span> district_id → dim_district</div>
+        <div><span class="fk">FK</span> vintage_date → dim_date <span class="label">EOY e.g. 2023-12-31</span></div>
+        <div><span class="fk">FK</span> zoning_code → dim_zoning</div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>vintage_year_key <span class="label">integer</span></div>
+        <div><span class="fact-col">FCT</span> area_sqmi <span class="label">numeric · additive within year</span></div>
+        <div><span class="fact-col">FCT</span> pct_district <span class="label">numeric · semi-additive ⚠</span></div>
+        <div style="color:#555;font-size:0.68rem;margin-top:4px">&nbsp;&nbsp;&nbsp;YoY change computed at query time only</div>
+      </div>
+    </div>
+
+    <div class="table-box fact" id="fct_tract_acs">
+      <div class="header">fct_tract_acs <span class="badge">E7 · snapshot · wide</span></div>
+      <div class="fields">
+        <div><span class="pk">PK</span> geoid_tract <span class="label">varchar</span></div>
+        <div><span class="pk">PK</span> acs_period_label <span class="label">varchar e.g. 2019-2023</span></div>
+        <div><span class="fk">FK</span> acs_period_end_date → dim_date <span class="label">EOY</span></div>
+        <div><span class="fact-col">FCT</span> median_income <span class="label">numeric</span></div>
+        <div><span class="fact-col">FCT</span> median_income_moe <span class="label">numeric</span></div>
+        <div><span class="fact-col">FCT</span> total_pop <span class="label">numeric</span></div>
+        <div><span class="fact-col">FCT</span> total_pop_moe <span class="label">numeric</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>... additional indicators + MOEs</div>
+        <div style="color:#555;font-size:0.68rem;margin-top:4px">&nbsp;&nbsp;&nbsp;referenced by bridge as tract lookup</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SPACER -->
+  <div></div>
+
+  <!-- COL 3: BRIDGE + AGG + GEO -->
+  <div class="col-right">
+    <div class="zone-label">Bridge · Aggregation · Feature Layer</div>
+
+    <div class="table-box bridge" id="bridge_tract">
+      <div class="header">bridge_tract_district_overlap <span class="badge">E6 · M:M</span></div>
+      <div class="fields">
+        <div><span class="pk">PK</span> geoid_tract <span class="label">varchar</span></div>
+        <div><span class="pk">PK</span> district_id <span class="label">varchar</span></div>
+        <div><span class="pk">PK</span> boundary_version <span class="label">varchar</span></div>
+        <div><span class="fk">FK</span> district_id → dim_district</div>
+        <div><span class="fk">FK</span> geoid_tract → fct_tract_acs</div>
+        <div><span class="fk">FK</span> boundary_version_eoy → dim_date</div>
+        <div><span class="fact-col">FCT</span> overlap_area_sqft <span class="label">numeric</span></div>
+        <div><span class="fact-col">FCT</span> pct_tract_area <span class="label">numeric</span></div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>assignment_method <span class="label">varchar</span></div>
+      </div>
+    </div>
+
+    <div class="table-box agg" id="agg_hist">
+      <div class="header">agg_district_acs_attributes_hist <span class="badge">E9 · pre-agg</span></div>
+      <div class="fields">
+        <div><span class="pk">PK</span> district_id <span class="label">varchar</span></div>
+        <div><span class="pk">PK</span> boundary_version_eoy <span class="label">date</span></div>
+        <div><span class="pk">PK</span> census_attribute <span class="label">varchar</span></div>
+        <div><span class="pk">PK</span> bin_range <span class="label">varchar e.g. 80k-100k</span></div>
+        <div><span class="fk">FK</span> district_id → dim_district</div>
+        <div><span class="fk">FK</span> boundary_version_eoy → dim_date</div>
+        <div><span class="fact-col">FCT</span> tract_count <span class="label">integer</span></div>
+        <div style="color:#555;font-size:0.68rem;margin-top:4px">&nbsp;&nbsp;&nbsp;bins data-derived · no dim_attribute_bin</div>
+        <div style="color:#555;font-size:0.68rem">&nbsp;&nbsp;&nbsp;source: fct_tract_acs via bridge</div>
+      </div>
+    </div>
+
+    <div class="table-box geo" id="geo_district">
+      <div class="header">geo_district_boundaries <span class="badge">E8 · feature layer</span></div>
+      <div class="fields">
+        <div><span class="pk">PK</span> district_id <span class="label">varchar</span></div>
+        <div><span class="pk">PK</span> boundary_version <span class="label">varchar</span></div>
+        <div><span class="fk">FK</span> district_id → dim_district</div>
+        <div><span class="attr">&nbsp;&nbsp;&nbsp;</span>polygon_geometry <span class="label">geometry(Polygon)</span></div>
+        <div style="color:#555;font-size:0.68rem;margin-top:4px">&nbsp;&nbsp;&nbsp;separated from dim_district to avoid</div>
+        <div style="color:#555;font-size:0.68rem">&nbsp;&nbsp;&nbsp;geometry overhead in analytics joins</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- SVG connector layer — inside wrapper so it doesn't scroll over page -->
+<svg id="arrows">
+  <defs>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4a7aa8"/>
+    </marker>
+    <marker id="arr-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4ec9b0"/>
+    </marker>
+  </defs>
+</svg>
+</div><!-- end .erd-wrapper -->
+
+<script>
+  function drawLine(x1, y1, x2, y2, color, markerId, dashed) {
+    const svg = document.getElementById('arrows');
+    const mx = (x1 + x2) / 2;
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`);
+    p.setAttribute('stroke', color);
+    p.setAttribute('stroke-width', '1.5');
+    p.setAttribute('fill', 'none');
+    p.setAttribute('marker-end', `url(#${markerId})`);
+    if (dashed) p.setAttribute('stroke-dasharray', '5,3');
+    svg.appendChild(p);
+  }
+
+  function connect(fromId, toId, color, markerId, dashed) {
+    const wrapper = document.querySelector('.erd-wrapper');
+    const wRect   = wrapper.getBoundingClientRect();
+    const from    = document.getElementById(fromId);
+    const to      = document.getElementById(toId);
+    if (!from || !to) return;
+    const fR = from.getBoundingClientRect();
+    const tR = to.getBoundingClientRect();
+    const x1 = fR.right  - wRect.left;
+    const y1 = fR.top + fR.height / 2 - wRect.top;
+    const x2 = tR.left   - wRect.left;
+    const y2 = tR.top + tR.height / 2 - wRect.top;
+    drawLine(x1, y1, x2, y2, color, markerId, dashed);
+  }
+
+  window.addEventListener('load', () => {
+    // dims → facts (adjacent columns, no crossings)
+    connect('dim_district', 'fct_permits', '#4a7aa8', 'arr-blue');
+    connect('dim_district', 'fct_zoning',  '#4a7aa8', 'arr-blue');
+    connect('dim_date',     'fct_permits', '#5588aa', 'arr-blue', true);
+    connect('dim_date',     'fct_zoning',  '#5588aa', 'arr-blue', true);
+    connect('dim_date',     'fct_tract_acs', '#5588aa', 'arr-blue', true);
+    connect('dim_zoning',   'fct_zoning',  '#4a7aa8', 'arr-blue');
+
+    // fct_tract_acs → bridge_tract (adjacent: middle → right)
+    connect('fct_tract_acs', 'bridge_tract', '#4ec9b0', 'arr-teal', true);
+  });
+</script>
+
+<!-- ── Relationships table ── -->
+<div class="rel-section">
+  <h2>All relationships — 12 total</h2>
+  <table class="rel-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>From (child)</th>
+        <th>To (parent)</th>
+        <th>Cardinality</th>
+        <th>Join key</th>
+        <th>Notes</th>
+        <th>Line drawn</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:#555">R1</td>
+        <td><span class="rel-from">fct_permits</span></td>
+        <td><span class="rel-to">dim_district</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">district_id</span></td>
+        <td><span class="rel-note">one permit belongs to one district</span></td>
+        <td><span class="drawn-badge yes">drawn</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R2</td>
+        <td><span class="rel-from">fct_permits</span></td>
+        <td><span class="rel-to">dim_date</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">permitissuedate → date_key</span><span class="rel-eoy">EOY</span></td>
+        <td><span class="rel-note">one permit has one issue date</span></td>
+        <td><span class="drawn-badge yes">drawn</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R3</td>
+        <td><span class="rel-from">fct_district_year_zoning_composition</span></td>
+        <td><span class="rel-to">dim_district</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">district_id</span></td>
+        <td><span class="rel-note">many zoning snapshots per district</span></td>
+        <td><span class="drawn-badge yes">drawn</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R4</td>
+        <td><span class="rel-from">fct_district_year_zoning_composition</span></td>
+        <td><span class="rel-to">dim_date</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">vintage_date → date_key</span><span class="rel-eoy">EOY</span></td>
+        <td><span class="rel-note">EOY date of vintage year; avoids year-level fan-out</span></td>
+        <td><span class="drawn-badge yes">drawn</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R5</td>
+        <td><span class="rel-from">fct_district_year_zoning_composition</span></td>
+        <td><span class="rel-to">dim_zoning</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">zoning_code</span></td>
+        <td><span class="rel-note">one zoning code per snapshot row</span></td>
+        <td><span class="drawn-badge yes">drawn</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R6</td>
+        <td><span class="rel-from">bridge_tract_district_overlap</span></td>
+        <td><span class="rel-to">dim_district</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">district_id</span></td>
+        <td><span class="rel-note">many tract–district pairs per district</span></td>
+        <td><span class="drawn-badge">—</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R7</td>
+        <td><span class="rel-from">bridge_tract_district_overlap</span></td>
+        <td><span class="rel-to">fct_tract_acs</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">geoid_tract</span></td>
+        <td><span class="rel-note">fact table acting as tract identity lookup</span></td>
+        <td><span class="drawn-badge yes">drawn</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R8</td>
+        <td><span class="rel-from">bridge_tract_district_overlap</span></td>
+        <td><span class="rel-to">dim_date</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">boundary_version_eoy → date_key</span><span class="rel-eoy">EOY</span></td>
+        <td><span class="rel-note">EOY date of district boundary version</span></td>
+        <td><span class="drawn-badge">—</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R9</td>
+        <td><span class="rel-from">fct_tract_acs</span></td>
+        <td><span class="rel-to">dim_date</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">acs_period_end_date → date_key</span><span class="rel-eoy">EOY</span></td>
+        <td><span class="rel-note">EOY date of ACS period end year</span></td>
+        <td><span class="drawn-badge yes">drawn</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R10</td>
+        <td><span class="rel-from">agg_district_acs_attributes_hist</span></td>
+        <td><span class="rel-to">dim_district</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">district_id</span></td>
+        <td><span class="rel-note">many histogram bins per district</span></td>
+        <td><span class="drawn-badge">—</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R11</td>
+        <td><span class="rel-from">agg_district_acs_attributes_hist</span></td>
+        <td><span class="rel-to">dim_date</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">boundary_version_eoy → date_key</span><span class="rel-eoy">EOY</span></td>
+        <td><span class="rel-note">EOY date of boundary version used in aggregation</span></td>
+        <td><span class="drawn-badge">—</span></td>
+      </tr>
+      <tr>
+        <td style="color:#555">R12</td>
+        <td><span class="rel-from">geo_district_boundaries</span></td>
+        <td><span class="rel-to">dim_district</span></td>
+        <td><span class="rel-card">many → one</span></td>
+        <td><span class="rel-key">district_id</span></td>
+        <td><span class="rel-note">one or more boundary versions per district</span></td>
+        <td><span class="drawn-badge">—</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── notes ── -->
+<div class="notes-block">
+  <div class="note">
+    <strong>EOY date pattern:</strong> All year-level and period-level tables join to <code>dim_date</code> via an end-of-year surrogate date column (<code>vintage_date</code>, <code>acs_period_end_date</code>, <code>boundary_version_eoy</code>). Joining on a raw year integer would fan-out — one fact row matching 365 date rows. Dashed connectors = EOY date join.
+  </div>
+  <div class="note warn">
+    <strong>Semi-additive measures:</strong> <code>pct_district</code> in <code>fct_district_year_zoning_composition</code> must not be SUMmed across vintage years or across districts. Aggregate only within a single year slice.
+  </div>
+  <div class="note green">
+    <strong>fct_tract_acs as lookup:</strong> <code>bridge_tract_district_overlap</code> references <code>fct_tract_acs</code> on <code>geoid_tract</code> — a fact table acting as a dimensional lookup. ACS data contains measurements (estimates + MOE), so no separate <code>dim_census_tract</code> is needed.
+  </div>
+  <div class="note">
+    <strong>Geometry separation:</strong> Polygon geometry lives in <code>geo_district_boundaries</code> (E8) to keep analytics joins on <code>dim_district</code> lightweight. Only loaded for spatial operations and map rendering.
+  </div>
+  <div class="note" style="border-left-color:#333;color:#555">
+    <strong>Connector scope:</strong> Lines drawn for adjacent-column relationships only (dims → facts, fct_tract_acs → bridge). Cross-column relationships (R6, R8, R10, R11, R12) are documented in the table above — their FK fields are also labeled inline in each table box.
+  </div>
+</div>
+
+<!-- ── legend ── -->
+<div class="legend">
+  <div class="legend-item"><div class="swatch sw-dim"></div> Dimension</div>
+  <div class="legend-item"><div class="swatch sw-fact"></div> Fact table</div>
+  <div class="legend-item"><div class="swatch sw-bridge"></div> Bridge (M:M resolver)</div>
+  <div class="legend-item"><div class="swatch sw-agg"></div> Aggregation / pre-computed</div>
+  <div class="legend-item"><div class="swatch sw-geo"></div> Feature layer (geometry)</div>
+  <div class="legend-item"><span style="color:#f8c555">PK</span>&nbsp;Primary key</div>
+  <div class="legend-item"><span style="color:#ce9178">FK</span>&nbsp;Foreign key</div>
+  <div class="legend-item"><span style="color:#4ec9b0">FCT</span>&nbsp;Measure column</div>
+  <div class="legend-item"><span style="color:#5588aa">--- dashed</span>&nbsp;EOY date join</div>
+</div>
+
+</body>
+</html>

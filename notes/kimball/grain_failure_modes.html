@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grain Failure Modes — Philadelphia Data Warehouse</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 24px;
+      color: #1a1a1a;
+      line-height: 1.6;
+      background: #fafafa;
+    }
+    h1 { font-size: 1.6rem; border-bottom: 2px solid #2563eb; padding-bottom: 8px; }
+    h2 { font-size: 1.2rem; margin-top: 2.5rem; color: #1e40af; }
+    h3 { font-size: 1rem; margin-top: 1.5rem; color: #374151; }
+    .subtitle { color: #6b7280; font-size: 0.9rem; margin-top: -8px; margin-bottom: 24px; }
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 16px 0;
+    }
+    .card.bad { border-left: 4px solid #ef4444; }
+    .card.good { border-left: 4px solid #22c55e; }
+    .card.warn { border-left: 4px solid #f59e0b; }
+    .label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .label.bad { background: #fee2e2; color: #b91c1c; }
+    .label.good { background: #dcfce7; color: #15803d; }
+    .label.warn { background: #fef3c7; color: #92400e; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin-top: 10px;
+    }
+    th {
+      background: #f1f5f9;
+      text-align: left;
+      padding: 8px 12px;
+      border: 1px solid #e2e8f0;
+      font-weight: 600;
+    }
+    td {
+      padding: 8px 12px;
+      border: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+    tr.dup { background: #fee2e2; }
+    tr.ok { background: #f0fdf4; }
+    tr.mixed-snap { background: #dcfce7; }
+    tr.mixed-change { background: #fef9c3; }
+    code {
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.85em;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+    }
+    .definition {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+    .fix {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+    footer {
+      margin-top: 48px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Grain Failure Modes</h1>
+<p class="subtitle">Philadelphia Data Warehouse — Task 11.1 reference | Source: Kimball &amp; Ross, <em>The Data Warehouse Toolkit</em> (B1)</p>
+
+<div class="definition">
+  <strong>What is grain?</strong><br/>
+  Grain is the row-level contract of a table — it defines exactly what one row represents. A precise grain statement locks in: (1) the unit of uniqueness, and (2) the type of fact being stored. Grain violations cause silent query errors — counts inflate, averages skew, and joins fan out, all without raising an error.
+</div>
+
+---
+
+<h2>FM1 — Grain Integrity Failure</h2>
+<p>Occurs when duplicate rows violate the primary key guarantee. The grain statement says "one row = one thing," but multiple rows exist for the same thing.</p>
+
+<h3>Example: <code>fct_permits</code></h3>
+<p>Grain: <em>one issued permit event per <code>permitnumber</code></em></p>
+
+<div class="card bad">
+  <span class="label bad">Broken — duplicate permitnumber</span>
+  <table>
+    <thead>
+      <tr><th>permitnumber</th><th>status</th><th>permitissuedate</th><th>permittype</th></tr>
+    </thead>
+    <tbody>
+      <tr class="dup"><td>P-100432</td><td>Issued</td><td>2023-03-15</td><td>Building</td></tr>
+      <tr class="dup"><td>P-100432</td><td>Issued</td><td>2023-03-15</td><td>Building</td></tr>
+      <tr><td>P-100433</td><td>Issued</td><td>2023-03-18</td><td>Zoning</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:10px; color:#b91c1c; font-size:0.88rem;">
+    Result: <code>COUNT(*) = 3</code> but only 2 permits exist. Every district-level count is now inflated. No error is raised.
+  </p>
+</div>
+
+<div class="card good">
+  <span class="label good">Fixed — deduplication enforced in staging</span>
+  <table>
+    <thead>
+      <tr><th>permitnumber</th><th>status</th><th>permitissuedate</th><th>permittype</th></tr>
+    </thead>
+    <tbody>
+      <tr class="ok"><td>P-100432</td><td>Issued</td><td>2023-03-15</td><td>Building</td></tr>
+      <tr class="ok"><td>P-100433</td><td>Issued</td><td>2023-03-18</td><td>Zoning</td></tr>
+    </tbody>
+  </table>
+  <div class="fix">
+    <strong>Fix:</strong> Deduplicate on <code>permitnumber</code> in the staging layer before loading into <code>fct_permits</code>. Log any dropped duplicates for audit.
+  </div>
+</div>
+
+---
+
+<h2>FM2 — Mixed-Grain Facts</h2>
+<p>Occurs when two different types of facts — representing different business questions — are stored in the same table under the same grain. The rows look identical structurally, but they answer fundamentally different questions.</p>
+
+<h3>Example: <code>fct_district_year_zoning_composition</code></h3>
+<p>Grain: <em>one planning district × one vintage year × one zoning code composition snapshot</em></p>
+
+<div class="card bad">
+  <span class="label bad">Broken — snapshot + change metric mixed</span>
+  <table>
+    <thead>
+      <tr><th>district_id</th><th>vintage_year</th><th>zoning_code</th><th>area_sqmi</th><th>pct_district</th><th>pct_change_from_prior_year</th></tr>
+    </thead>
+    <tbody>
+      <tr class="mixed-change"><td>D01</td><td>2020</td><td>RM1</td><td>2.1</td><td>10.5%</td><td style="color:#92400e">NULL — no prior year</td></tr>
+      <tr class="mixed-snap"><td>D01</td><td>2021</td><td>RM1</td><td>2.3</td><td>11.5%</td><td>+9.5%</td></tr>
+      <tr class="mixed-snap"><td>D01</td><td>2022</td><td>RM1</td><td>2.4</td><td>12.0%</td><td>+4.3%</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:10px; color:#b91c1c; font-size:0.88rem;">
+    Problems: (1) 2020 row is structurally incomplete — <code>pct_change_from_prior_year</code> is always NULL for the earliest vintage. (2) The table now answers two questions simultaneously: "What exists?" and "How did it change?" These are different business processes stored at the same grain. Analysts querying composition now have to mentally filter out the change column, and vice versa.
+  </p>
+</div>
+
+<div class="card good">
+  <span class="label good">Fixed — two separate tables, each with a clean grain</span>
+  <table>
+    <thead>
+      <tr><th>Table</th><th>Grain</th><th>Columns</th><th>Answers</th></tr>
+    </thead>
+    <tbody>
+      <tr class="ok"><td><code>fct_district_year_zoning_composition</code></td><td>district × year × zoning_code</td><td><code>area_sqmi</code>, <code>pct_district</code></td><td>"What is the composition in year Y?"</td></tr>
+      <tr class="ok"><td>Analyst self-join or <code>agg_zoning_yoy_change</code> (if pre-built)</td><td>district × year × zoning_code</td><td><code>pct_change_from_prior_year</code></td><td>"How did it change from Y-1 to Y?"</td></tr>
+    </tbody>
+  </table>
+  <div class="fix">
+    <strong>Fix:</strong> Keep <code>fct_district_year_zoning_composition</code> as a pure snapshot. Year-over-year change is computed at query time via a self-join (or a separate aggregation table if pre-computation is needed). This keeps every row in the snapshot table structurally complete and unambiguous.
+  </div>
+</div>
+
+---
+
+<h2>Why This Matters</h2>
+
+<div class="card warn">
+  <span class="label warn">Key principle</span>
+  <p>Grain failures are <strong>silent</strong>. Queries run. Results are returned. No errors are raised. The only signal is a number that's slightly off — which you may never notice without a known-good benchmark to compare against.</p>
+  <p>This is why grain is declared <em>before</em> implementation: once data is loaded with a broken grain, every downstream metric that touched it is suspect.</p>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Failure type</th><th>How it breaks</th><th>Symptom</th><th>Fix</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>FM1 — Integrity</strong></td>
+      <td>Duplicate rows violate PK</td>
+      <td>Counts inflate; aggregates double-count</td>
+      <td>Dedup in staging; assert uniqueness in tests</td>
+    </tr>
+    <tr>
+      <td><strong>FM2 — Mixed grain</strong></td>
+      <td>Two fact types coexist in same table</td>
+      <td>NULLs for edge cases; ambiguous query semantics</td>
+      <td>Split into separate tables by fact type</td>
+    </tr>
+  </tbody>
+</table>
+
+<footer>
+  Philadelphia LandUse Analytics · notes/kimball/grain_failure_modes.html · Task 11.1 · 2026-03-08
+</footer>
+
+</body>
+</html>

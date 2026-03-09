@@ -95,11 +95,11 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ## Week 3 — Data Modeling
 
-- [ ] Task 11.1 — Kimball: Grain deep dive + apply to project
-- [ ] Task 11.2 — Identify entities + relationships (text-only ERD draft)
-- [ ] Task 11.3 — Define 'feature vs rollup' table list
-- [ ] Task 11.4 — Add modeling glossary expansions
-- [ ] Task 12.1 — Metric spec template (final)
+- [x] Task 11.1 — Kimball: Grain deep dive + apply to project (PASS, 9/10, 2026-03-08)
+- [x] Task 11.2 — Identify entities + relationships (text-only ERD draft) (PASS, 10/10, 2026-03-08)
+- [x] Task 11.3 — Define 'feature vs rollup' table list (PASS, 10/10, 2026-03-08)
+- [x] Task 11.4 — Add modeling glossary expansions (PASS, 9/10, 2026-03-08)
+- [x] Task 12.1 — Metric spec template (final) (PASS, 9/10, 2026-03-08)
 - [ ] Task 12.2 — Permits metric spec: monthly count
 - [ ] Task 12.3 — Permits metric spec: permits per land sq mi
 - [ ] Task 12.4 — Permits composition metric spec
@@ -136,4 +136,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-08 (Task 10.5)
+**Last updated:** 2026-03-08 (Task 12.1)

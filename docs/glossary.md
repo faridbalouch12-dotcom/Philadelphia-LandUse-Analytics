@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-03
-**Last Updated:** 2026-03-03
+**Last Updated:** 2026-03-08
 **Status:** Draft
 
 ---
@@ -39,11 +39,51 @@ This pattern prevents accidental over-counting and makes lifecycle questions (ho
 
 ---
 
+### Bridge table
+
+A bridge table resolves a many-to-many relationship between two entities that cannot be expressed with a simple foreign key join. Each row in a bridge table represents one valid pairing between the two sides, plus any attributes of that relationship (such as an overlap weight or share).
+
+Bridge tables are infrastructure — they are consumed by pipeline/dbt models doing aggregations, not by dashboards or analysts running ad-hoc queries. In this project, `bridge_tract_district_overlap` links census tracts to planning districts using area-weighted overlap shares, allowing ACS tract-level estimates to be rolled up to the district level correctly.
+
+*See also:* [Grain](#grain), [Conformed dimension](#conformed-dimension)
+
+---
+
 ### Bounding box
 
 A bounding box is the smallest axis-aligned rectangle that fully encloses a geometry, represented by four values: `min_x`, `max_x`, `min_y`, `max_y`. PostGIS uses bounding boxes as a cheap first-pass filter in spatial indexing: if a point isn't inside the polygon's bounding rectangle, it cannot be inside the polygon, so you skip the expensive containment math. Because rectangles overestimate irregular shapes, a bounding box test can rule out candidates but cannot confirm a match — it narrows down the set that needs exact checking. [D3]
 
 *See also:* [Spatial index](#spatial-index)
+
+---
+
+### Conformed dimension
+
+A conformed dimension is a dimension table that is shared — and joined consistently — across multiple fact tables in the warehouse. Because every fact table uses the same dimension definition and key, you can combine metrics from different fact tables in the same query without grain conflicts or definitional ambiguity.
+
+In this project, `dim_date` is the primary conformed dimension: both `fct_permits` and `fct_district_year_zoning_composition` join to it using an end-of-year surrogate date key, so date-based comparisons are consistent across domains. `dim_district` is also a conformed dimension shared by the permits, zoning, and ACS aggregation tables. [B1]
+
+*See also:* [EOY date surrogate](#eoy-date-surrogate), [Grain integrity failure](#grain-integrity-failure-fm1)
+
+---
+
+### Dimension table
+
+A dimension table is a lookup or reference table that provides descriptive attributes for joining to fact tables. Each row describes one member of a category (one district, one zoning code, one calendar date). Dimension tables are not pre-aggregated — they describe context, not measurement.
+
+In this project, `dim_district`, `dim_date`, and `dim_zoning` are dimension tables. They provide the descriptive context (district names, date attributes, zoning code labels) that analysts use for filtering, grouping, and labeling metric values. [B1]
+
+*See also:* [Conformed dimension](#conformed-dimension), [Grain](#grain)
+
+---
+
+### EOY date surrogate
+
+An end-of-year (EOY) date surrogate is a calendar date set to December 31 of a given year (e.g., `2023-12-31`) used as the join key on a fact table that is naturally identified by year integer. The technique prevents fan-out: joining on a year integer to a daily dimension table would produce 365 matching rows per fact row; joining on an EOY date gives a clean 1:1 match.
+
+In this project, `fct_district_year_zoning_composition` stores a `vintage_date` column (e.g., `2023-12-31`) to join to `dim_date`, and `fct_tract_acs` uses `acs_period_end_date` as the ACS period's EOY anchor. The same pattern applies wherever a year-grain fact needs to join a day-grain dimension. [B1]
+
+*See also:* [Conformed dimension](#conformed-dimension), [Grain](#grain)
 
 ---
 
@@ -67,6 +107,36 @@ In this project, feature tables power map visuals and spatial joins, while rollu
 
 ---
 
+### Fact-as-lookup
+
+Fact-as-lookup is a design pattern where a fact table — one that stores measurements (estimates, counts, margins of error) — is also used as a join source by downstream pipeline models, similar to how a dimension table would be used. It is called fact-as-lookup because the pipeline is "looking up" values from it, even though the table's primary purpose is to store measures at a declared grain.
+
+This is architecturally distinct from a true dimension: a dimension table stores only descriptive attributes, while a fact-as-lookup stores numeric measurements. Renaming a fact table with a `dim_` prefix to signal lookup use would be misleading. In this project, `fct_tract_acs` is used as a lookup source by `bridge_tract_district_overlap` during the ACS aggregation pipeline — it stores estimates and MOEs, not attributes. [B1]
+
+*See also:* [Dimension table](#dimension-table), [Bridge table](#bridge-table)
+
+---
+
+### Geo table
+
+A geo table stores polygon geometry for spatial operations and map rendering. Unlike a feature table, a geo table is not intended for analytics joins — its geometry columns are expensive to process, and the table does not answer analytics questions by itself.
+
+In this project, `geo_district_boundaries` stores one row per planning district boundary version and is consumed only by GIS tools and map rendering. Analytics models join to `dim_district` (lightweight attributes) instead.
+
+*See also:* [Feature layer](#feature-layer), [Dimension table](#dimension-table)
+
+---
+
+### Grain integrity failure (FM1)
+
+A grain integrity failure occurs when multiple rows in a table violate the declared grain — typically because deduplication in staging failed and the primary key is not unique. It is the most dangerous failure mode because queries may produce silently inflated results without any error: joins fan out, counts double-count, and totals look plausible but are wrong.
+
+In this project, a grain integrity failure in `fct_permits` would mean a permit number appears more than once with `status = 'Issued'`, violating the declared grain of "one issued permit event." Root cause: bad deduplication in the staging layer. [B1]
+
+*See also:* [Grain](#grain), [Mixed-grain facts (FM2)](#mixed-grain-facts-fm2)
+
+---
+
 ### Geometry types
 
 **Point** geometry represents a single coordinate location (e.g., a geocoded permit address). Used when the "where" is best modeled as one spot on the map.
@@ -86,6 +156,16 @@ Grain is the business-level declaration of exactly what one row in a fact (or sn
 Mixing different grains in one table, or joining tables at incompatible grains without handling the granularity mismatch, can silently corrupt aggregations — the most dangerous kind of error because results may look plausible but be wrong. [B1]
 
 *See also:* [Accumulating snapshot fact table](#accumulating-snapshot-fact-table), [Periodic snapshot](#periodic-snapshot)
+
+---
+
+### Mixed-grain facts (FM2)
+
+Mixed-grain facts occur when two different fact types — typically a snapshot and a derived change measure — are stored in the same table. This creates NULL-filled rows (the earliest vintage has no prior year to compare against), forces consumers to interpret two different types of facts from one table, and violates the principle that a table should answer one type of business question.
+
+In this project, the risk is adding a `pct_change_from_prior_year` column to `fct_district_year_zoning_composition` (a snapshot table). This would mix snapshot facts (composition at a point in time) with change facts (delta from prior year) in the same table. The correct approach is to compute year-over-year change at query time via a self-join or window function. [B1]
+
+*See also:* [Grain](#grain), [Grain integrity failure (FM1)](#grain-integrity-failure-fm1)
 
 ---
 
@@ -216,3 +296,4 @@ See [Resources](../.claude/resources.md) for full citations and URLs.
 | Date | Change Description | Author |
 |------|--------------------|--------|
 | 2026-03-03 | Initial draft (v0) — 18 terms | Farid |
+| 2026-03-08 | Modeling expansions (Task 11.4) — added: Bridge table, Conformed dimension, Dimension table, EOY date surrogate, Fact-as-lookup, Geo table, Grain integrity failure (FM1), Mixed-grain facts (FM2) | Farid |

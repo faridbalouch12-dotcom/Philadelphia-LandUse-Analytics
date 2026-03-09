@@ -259,3 +259,7 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Zoning comparability plan (draft):** [`docs/zoning_comparability_plan_draft.md`](./docs/zoning_comparability_plan_draft.md)
 - **ACS to district alignment note:** [`docs/feasibility/acs_to_district_alignment_note.md`](./docs/feasibility/acs_to_district_alignment_note.md)
 - **ACS uncertainty messaging notes:** [`notes/acs_uncertainty_messaging_notes.md`](./notes/acs_uncertainty_messaging_notes.md)
+- **Grain spec:** [`docs/modeling/grain_spec.md`](./docs/modeling/grain_spec.md)
+- **ERD text draft:** [`docs/modeling/erd_text_draft.md`](./docs/modeling/erd_text_draft.md)
+- **Table inventory (feature vs rollup):** [`docs/modeling/table_inventory.md`](./docs/modeling/table_inventory.md)
+- **Metric spec template:** [`docs/templates/metric_spec_template.md`](./docs/templates/metric_spec_template.md)
