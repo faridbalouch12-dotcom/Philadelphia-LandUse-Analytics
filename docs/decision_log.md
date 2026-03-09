@@ -149,6 +149,18 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ---
 
+### D11. Cross-metric consistency fixes (Week 3 quality pass — Task 15.1)
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-08 |
+| **Decision** | Five naming inconsistencies identified across metric specs and modeling docs were resolved: (1) `stg_permits` → `fct_permits` in source tables of permits_monthly_count, permits_per_sqmi_land, and permits_composition — metric specs reference analyst-facing fact tables, not staging tables. (2) `dim_permit_type` → `permit_category_groups` in dimensions of permits_monthly_count and permits_per_sqmi_land — table inventory does not include a separate dim_permit_type; the lookup is permit_category_groups per the grouping memo. (3) `dim_zoning_code` → `dim_zoning` in zoning_comparability_plan final — table inventory (E3) uses dim_zoning as the canonical name. (4) Planning District dimension in ACS metric specs corrected from bridge_tract_district_overlap to dim_district — the bridge is infrastructure, not a sliceable dimension. (5) SQL sketch in permits_composition corrected from stg_permits to fct_permits for consistency with (1). |
+| **Alternatives** | Leave inconsistencies in place until Month 2 implementation forces resolution. |
+| **Rationale** | Naming inconsistencies in documentation specs create ambiguity that compounds when engineers implement models. Resolving them in documentation before any code is written is lower cost than reconciling divergent table names after pipeline work begins. |
+| **Implications** | All metric specs and the final zoning comparability plan now use consistent table names aligned to the table inventory. Month 2 pipeline implementation should treat these names as canonical. |
+
+---
+
 ## References
 
 - **[B7]** The Pragmatic Programmer (20th Anniversary). See
@@ -173,3 +185,4 @@ and placeholder entries for decisions that have not actually been made yet.
 | 2026-03-08 | Added D8: carry MOE columns in tract-level ACS mart | Farid |
 | 2026-03-08 | Added D9: represent income as tract median range, not aggregated district median | Farid |
 | 2026-03-08 | Added D10: present all ACS indicators at tract level on dashboard; no single-value district ACS KPI | Farid |
+| 2026-03-08 | Added D11: cross-metric consistency fixes from Task 15.1 quality pass | Farid |

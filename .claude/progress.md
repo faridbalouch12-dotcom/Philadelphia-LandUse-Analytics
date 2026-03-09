@@ -100,25 +100,25 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [x] Task 11.3 — Define 'feature vs rollup' table list (PASS, 10/10, 2026-03-08)
 - [x] Task 11.4 — Add modeling glossary expansions (PASS, 9/10, 2026-03-08)
 - [x] Task 12.1 — Metric spec template (final) (PASS, 9/10, 2026-03-08)
-- [ ] Task 12.2 — Permits metric spec: monthly count
-- [ ] Task 12.3 — Permits metric spec: permits per land sq mi
-- [ ] Task 12.4 — Permits composition metric spec
-- [ ] Task 12.5 — Update limitations register (permits metrics)
-- [ ] Task 13.1 — Zoning metric spec: composition by year
-- [ ] Task 13.2 — Zoning metric spec: year-to-year churn
-- [ ] Task 13.3 — Finalize zoning comparability plan
-- [ ] Task 13.4 — Update limitations register (zoning metrics)
-- [ ] Task 14.1 — ACS metric spec: income proxy
-- [ ] Task 14.2 — ACS metric spec: tenure proxy
-- [ ] Task 14.3 — Standard disclaimer library
-- [ ] Task 14.4 — Update learning resources (Week 3 modeling)
-- [ ] Task 15.1 — Cross-metric consistency check
-- [ ] Task 15.2 — Docs index update (Week 3)
-- [ ] Task 15.3 — Week 3 recap + Week 4 plan
+- [x] Task 12.2 — Permits metric spec: monthly count (PASS, 10/10, 2026-03-08)
+- [x] Task 12.3 — Permits metric spec: permits per land sq mi (PASS, 10/10, 2026-03-08)
+- [x] Task 12.4 — Permits composition metric spec (PASS, 10/10, 2026-03-08)
+- [x] Task 12.5 — Update limitations register (permits metrics) (PASS, 10/10, 2026-03-08)
+- [x] Task 13.1 — Zoning metric spec: composition by year (PASS, 10/10, 2026-03-08)
+- [x] Task 13.2 — Zoning metric spec: year-to-year churn (PASS, 10/10, 2026-03-08)
+- [x] Task 13.3 — Finalize zoning comparability plan (PASS, 10/10, 2026-03-08)
+- [x] Task 13.4 — Update limitations register (zoning metrics) (PASS, 10/10, 2026-03-08)
+- [x] Task 14.1 — ACS metric spec: income proxy (PASS, 10/10, 2026-03-08)
+- [x] Task 14.2 — ACS metric spec: tenure proxy (PASS, 10/10, 2026-03-08)
+- [x] Task 14.3 — Standard disclaimer library (PASS, 9/10, 2026-03-08)
+- [x] Task 14.4 — Update learning resources (Week 3 modeling)
+- [x] Task 15.1 — Cross-metric consistency check (PASS, 9/10, 2026-03-08)
+- [x] Task 15.2 — Docs index update (Week 3) (PASS, 10/10, 2026-03-08)
+- [x] Task 15.3 — Week 3 recap + Week 4 plan (PASS, 10/10, 2026-03-08)
 
 ## Week 4 — Diagrams & Product Specs
 
-- [ ] Task 16.1 — Create ERD diagram (Mermaid)
+- [x] Task 16.1 — Create ERD diagram (Mermaid) (PASS, 10/10, 2026-03-08)
 - [ ] Task 16.2 — ERD review checklist self-audit
 - [ ] Task 16.3 — Update decision log from ERD work
 - [ ] Task 17.1 — Create high-level dataflow diagram (Mermaid)
@@ -136,4 +136,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-08 (Task 12.1)
+**Last updated:** 2026-03-08 (Task 16.1)

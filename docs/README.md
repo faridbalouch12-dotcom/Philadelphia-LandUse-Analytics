@@ -36,6 +36,7 @@ source file and gives a one-line summary of what that document is for.
 | [Data access notes](./04_data_access_notes.md) | Records the chosen access method, cadence, and access constraints for each MVP dataset. |
 | [Glossary](./glossary.md) | Tracks working definitions for core warehouse, modeling, spatial, and ACS terminology. |
 | [Week 2 recap + Week 3 plan](./week2_recap.md) | Consolidates Week 2 outputs and defines the concrete task-by-task Week 3 execution plan. |
+| [Week 3 recap + Week 4 plan](./week3_recap.md) | Consolidates Week 3 modeling and metric spec outputs and defines the concrete task-by-task Week 4 execution plan. |
 
 ---
 
@@ -49,6 +50,7 @@ source file and gives a one-line summary of what that document is for.
 | [Learning resources](./learning_resources.md) | Curated resource list for the Month 1 learning plan, tied to project needs. |
 | [Bibliography](./bibliography.md) | Standard reference list and citation source for learning notes and documentation artifacts. |
 | [Zoning comparability plan (draft)](./zoning_comparability_plan_draft.md) | Draft plan for detecting and handling year-to-year schema differences in zoning vintages. |
+| [Zoning comparability plan (final)](./zoning_comparability_plan.md) | Finalized plan for zoning YoY comparability strategy, flagging approach, and mapping architecture. |
 
 ---
 
@@ -62,6 +64,7 @@ source file and gives a one-line summary of what that document is for.
 | [Feature vs rollup policy](./policies/feature_vs_rollup_policy.md) | Defines the distinction between feature layers and rollup tables and how each will be maintained. |
 | [Land area denominator policy](./policies/land_area_denominator_policy.md) | Locks the land-only area denominator convention (sq miles) for intensity metrics. |
 | [ACS usage policy](./policies/acs_usage_policy.md) | Defines what ACS data is used for in this project and what comparisons are prohibited. |
+| [Standard disclaimer library](./policies/disclaimer_library.md) | Copy-paste ready disclaimer sentences and forbidden-claim examples for dashboards and docs. |
 
 ---
 
@@ -105,6 +108,32 @@ source file and gives a one-line summary of what that document is for.
 
 ---
 
+## Modeling specs
+
+| Document | Summary |
+|----------|---------|
+| [Grain spec](./modeling/grain_spec.md) | Defines the row-level grain for all six MVP warehouse tables with example PKs and failure modes to avoid. |
+| [ERD text draft](./modeling/erd_text_draft.md) | Text-only entity-relationship draft listing entities, cardinalities, and join keys. |
+| [ERD diagram (Mermaid)](./diagrams/erd.mmd) | Mermaid erDiagram of the full MVP schema — 9 entities, 12 relationships, renders in GitHub. |
+| [Table inventory](./modeling/table_inventory.md) | Classifies all 9 MVP tables by type (feature/rollup/dimension/bridge/geo), grain, and intended consumers. |
+
+---
+
+## Metric specs
+
+| Document | Summary |
+|----------|---------|
+| [Metric spec template](./templates/metric_spec_template.md) | Reusable template for all metric specification documents. |
+| [Permits monthly count](./metrics/permits_monthly_count.md) | Metric spec: count of permits issued per planning district per calendar month. |
+| [Permits per land sq mi](./metrics/permits_per_sqmi_land.md) | Metric spec: permit intensity normalized by district land area (non-additive ratio). |
+| [Permits composition](./metrics/permits_composition.md) | Metric spec: permit count by canonical permit type group per district per month. |
+| [Zoning composition by year](./metrics/zoning_composition_by_year.md) | Metric spec: share of district land area covered by each zoning group per vintage year. |
+| [Zoning year-to-year churn](./metrics/zoning_year_to_year_churn.md) | Metric spec: change in zoning share between consecutive vintage years (computed at query time). |
+| [ACS income proxy](./metrics/acs_income_proxy.md) | Metric spec: tract-level median household income distribution as district demographic context. |
+| [ACS tenure proxy](./metrics/acs_tenure_proxy.md) | Metric spec: tract-level renter-occupied share as district housing tenure context. |
+
+---
+
 ## Decisions
 
 | Document | Summary |
@@ -136,3 +165,5 @@ source file and gives a one-line summary of what that document is for.
 | 2026-03-03 | Rebuilt index to cover all live docs with summaries | Farid  |
 | 2026-03-08 | Full Week 2 update: added source catalogs, feasibility, data dictionaries, decisions, policies, limitations register | Farid  |
 | 2026-03-08 | Added Week 2 recap + Week 3 plan link               | Farid  |
+| 2026-03-08 | Week 3 update: added Modeling specs section, Metric specs section, disclaimer library, and finalized zoning comparability plan | Farid  |
+| 2026-03-08 | Added Week 3 recap + Week 4 plan link (Task 15.2 fix) | Farid  |
