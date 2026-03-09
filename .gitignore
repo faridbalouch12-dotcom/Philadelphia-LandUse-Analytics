@@ -25,6 +25,7 @@ books/*.pdf
 *.pyc
 .ipynb_checkpoints/
 __pycache__/
+*.egg-info/
 
 *.db
 *.sqlite
