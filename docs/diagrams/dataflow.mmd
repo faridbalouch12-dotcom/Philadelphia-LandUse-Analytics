@@ -6,110 +6,91 @@ title: Philadelphia Data Warehouse — High-Level Dataflow (Month 1 MVP)
 flowchart TD
 
     %% ── Source datasets ──────────────────────────────────────────────
-    subgraph SOURCES["Source datasets [S1–S4]"]
-        direction TB
-        SRC1["🗺 Planning Districts\n(ArcGIS FeatureServer)\nGeometry: polygon\nGrain: 1 district"]
-        SRC2["📋 L&I Permits\n(CARTO SQL API / OpenDataPhilly)\nGeometry: point\nGrain: 1 permit event"]
-        SRC3["🏗 Zoning Base Districts\n(ArcGIS FeatureServer — 5 vintages)\nGeometry: polygon\nGrain: 1 zoning polygon × vintage"]
-        SRC4["📊 ACS 5-Year Estimates\n(Census Bureau API)\nGeometry: none\nGrain: 1 tract × period"]
+    subgraph SOURCES["Source datasets"]
+        SRC1["Planning Districts — ArcGIS FeatureServer"]
+        SRC2["L&I Permits — CARTO SQL API"]
+        SRC3["Zoning Base Districts — ArcGIS FeatureServer (5 vintages)"]
+        SRC4["ACS 5-Year Estimates — Census Bureau API"]
     end
 
     %% ── Raw layer ────────────────────────────────────────────────────
-    subgraph RAW["Raw layer  (Postgres schema: raw)"]
-        direction TB
-        R1["raw.planning_districts\nFull GeoJSON/shapefile as-loaded\nNo transformations"]
-        R2["raw.li_permits\nFull API response as-loaded\nNo transformations"]
-        R3["raw.zoning_base_districts_{year}\nOne table per vintage year\nNo transformations"]
-        R4["raw.acs_tract_{period}\nOne table per period label\nNo transformations"]
+    subgraph RAW["Raw layer  (schema: raw)"]
+        RAW_DISTRICTS["raw.planning_districts"]
+        RAW_PERMITS["raw.li_permits"]
+        RAW_ZONING["raw.zoning_base_districts_{year}"]
+        RAW_ACS["raw.acs_tract_{period}"]
     end
 
     %% ── Staging layer ────────────────────────────────────────────────
-    subgraph STAGING["Staging layer  (Postgres schema: staging / dbt stg_*)"]
-        direction TB
-        STG1["stg_planning_districts\n• Renamed fields\n• CRS validated → EPSG:4326\n• land_area_sqmi computed (PostGIS)\n• district_id = DIST_NUM (confirmed)"]
-        STG2["stg_li_permits\n• Canonical event date = permitissuedate\n• status filter: Issued only\n• permit_category_group mapped\n• district_id assigned via spatial join\n• unassigned_flag added"]
-        STG3["stg_zoning_base_districts\n• long_code normalized via stg_zoning_code_crosswalk\n• vocab_stable flag added\n• polygon_area_sqmi computed (PostGIS)\n• district_id assigned via polygon overlay"]
-        STG4["stg_acs_tract\n• geoid_tract standardized (11-digit FIPS)\n• acs_period_label standardized (e.g. 2020-2024)\n• acs_period_end_date computed (EOY of end year)\n• Suppressed values (-666666666) → NULL + flag"]
-        XWALK["stg_zoning_code_crosswalk\n(hand-authored mapping table)\nMaps renamed codes across vintages"]
-        BRIDGE_STG["stg_tract_district_overlap\n• Spatial intersection: stg_acs_tract tracts × stg_planning_districts polygons\n• overlap_area_sqft, pct_tract_area computed\n• assignment_method = overlap_any"]
+    subgraph STAGING["Staging layer  (schema: staging / dbt stg_*)"]
+        STG_DISTRICTS["stg_planning_districts — CRS validated, land_area_sqmi"]
+        STG_PERMITS["stg_li_permits — Issued filter, category group, district join"]
+        STG_ZONING["stg_zoning_base_districts — crosswalk, vocab_stable, district join"]
+        STG_ACS["stg_acs_tract — geoid standardized, period label, suppress nulls"]
+        STG_XWALK["stg_zoning_code_crosswalk — hand-authored vintage mapping"]
+        STG_BRIDGE["stg_tract_district_overlap — spatial intersection, pct_tract_area"]
     end
 
-    %% ── Mart layer (feature tables) ──────────────────────────────────
-    subgraph MART_FEATURE["Mart layer — Feature tables  (schema: mart)"]
-        direction TB
-        F1["fct_permits  [G1]\nGrain: 1 issued permit event\nPK: permitnumber\nConsumers: SQL analysts, map drill-down"]
-        F2["fct_tract_acs  [G4]\nGrain: 1 tract × ACS period\nPK: (geoid_tract, acs_period_label)\nConsumers: SQL analysts, pipeline → agg table"]
-        F3["geo_district_boundaries  [E8]\nGrain: 1 district × boundary version\nPK: (district_id, boundary_version)\nConsumers: GIS / map rendering only"]
-    end
+    %% ── Mart layer ───────────────────────────────────────────────────
+    subgraph MART["Mart layer  (schema: mart)"]
 
-    %% ── Mart layer (rollup/agg tables) ───────────────────────────────
-    subgraph MART_ROLLUP["Mart layer — Rollup + Aggregation tables  (schema: mart)"]
-        direction TB
-        R5["fct_district_year_zoning_composition  [G2]\nGrain: 1 district × vintage year × zoning code\nPK: (district_id, vintage_year_key, zoning_code)\nConsumers: Metabase dashboards, SQL analysts"]
-        R6["agg_district_acs_attributes_hist  [G6]\nGrain: 1 district × boundary version × attribute × bin\nPK: (district_id, boundary_version_eoy, census_attribute, bin_range)\nConsumers: Metabase hover tooltips"]
-        BRIDGE["bridge_tract_district_overlap  [G3]\nGrain: 1 tract × district × boundary version\nPK: (geoid_tract, district_id, boundary_version)\nConsumers: Pipeline only (aggregation input)"]
-    end
+        subgraph MART_DIMS["Conformed dimensions"]
+            DIM_DISTRICT["dim_district"]
+            DIM_DATE["dim_date"]
+            DIM_ZONING["dim_zoning"]
+        end
 
-    %% ── Conformed dimensions ─────────────────────────────────────────
-    subgraph DIMS["Conformed dimensions  (schema: mart)"]
-        direction TB
-        D1["dim_district\nGrain: 1 planning district\nPK: district_id\n+ land_area_sqmi"]
-        D2["dim_date\nGrain: 1 calendar date\nPK: date_key\n(full analysis window)"]
-        D3["dim_zoning\nGrain: 1 zoning code\nPK: zoning_code\n(union of all vintages)"]
+        subgraph MART_FEATURE["Feature tables"]
+            FCT_PERMITS["fct_permits  [G1]"]
+            FCT_ACS["fct_tract_acs  [G4]"]
+            GEO_BOUNDS["geo_district_boundaries  [E8]"]
+        end
+
+        subgraph MART_ROLLUP["Rollup + Aggregation tables"]
+            FCT_ZONING["fct_district_year_zoning_composition  [G2]"]
+            MART_BRIDGE["bridge_tract_district_overlap  [G3]"]
+            AGG_ACS["agg_district_acs_attributes_hist  [G6]"]
+        end
     end
 
     %% ── BI layer ─────────────────────────────────────────────────────
     subgraph BI["BI layer  (Metabase)"]
-        direction TB
-        DB1["District Change Explorer\n• Permit trends (monthly, intensity)\n• Zoning composition & churn\n• ACS context histograms\n• District filter + time filter"]
+        DB1["District Change Explorer"]
     end
 
     %% ── Data flows ───────────────────────────────────────────────────
-    SRC1 --> R1
-    SRC2 --> R2
-    SRC3 --> R3
-    SRC4 --> R4
 
-    R1 --> STG1
-    R2 --> STG2
-    R3 --> STG3
-    R4 --> STG4
-    XWALK --> STG3
-    STG1 --> BRIDGE_STG
-    STG4 --> BRIDGE_STG
+    SRC1 --> RAW_DISTRICTS
+    SRC2 --> RAW_PERMITS
+    SRC3 --> RAW_ZONING
+    SRC4 --> RAW_ACS
 
-    STG1 --> D1
-    STG1 --> F3
-    STG2 --> F1
-    STG2 --> D1
-    STG3 --> R5
-    STG3 --> D3
-    STG4 --> F2
-    BRIDGE_STG --> BRIDGE
+    RAW_DISTRICTS --> STG_DISTRICTS
+    RAW_PERMITS   --> STG_PERMITS
+    RAW_ZONING    --> STG_ZONING
+    RAW_ACS       --> STG_ACS
+    STG_XWALK     --> STG_ZONING
+    STG_DISTRICTS --> STG_BRIDGE
+    STG_ACS       --> STG_BRIDGE
 
-    F2 --> R6
-    BRIDGE --> R6
+    STG_DISTRICTS --> DIM_DISTRICT
+    STG_ZONING    --> DIM_ZONING
 
-    D1 --> F1
-    D1 --> R5
-    D1 --> BRIDGE
-    D1 --> R6
-    D2 --> F1
-    D2 --> R5
-    D2 --> F2
-    D2 --> BRIDGE
-    D2 --> R6
-    D3 --> R5
+    STG_DISTRICTS --> GEO_BOUNDS
+    STG_PERMITS   --> FCT_PERMITS
+    STG_ACS       --> FCT_ACS
 
-    R5 --> DB1
-    R6 --> DB1
-    F1 --> DB1
+    STG_ZONING  --> FCT_ZONING
+    STG_BRIDGE  --> MART_BRIDGE
 
-    %% ── Layer annotations ─────────────────────────────────────────────
-    %% Feature vs rollup separation:
-    %%   Feature: fct_permits, fct_tract_acs, geo_district_boundaries
-    %%   Rollup:  fct_district_year_zoning_composition, agg_district_acs_attributes_hist
-    %%   Bridge:  bridge_tract_district_overlap (pipeline infrastructure, not BI-facing)
-    %%
+    FCT_ACS     --> AGG_ACS
+    MART_BRIDGE --> AGG_ACS
+
+    FCT_PERMITS --> DB1
+    FCT_ZONING  --> DB1
+    AGG_ACS     --> DB1
+
+    %% ── Notes ─────────────────────────────────────────────────────────
+    %% Join relationships (FK/PK) are in erd.mmd — not shown here.
     %% Grain labels: G1–G6 reference grain_spec.md
-    %% Sources: docs/modeling/grain_spec.md, docs/modeling/table_inventory.md, docs/modeling/erd_text_draft.md
+    %% Feature vs rollup separation: see feature_vs_rollup_policy.md
