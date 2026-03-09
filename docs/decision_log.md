@@ -185,6 +185,42 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ---
 
+### D17. SCD strategy for all warehouse dimensions
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-09 |
+| **Decision** | `dim_district`: Type 1 (overwrite). `dim_date`: Static (generated once, never updated). `dim_zoning`: Type 1 (overwrite). Fact and bridge tables are not subject to SCD — they are immutable once loaded or versioned by design. |
+| **Alternatives** | Type 2 (track history) for `dim_district` or `dim_zoning` — would preserve the old row and add a new one when attributes change, keeping historical facts linked to the description accurate at the time. |
+| **Rationale** | `dim_district`: Philadelphia planning district names and boundaries are administratively stable. The boundary itself is tracked separately via `boundary_version` in `geo_district_boundaries` and `bridge_tract_district_overlap` — so geographic changes are already versioned at the appropriate layer, not in the dimension. `dim_date`: Calendar dates are immutable by definition. `dim_zoning`: Zoning categories (`zoning_label`, `zoning_category`) are broad and stable within the MVP window (recent 5 years). The raw `zoning_code` is preserved in `fct_district_year_zoning_composition` regardless of label changes, so historical composition data is not affected by a Type 1 overwrite — only the display label changes. Type 2 would add surrogate key complexity and version-tracking overhead not justified by the stability of these attributes at MVP scale. |
+| **Implications** | No surrogate key versioning columns (`effective_date`, `expiry_date`, `is_current`) are needed on any dimension for MVP. If a `dim_zoning` label is corrected in Month 2+, the correction silently applies to all historical display queries — this is acceptable and documented. If district boundaries change materially, the change is captured via a new `boundary_version` in the spatial tables, not via `dim_district`. |
+
+---
+
+### D16. Bridge table minimum overlap threshold: `pct_tract_area > 0.01`
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-09 |
+| **Decision** | `bridge_tract_district_overlap` only stores rows where `pct_tract_area > 0.01` (i.e., a census tract must contribute more than 1% of its area to a planning district to be included). Rows below this threshold are dropped in staging and never loaded. All rows that pass are assigned `assignment_method = 'overlap_weighted'`. |
+| **Alternatives** | (1) Include all rows where `overlap_area_sqft > 0` — captures every geometric intersection, including zero-area edge/point touches and GIS slivers. (2) Use a higher threshold (e.g., 5%) — more conservative, removes borderline overlaps but risks dropping tracts with meaningful small contributions near district edges. |
+| **Rationale** | Philadelphia planning district boundaries are well-defined administrative boundaries and census tract geometries are generally clean. Slivers below 1% are almost certainly GIS artifacts from polygon edge alignment, not real geographic overlap worth weighting on. Filtering them reduces noise in weighted ACS aggregations with negligible impact on accuracy — a tract contributing < 1% of its area to a district adds near-zero weight to any estimate. Using `pct_tract_area` (relative threshold) rather than `overlap_area_sqft` (absolute threshold) is more robust because it scales correctly regardless of tract size. |
+| **Implications** | `pct_tract_area` values for a given tract will sum to slightly less than 1.0 across all its district rows (< 1% gap from dropped slivers) — this is acceptable for MVP. Staging logic must implement the filter before load, not as a DB constraint. The threshold must be documented in the bridge table's data dictionary and the limitations register as a known approximation. |
+
+---
+
+### D15. `fct_permits` is a transaction fact table only in MVP; permit lifecycle snapshot deferred
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-09 |
+| **Decision** | The MVP uses `fct_permits` as a transaction/event fact table only — one row per issued permit, filtered in staging to `status = 'Issued'`. A separate `fct_permit_lifecycle_snapshot` (accumulating snapshot tracking milestone dates such as applied, issued, and completed) is explicitly deferred to a future phase. |
+| **Alternatives** | (1) MVP includes both a transaction fact and a lifecycle accumulating snapshot fact — more complete, but adds staging complexity and requires reliable milestone date coverage that the raw data does not currently guarantee. (2) MVP uses only an accumulating snapshot — simpler to answer lifecycle questions, but adds update complexity and doesn't align with how the raw data is naturally structured (it's filtered to issued events, not tracked through a full lifecycle). |
+| **Rationale** | The raw L&I data is filtered to `status = 'Issued'`, which means each permit row represents a single completed issuance event. A transaction fact is the natural pattern for this structure. Lifecycle questions (e.g., how long from application to issuance?) require reliable population of milestone columns (`permitapplicationdate`, `permitcompleteddate`) — fields that are currently sparse or inconsistently populated. Building an accumulating snapshot on incomplete milestone data would produce misleading duration metrics. Deferring it keeps the MVP clean and avoids fabricating lifecycle claims the data can't support. |
+| **Implications** | `fct_permits` must be treated as a transaction fact throughout all documentation, metric specs, ERD annotations, and implementation work. Any reference to permit lifecycle or accumulating snapshot must include explicit "deferred" language. When lifecycle data quality improves in Month 2+, a separate `fct_permit_lifecycle_snapshot` can be added without changing the existing transaction fact table. |
+
+---
+
 ### D11. Cross-metric consistency fixes (Week 3 quality pass — Task 15.1)
 
 | Field | Detail |
@@ -223,3 +259,6 @@ and placeholder entries for decisions that have not actually been made yet.
 | 2026-03-08 | Added D10: present all ACS indicators at tract level on dashboard; no single-value district ACS KPI | Farid |
 | 2026-03-08 | Added D11: cross-metric consistency fixes from Task 15.1 quality pass | Farid |
 | 2026-03-08 | Added D12: EOY surrogate date key pattern; D13: geometry separation from dim_district; D14: fct_tract_acs as bridge lookup — all from ERD work (Task 16.3) | Farid |
+| 2026-03-09 | Added D15: fct_permits locked as transaction fact; permit lifecycle accumulating snapshot deferred (Month 1 closeout) | Farid |
+| 2026-03-09 | Added D16: bridge table minimum overlap threshold pct_tract_area > 0.01 (Month 1 closeout) | Farid |
+| 2026-03-09 | Added D17: SCD strategy for all dimensions — Type 1 for dim_district and dim_zoning, static for dim_date (Month 1 closeout) | Farid |

@@ -42,17 +42,17 @@ This document inventories all planned warehouse tables for the Philadelphia data
 
 ## Table inventory
 
-| Table | Entity | Type | Grain | Intended consumers |
-|-------|--------|------|-------|--------------------|
-| `dim_district` | E1 | dimension | One planning district | SQL analysts (joins); Metabase dashboards (district filter) |
-| `dim_date` | E2 | dimension | One calendar date | Pipeline / dbt models (all fact tables join via EOY surrogate date keys) |
-| `dim_zoning` | E3 | dimension | One zoning code | SQL analysts (joins); Metabase dashboards (zoning filter) |
-| `fct_permits` | E4 | feature | One issued permit event (`status = 'Issued'`) | SQL analysts (drill-down, custom aggregations); Metabase dashboards (permit counts, intensity metrics) |
-| `fct_district_year_zoning_composition` | E5 | rollup | One planning district × one vintage year × one zoning code | Metabase dashboards (zoning composition charts, YoY comparisons); SQL analysts (composition queries) |
-| `bridge_tract_district_overlap` | E6 | bridge | One census tract × one planning district × one boundary version overlap, where overlap exists | Pipeline / dbt models (primary — used to aggregate `fct_tract_acs` to district level); advanced analysts building custom MOE-aware district aggregations (secondary) |
-| `fct_tract_acs` | E7 | feature | One census tract × one ACS 5-year period snapshot (wide — each indicator as separate column) | SQL analysts (custom MOE-aware aggregations); pipeline / dbt models (source for `agg_district_acs_attributes_hist` via bridge) |
-| `geo_district_boundaries` | E8 | geo | One planning district boundary version | GIS tools / map rendering only; not for analytics joins (geometry overhead) |
-| `agg_district_acs_attributes_hist` | E9 | rollup | One planning district × one boundary version × one census attribute × one bin range | Metabase dashboards (district-level ACS histogram visualizations, hover tooltips) |
+| Table | Entity | Type | Grain | SCD Strategy | Intended consumers |
+|-------|--------|------|-------|--------------|-------------------|
+| `dim_district` | E1 | dimension | One planning district | **Type 1** — district names and area are administratively stable; corrections overwrite in place | SQL analysts (joins); Metabase dashboards (district filter) |
+| `dim_date` | E2 | dimension | One calendar date | **Static** — calendar dates never change; table is generated once and never updated | Pipeline / dbt models (all fact tables join via EOY surrogate date keys) |
+| `dim_zoning` | E3 | dimension | One zoning code | **Type 1** — zoning categories are broad and stable within the MVP window; label corrections overwrite in place | SQL analysts (joins); Metabase dashboards (zoning filter) |
+| `fct_permits` | E4 | feature | One issued permit event (`status = 'Issued'`) | N/A — transaction fact; rows are immutable once loaded | SQL analysts (drill-down, custom aggregations); Metabase dashboards (permit counts, intensity metrics) |
+| `fct_district_year_zoning_composition` | E5 | rollup | One planning district × one vintage year × one zoning code | N/A — periodic snapshot; each vintage is a full reload, not an update | Metabase dashboards (zoning composition charts, YoY comparisons); SQL analysts (composition queries) |
+| `bridge_tract_district_overlap` | E6 | bridge | One census tract × one planning district × one boundary version overlap, where `pct_tract_area > 0.01` | N/A — versioned by `boundary_version`; new boundary → new rows, old rows retained | Pipeline / dbt models (primary — used to aggregate `fct_tract_acs` to district level); advanced analysts building custom MOE-aware district aggregations (secondary) |
+| `fct_tract_acs` | E7 | feature | One census tract × one ACS 5-year period snapshot (wide — each indicator as separate column) | N/A — append-only by period; historical periods are never updated | SQL analysts (custom MOE-aware aggregations); pipeline / dbt models (source for `agg_district_acs_attributes_hist` via bridge) |
+| `geo_district_boundaries` | E8 | geo | One planning district boundary version | N/A — versioned by `boundary_version`; geometry rows are immutable once loaded | GIS tools / map rendering only; not for analytics joins (geometry overhead) |
+| `agg_district_acs_attributes_hist` | E9 | rollup | One planning district × one boundary version × one census attribute × one bin range | N/A — derived rollup; rebuilt from source on refresh | Metabase dashboards (district-level ACS histogram visualizations, hover tooltips) |
 
 ---
 
@@ -107,3 +107,4 @@ This document inventories all planned warehouse tables for the Philadelphia data
 | Date | Change description | Author |
 |------|--------------------|--------|
 | 2026-03-08 | Initial draft — 9 tables, type classifications, grain statements, consumer designations, assumptions and risks | Farid |
+| 2026-03-09 | Added SCD Strategy column for all 9 tables (Month 1 closeout) | Farid |

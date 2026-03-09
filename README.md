@@ -1,15 +1,35 @@
 # Philadelphia-LandUse-Analytics
 
+## Current repo status
+
+> **Month 1 complete — design and documentation only.**
+> No pipelines, no SQL, no dbt models exist yet. Everything below is designed and specified; implementation begins in Month 2.
+
+| Layer | Status |
+|-------|--------|
+| Warehouse design (grain, schema contracts, ERD) | ✅ Complete |
+| Dataset cataloging (L&I permits, zoning, ACS, districts) | ✅ Complete |
+| Metric specifications (7 metrics defined) | ✅ Complete |
+| Product specs (district brief, compare view) | ✅ Complete |
+| Decision log (17 locked decisions) | ✅ Complete |
+| Python ingestion pipelines | 🔲 Month 2 |
+| Docker Compose stack | 🔲 Month 2 |
+| dbt project + staging + mart models | 🔲 Month 2 |
+| Metabase dashboards | 🔲 Month 2 |
+
+---
+
 ## Project overview
 
-An analytics platform to analyze changes in Philadelphia's planning district over time with the support of public datasets.
+An analytics platform to analyze changes in Philadelphia's planning districts over time, using public datasets.
 
 ## Project goal
 
 Build a reproducible analytics platform that explains how Philadelphia's 18 planning districts change over time, using public datasets. The output is a district change explorer (interactive) plus a well-modeled warehouse that supports longitudinal analysis and future expansions.
 
-District Change is defined by the change in permits of buildings (buildings getting a rental permit), zoning (single family home getting upzoned to a multi-family home), changes in demographics (income, race, education levels, etc) tracked by the American Commmunity Survey (ACS) and changes in the district's physical boundaries itself.
+District change is defined by: changes in building permits (L&I), zoning reclassifications, and demographic shifts (income, tenure) tracked by the American Community Survey (ACS).
 
+---
 
 ## Locked decisions
 
@@ -35,108 +55,58 @@ District Change is defined by the change in permits of buildings (buildings gett
 - docs/ (data dictionary, architecture notes)
 
 - sql/ (optional ad-hoc queries, debugging). 
-## Month-1 deliverables (v0)
+## Completed in Month 1
 
-By the end of Month 1, I'll have a complete documentation package for your warehouse. No code yet, just comprehensive design artifacts with a repo structure that looks like this:
+Month 1 was documentation and design only — no code, no SQL, no pipelines.
 
-```
-philly-data-warehouse/
-├── README.md
-├── .gitignore
-├── CONTRIBUTING.md
-├── docs/
-│   ├── glossary.md
-│   ├── problem_statement.md
-│   ├── success_criteria.md
-│   ├── dataset_catalog.md
-│   ├── grain_spec.md
-│   ├── dimension_specs.md
-│   ├── metric_definitions.md
-│   ├── erd.md (or .png)
-│   ├── dataflow_diagram.md (or .png)
-│   ├── assumptions_log.md
-│   ├── style_guide.md
-│   ├── repo_settings_applied.md
-│   ├── week1_recap.md
-│   ├── week2_recap.md
-│   ├── week3_recap.md
-│   ├── month1_recap.md
-│   ├── knowledge_gaps.md
-│   └── month2_plan.md
-├── notes/
-│   ├── kimball_grain_notes.md
-│   ├── kimball_dimensions_notes.md
-│   ├── kimball_scd_notes.md
-│   ├── acs_period_estimates_notes.md
-│   ├── postgis_spatial_notes.md
-│   └── [other reading notes]
-├── assets/
-│   ├── concept_map_week1.png
-│   ├── concept_map_month1.png
-│   └── [diagrams, screenshots]
-├── .claude/
-│   ├── syllabus.md
-│   ├── rubrics.md
-│   ├── resources.md
-│   ├── progress.md
-│   └── CLAUDE.md
-└── templates/
-    ├── memo_template.md
-    └── notes_template.md
-```
+**Warehouse design**
+- Grain spec with schema contracts for all 4 high-risk tables (DDL-ready)
+- Table inventory with SCD strategies for all 9 warehouse tables
+- ERD diagram (Mermaid) with grain annotations, PKs, FKs, and cardinality
+- Dataflow diagram showing raw → staging → mart → BI layer
+- 17 locked design decisions logged with rationale and implications
 
-1) **Reproducible local environment**
-- `docker/` (or root) includes a working `docker-compose.yml` that starts **Postgres** and **Metabase** (and any supporting services) successfully.
-- `.env.example` exists and documents required environment variables; no secrets committed.
+**Dataset cataloging** (4 datasets)
+- L&I building permits, zoning base districts, ACS 5-year estimates, planning district boundaries
+- Source catalog entry, feasibility checklist, and critical fields dictionary for each
 
-2) **Database initialization + conventions**
-- A Postgres init path exists (SQL init scripts or a Python bootstrap) that creates required schemas (e.g., `raw`, `staging`, `mart`) and core extensions (if needed).
-- A short `docs/modeling_conventions.md` defines naming conventions (`raw_*`, `stg_*`, `dim_*`, `fct_*`) and the chosen time grain for Month 1.
+**Metric specifications** (7 metrics)
+- Permits: monthly count, permits per land sq mi, permit composition by type
+- Zoning: composition by year, year-over-year churn
+- ACS: income proxy (tract median range), tenure proxy (owner-occupied share)
 
-3) **Ingestion pipeline (Python)**
-- A Python ingestion module/script exists that loads **at least one core dataset** into Postgres **raw** tables (starting with planning districts boundaries + at least one of permits/zoning/ACS).
-- Ingestion is **idempotent** (re-running does not duplicate data).
-- Basic pipeline logging exists (run timestamp, row counts, and control totals written to a log table or log file).
+**Policies and governance**
+- Feature vs rollup policy, land-area denominator policy, ACS usage policy
+- Limitations register (hardened through 4 weeks), assumptions log, decision log
 
-4) **Core reference data in the warehouse**
-- Planning district boundaries are loaded into a canonical raw table (and carried through to staging), with a clear district identifier strategy documented.
-- A "date spine" or time dimension exists for the Month-1 analysis window (e.g., last 5 years).
+**Product specs**
+- District brief output spec, compare-districts view spec
 
-5) **dbt project scaffold**
-- A dbt project exists (`dbt/` folder) with working profiles/config for the Postgres service.
-- `dbt debug` succeeds using the Docker network connection.
+**Repo infrastructure**
+- GitHub workflow (branch naming, PR template, contribution guide)
+- Doc style guide, doc templates, glossary
 
-6) **Staging models (`stg_*`)**
-- `stg_*` models exist for each ingested Month-1 source (at minimum: districts + one of permits/zoning/ACS), with cleaned field names, typed columns, and parsed dates.
+---
 
-7) **Marts: district-time fact table(s)**
-- At least one **district-time grain** fact table exists (e.g., `fct_district_year_metrics` or `fct_district_month_metrics`) that includes:
-  - permit intensity metrics normalized by land area (e.g., permits per sq mi), and/or
-  - a basic zoning-change metric (for the recent 5-year YoY comparison window), and/or
-  - a small set of ACS indicators aligned to the same district-time grain.
+## Planned for Month 2
 
-8) **Dimensions (`dim_*`)**
-- Core dimensions exist to support analysis (at minimum `dim_district` and `dim_time`; optionally `dim_permit_type`, `dim_zoning_category` depending on what's ingested first).
+Month 2 is local implementation — building the actual pipeline from raw data to Metabase.
 
-9) **Data quality checks**
-- dbt tests are implemented for marts and key dims (at least `unique`, `not_null`, and `relationships` where applicable).
-- Basic "sanity checks" are documented (row count expectations, missingness checks, and any known caveats).
+**Platform foundation**
+- Docker Compose stack: Postgres + PostGIS + Metabase
+- Python project scaffold with environment-variable handling
+- Database bootstrap SQL (schemas: `raw`, `staging`, `mart`; extensions: PostGIS)
+- dbt project scaffold with source declarations and materialization strategy
 
-10) **Metabase baseline analytics**
-- Metabase is connected to Postgres and contains:
-  - at least 3 saved questions built from marts (not raw tables), and
-  - one simple dashboard with filters (district + time period) showing trends and rankings.
+**Vertical slices** (one dataset at a time, end-to-end)
+1. Planning districts — raw ingest → `dim_district` → `geo_district_boundaries`
+2. L&I permits — raw ingest → `stg_li_permits` → `fct_permits` → permits marts
+3. Zoning — raw ingest → `fct_district_year_zoning_composition` → zoning marts
+4. ACS — raw ingest → `fct_tract_acs` → bridge → `agg_district_acs_attributes_hist`
 
-11) **Documentation index + month-1 docs**
-- `docs/README.md` exists as a docs index and links to all Month-1 docs.
-- At least one additional Month-1 doc exists describing:
-  - the district-time grain,
-  - the definition of key metrics (e.g., "permits per sq mi", "YoY change"), and
-  - how to run the Month-1 pipeline end-to-end.
-
-12) **Project hygiene**
-- Root `README.md` includes the required sections (Overview, Locked Decisions, Month-1 Deliverables, Repo Structure, How to Contribute/Work, Links to Docs Index).
-- Repo includes baseline `.gitignore` and licensing is in place (already done)
+**Dashboard**
+- District brief dashboard in Metabase
+- Compare-districts view in Metabase
   
 
 ## How to contribute / work

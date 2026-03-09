@@ -53,9 +53,9 @@ Exhaustively cataloged all four MVP datasets and produced feasibility and risk d
 
 Converted the dataset strategy into a formal warehouse design:
 
-- **Grain spec:** [`docs/modeling/grain_spec.md`](./modeling/grain_spec.md) — 6 grain statements, 2 failure modes
+- **Grain spec:** [`docs/modeling/grain_spec.md`](./modeling/grain_spec.md) — 6 grain statements, 4 schema contracts (SC1–SC4, DDL-ready), 2 failure modes
 - **ERD text draft:** [`docs/modeling/erd_text_draft.md`](./modeling/erd_text_draft.md) — 9 entities, 12 relationships, 5 design decisions
-- **Table inventory:** [`docs/modeling/table_inventory.md`](./modeling/table_inventory.md) — all 9 tables typed and consumer-designated
+- **Table inventory:** [`docs/modeling/table_inventory.md`](./modeling/table_inventory.md) — all 9 tables typed, consumer-designated, and SCD-strategy documented
 - **7 metric specs** in [`docs/metrics/`](./metrics/): permits monthly count, permits per land sq mi, permits composition, zoning composition by year, zoning YoY churn, ACS income proxy, ACS tenure proxy
 - **Zoning comparability plan (final):** [`docs/zoning_comparability_plan.md`](./zoning_comparability_plan.md) — vocabulary detection, mapping strategy, and MVP claim bounds
 - **Standard disclaimer library:** [`docs/policies/disclaimer_library.md`](./policies/disclaimer_library.md) — 5 standard disclaimers, 5 forbidden claims
@@ -94,6 +94,9 @@ The following decisions are the architectural foundation for Month 2. All are in
 | D12 | EOY surrogate date keys for all year-level joins to `dim_date` |
 | D13 | Polygon geometry separated from `dim_district` into `geo_district_boundaries` |
 | D14 | `fct_tract_acs` used as dimensional lookup for bridge table; no separate `dim_census_tract` |
+| D15 | `fct_permits` locked as transaction fact only; permit lifecycle accumulating snapshot deferred |
+| D16 | Bridge table overlap threshold: `pct_tract_area > 0.01` (1% minimum, GIS slivers dropped) |
+| D17 | SCD strategy: Type 1 for `dim_district` and `dim_zoning`; static for `dim_date` |
 
 ---
 
@@ -191,3 +194,4 @@ The metric specs in [`docs/metrics/`](./metrics/) define exactly what each mart 
 | Date       | Change description | Author |
 |------------|--------------------|--------|
 | 2026-03-08 | Initial Month 1 executive summary (Task 20.1) | Farid |
+| 2026-03-09 | Month 1 closeout pass: updated grain spec description (SC1–SC4 added), table inventory (SCD), decision table (D15–D17) | Farid |

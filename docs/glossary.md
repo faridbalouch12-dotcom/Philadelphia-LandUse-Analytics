@@ -21,7 +21,7 @@ This glossary defines the core terminology used across all project artifacts. It
 
 An accumulating snapshot fact table is a fact-table design where you store one row per process instance (one row per permit, one row per case) and update that same row over time as the process moves through its lifecycle. Instead of recording separate rows for each status change, you capture milestone columns — most commonly date/timestamp fields such as `applied_date`, `issued_date`, `completed_date`, plus optional duration metrics.
 
-This pattern prevents accidental over-counting and makes lifecycle questions (how long from issue to completion?) straightforward because all milestones live on a single row at a consistent grain. In this project, a permit accumulating snapshot supports questions like "how long from issue to completion by district and permit type?" because all relevant lifecycle dates are on one row per permit.
+This pattern prevents accidental over-counting and makes lifecycle questions (how long from issue to completion?) straightforward because all milestones live on a single row at a consistent grain. In this project, `fct_permits` is a transaction fact table (one row per issued permit event) — not an accumulating snapshot. A permit lifecycle accumulating snapshot is a deferred future addition (see D15 in the decision log), pending reliable population of milestone date columns (`permitapplicationdate`, `permitcompleteddate`) in the raw source data.
 
 *See also:* [Grain](#grain), [Periodic snapshot](#periodic-snapshot)
 
