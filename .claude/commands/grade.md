@@ -6,13 +6,13 @@ Grade task $ARGUMENTS.
 
 ## Step 1: Load the task spec
 
-Read `..claude/syllabus.md` to find the task. Identify:
+Read `..claude/month2_syllabus.md` to find the task. Identify:
 - Task name and number
 - Learning Objective
 - Definition of Done
 - Deliverable Artifacts (exact file paths)
 
-Read `..claude/rubrics.md` to find the task-specific rubric checks for criterion 5 (Task Objective Mastery).
+Read `..claude/month2_rubrics.md` to find the task-specific rubric checks for criterion 5 (Task Objective Mastery).
 
 ---
 
@@ -27,9 +27,12 @@ Read every file listed in Deliverable Artifacts. Do not grade from memory or pri
 ```
 □ Does the artifact exist at the correct file path specified in the task?
 □ Does it satisfy every requirement in the Definition of Done?
+□ (Code artifacts only) Does it run as documented?
 ```
 
-If either gate fails: state what is missing clearly and **stop**. Do not proceed to scoring. Tell the learner exactly what needs to be fixed.
+**On the third gate:** For code artifacts — Python modules, dbt models, SQL, `compose.yml`, CI workflows, Makefiles — file existence is not enough. The artifact must be runnable from the documented workflow. A dbt model that won't compile, a Compose service that fails its healthcheck, or a Python module that can't be imported are gate failures regardless of how complete the file looks. If the artifact can't be run in this session, the learner must provide evidence it ran (log output, `dbt run` success, row count confirmation). If no evidence exists, state the gate as unverified and do not score.
+
+If any gate fails: state what is missing clearly and **stop**. Do not proceed to scoring. Tell the learner exactly what needs to be fixed.
 
 ---
 
@@ -42,7 +45,7 @@ Be honest — don't inflate scores. A 1 means "mostly there with real gaps," a 2
 3. **Traceability** — Are there source links, cross-links, evidence? Can claims be verified?
 4. **Consistency** — Does it align with the style guide, templates, and other artifacts?
    - File names follow `lowercase_with_underscores` convention
-   - Resources cited using IDs from `..claude/resources.md` ([B3], [D7], etc.)
+   - Resources cited using IDs from `..claude/month2_resources.md` ([B3], [D7], etc.)
    - Markdown formatting is consistent (headings, lists, links)
    - Cross-references use correct relative paths and resolve
    - Header block present with all required metadata fields (where template applies)

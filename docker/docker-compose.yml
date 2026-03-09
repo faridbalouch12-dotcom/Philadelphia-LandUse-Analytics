@@ -1,0 +1,57 @@
+name: philly-landuse-analytics
+services:
+  postgres_philly_dw:
+    # Pin to postgres:17 and postgis:3.5 to avoid silent breaking changes from version upgrades
+    image: postgis/postgis:17-3.5
+    env_file:
+      - ../.env.example
+    ports:
+      - "5432:5432"
+    volumes:
+       # Mount the local 'init-scripts' directory to the container's init directory as read-only
+      - type: bind
+        source: ../sql/init-scripts/
+        target: /docker-entrypoint-initdb.d/
+        read_only: true
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+    healthcheck:
+      # pg_isready checks TCP-level connection readiness only — no credentials
+      # needed
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_interval: 10s
+      # 30s grace period accounts for first-boot init scripts in
+      # /docker-entrypoint-initdb.d, volume setup, and internal service startup
+      start_period: 30s
+    
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    hostname: metabase
+    volumes:
+      - type: volume
+        source: metabase_data
+        target: /metabase-data
+    ports:
+      - 3000:3000
+    env_file:
+      - ../.env.example
+    depends_on:
+      postgres_philly_dw:
+        condition: service_healthy
+    # Metabase connects to Postgres via MB_DB_HOST in env_file — must match the Compose service name (Docker network hostname)
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      # Metabase takes 1-2 min to fully initialize — grace period prevents premature healthcheck failure
+      start_period: 90s
+volumes:
+  postgres_data:
+  metabase_data:
+      

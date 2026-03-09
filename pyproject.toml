@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[project]
+name = "philly-dw"
+version = "0.1.0"
+description = "Philadelphia land use analytics local warehouse"
+requires-python = ">=3.11"
+dependencies = [
+  "psycopg[binary]",
+  "requests",
+  "pandas",
+  "geopandas",
+]

@@ -138,35 +138,52 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
+## Month 1 — 8-Check Gate Results (re-graded 2026-03-09)
+
+| Check | Description | Status | Evidence |
+|-------|-------------|--------|----------|
+| 1 | All tasks complete with PASS verdicts | ✅ PASS | All Month 1 tasks marked `[x]` above |
+| 2 | Grain spec is implementable | ✅ PASS | SC1–SC4 added to `grain_spec.md`; DDL-ready column contracts, key strategy, and validation rules for 4 high-risk tables |
+| 3 | Table inventory is complete | ✅ PASS | SCD strategy column added for all 9 tables with project-specific rationale (D17) |
+| 4 | Metric definitions are queryable | ✅ PASS | 7 metric specs in `docs/metrics/` — each has formula, grain, joins, numerator/denominator, and caveats |
+| 5 | ERD is renderable and complete | ✅ PASS | `erd.mmd` renders in GitHub; GRAIN annotations on all fact-like entities, PKs/FKs labeled, cardinality shown |
+| 6 | Source catalog covers all 4 MVP datasets | ✅ PASS | Entries in `docs/source_catalog/` for planning districts, L&I permits, zoning, ACS — each with access URL, key fields, cadence, risks |
+| 7 | Dataflow diagram is complete | ✅ PASS | `dataflow.mmd` refactored: all 4 datasets flow through pipeline; feature vs rollup layers separated; grain labels via [G1]–[G6] |
+| 8 | Policies are in place | ✅ PASS | `acs_usage_policy.md` has standard disclaimer sentence; `land_area_denominator_policy.md` states land-only area, sq mi units, and edge cases |
+
+**Month 1 score: 8/8 PASS**
+
+---
+
 ## MONTH 2 — Local MVP Implementation
 
 ### Week 1 — Month 1 Closeout + Local Platform Foundation
 
 **Day 1 — Resolve Month 1 contradictions**
-- [ ] Task 1.1 — Re-read Month 1 gate documents
-- [ ] Task 1.2 — Resolve the permits fact-table decision
-- [ ] Task 1.3 — Propagate the permits decision across all affected docs
-- [ ] Task 1.4 — Make the progress tracker real
-- [ ] Task 1.5 — Re-grade Month 1 honestly
+- [x] Task 1.1 — Re-read Month 1 gate documents (PASS, 8/10, 2026-03-09)
+- [x] Task 1.2 — Resolve the permits fact-table decision (PASS, 10/10, 2026-03-09)
+- [x] Task 1.3 — Propagate the permits decision across all affected docs (PASS, 10/10, 2026-03-09)
+- [x] Task 1.4 — Make the progress tracker real (PASS, 9/10, 2026-03-09)
+- [x] Task 1.5 — Re-grade Month 1 honestly (PASS, 9/10, 2026-03-09)
 
 **Day 2 — Implementation contract**
-- [ ] Task 2.1 — Add SCD strategy to dimensions
-- [ ] Task 2.2 — Upgrade `fct_permits` spec to DDL-ready
-- [ ] Task 2.3 — Upgrade the remaining high-risk table specs
-- [ ] Task 2.4 — Add grain annotations to the ERD
-- [ ] Task 2.5 — Split "designed" vs "implemented" in the README
+- [x] Task 2.1 — Add SCD strategy to dimensions (PASS, 9/10, 2026-03-09)
+- [x] Task 2.2 — Upgrade `fct_permits` spec to DDL-ready (PASS, 10/10, 2026-03-09)
+- [x] Task 2.3 — Upgrade the remaining high-risk table specs (PASS, 10/10, 2026-03-09)
+- [x] Task 2.4 — Add grain annotations to the ERD (PASS, 10/10, 2026-03-09)
+- [x] Task 2.5 — Split "designed" vs "implemented" in the README (PASS, 10/10, 2026-03-09)
 
 **Day 3 — Python project scaffold**
-- [ ] Task 3.1 — Create the Python project manifest
-- [ ] Task 3.2 — Create the source package skeleton
-- [ ] Task 3.3 — Add environment-variable handling
-- [ ] Task 3.4 — Add task runner commands
-- [ ] Task 3.5 — Write the local-dev runbook
+- [x] Task 3.1 — Create the Python project manifest (PASS, 10/10, 2026-03-09)
+- [x] Task 3.2 — Create the source package skeleton (PASS, 9/10, 2026-03-09)
+- [x] Task 3.3 — Add environment-variable handling (PASS, 8/10, 2026-03-09)
+- [x] Task 3.4 — Add task runner commands (PASS, 9/10, 2026-03-09)
+- [x] Task 3.5 — Write the local-dev runbook (PASS, 10/10, 2026-03-09)
 
 **Day 4 — Docker Compose stack skeleton**
-- [ ] Task 4.1 — Create the Compose file
-- [ ] Task 4.2 — Add the PostGIS-backed database service
-- [ ] Task 4.3 — Add the Metabase service
+- [x] Task 4.1 — Create the Compose file (PASS, 8/10, 2026-03-09)
+- [x] Task 4.2 — Add the PostGIS-backed database service (PASS, 9/10, 2026-03-09)
+- [x] Task 4.3 — Add the Metabase service (PASS, 7/10, 2026-03-09)
 - [ ] Task 4.4 — Add named volumes and healthchecks
 - [ ] Task 4.5 — Smoke-test the whole stack
 
@@ -392,4 +409,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-09 (Month 2 tracker initialized — Month 1 COMPLETE ✓)
+**Last updated:** 2026-03-09 (Task 4.3)

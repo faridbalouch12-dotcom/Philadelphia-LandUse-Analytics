@@ -31,7 +31,7 @@ District change is defined by: changes in building permits (L&I), zoning reclass
 
 ---
 
-## Locked decisions
+## Locked decisions (architectural decisions, not yet implemented)
 
 - Stack: Postgres + Python + dbt + Metabase + Docker
 - Reproducibility: Docker Compose is the default run path; GitHub is the source of truth
@@ -232,6 +232,7 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Grain spec:** [`docs/modeling/grain_spec.md`](./docs/modeling/grain_spec.md)
 - **ERD text draft:** [`docs/modeling/erd_text_draft.md`](./docs/modeling/erd_text_draft.md)
 - **Table inventory (feature vs rollup):** [`docs/modeling/table_inventory.md`](./docs/modeling/table_inventory.md)
+- **Column contracts (DDL-ready specs):** [`docs/modeling/column_contracts.md`](./docs/modeling/column_contracts.md)
 - **Metric spec template:** [`docs/templates/metric_spec_template.md`](./docs/templates/metric_spec_template.md)
 - **Permits monthly count metric spec:** [`docs/metrics/permits_monthly_count.md`](./docs/metrics/permits_monthly_count.md)
 - **Permits per land sq mi metric spec:** [`docs/metrics/permits_per_sqmi_land.md`](./docs/metrics/permits_per_sqmi_land.md)
@@ -248,3 +249,8 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **District brief spec:** [`docs/product/district_brief_spec.md`](./docs/product/district_brief_spec.md)
 - **Compare districts spec:** [`docs/product/district_compare_spec.md`](./docs/product/district_compare_spec.md)
 - **Month 1 recap:** [`docs/month1_recap.md`](./docs/month1_recap.md)
+- **Month 1 closeout findings:** [`docs/checklists/month1_closeout_findings.md`](./docs/checklists/month1_closeout_findings.md)
+- **Environment variable reference:** [`.env.example`](./.env.example)
+- **Local environment setup runbook:** [`docs/runbooks/local_env_setup.md`](./docs/runbooks/local_env_setup.md)
+- **Task runner (Makefile):** [`Makefile`](./Makefile)
+- **Local dev runbook:** [`docs/runbooks/local_dev.md`](./docs/runbooks/local_dev.md)

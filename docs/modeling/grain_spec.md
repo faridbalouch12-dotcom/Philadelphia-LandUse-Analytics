@@ -101,6 +101,8 @@ so joins and metrics stay consistent.
 
 ## Schema contracts
 
+> **Note:** The schema contracts below define grain statements and validation rules at a high level. DDL-ready column contracts (exact types, nullability, key strategy) are in [`docs/modeling/column_contracts.md`](./column_contracts.md).
+
 ### SC1 — `fct_permits`
 
 > Goal: a developer can write a first-pass DDL from this table alone.
