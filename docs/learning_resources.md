@@ -100,6 +100,18 @@ Resources are referenced using IDs from [`claude/resources.md`](../claude/resour
 
 ---
 
+## Diagrams and product documentation
+
+**Why this matters for this project:** Week 4 translates the data model into visual artifacts (ERD, dataflow diagram) and product specs. Understanding how to communicate warehouse architecture through diagrams, and how to define output specifications for non-technical users, is the final step before Month 2 implementation.
+
+- **[D19]** [CARTO User Manual: PostgreSQL Connections](https://docs.carto.com/carto-user-manual/connections/postgresql) — Already listed under Philly datasets; also directly relevant to understanding how data flows from source to warehouse in the dataflow diagram.
+- **[D20]** [CARTO SQL API Documentation](https://carto.com/developers/sql-api/) — Already listed under Philly datasets; relevant to the raw-layer ingestion step in the dataflow diagram.
+- **[D23]** [Mermaid.js Documentation — erDiagram and flowchart syntax](https://mermaid.js.org/syntax/entityRelationshipDiagram.html) — Reference for the Mermaid `erDiagram` and `flowchart` syntax used in `erd.mmd` and `dataflow.mmd`; covers entity notation, relationship cardinality, and flowchart node/edge syntax.
+- **[V9]** [Mermaid Live Editor](https://mermaid.live/) — Browser-based tool for previewing and validating Mermaid diagrams before committing; used to verify `erd.mmd` and `dataflow.mmd` render correctly.
+- **[V8]** [dbt Fundamentals — dbt Learn (video series)](https://www.getdbt.com/dbt-learn) — Companion video series to D10; provides visual walkthroughs of staging, marts, and model lineage — directly relevant to the dataflow diagram's staging → mart layer structure.
+
+---
+
 ## References
 
 Full citations for all resources listed above are in [`docs/bibliography.md`](./bibliography.md). Resources are referenced by ID — resolve using [`claude/resources.md`](../claude/resources.md).
@@ -116,3 +128,4 @@ Full citations for all resources listed above are in [`docs/bibliography.md`](./
 | 2026-03-05 | Populated Philly datasets section with S1, S2, S3, S4 (Task 5.9) | Farid |
 | 2026-03-06 | Added D16, D17, D19, D20 to Philly datasets section — permits/open data access references (Task 7.7) | Farid |
 | 2026-03-08 | Added V6 (PRB Data 101 ACS) to ACS section (Task 9.7) | Farid |
+| 2026-03-08 | Added Diagrams and product documentation section: D23, V9, V8 (Task 19.3) | Farid |

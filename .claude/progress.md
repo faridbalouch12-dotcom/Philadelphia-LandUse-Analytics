@@ -119,21 +119,21 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 ## Week 4 — Diagrams & Product Specs
 
 - [x] Task 16.1 — Create ERD diagram (Mermaid) (PASS, 10/10, 2026-03-08)
-- [ ] Task 16.2 — ERD review checklist self-audit
-- [ ] Task 16.3 — Update decision log from ERD work
-- [ ] Task 17.1 — Create high-level dataflow diagram (Mermaid)
-- [ ] Task 17.2 — Write 'map-first ready' contract (final)
-- [ ] Task 17.3 — Create repo review checklist (Month 1)
-- [ ] Task 18.1 — Docs index final pass
-- [ ] Task 18.2 — Traceability pass: cross-links
-- [ ] Task 18.3 — Consistency pass: terminology & naming
-- [ ] Task 18.4 — Limitations register final hardening
-- [ ] Task 19.1 — Define 'district brief' output spec (MVP narrative)
-- [ ] Task 19.2 — Create 'compare districts' view spec
-- [ ] Task 19.3 — Update learning resources (Week 4 docs/diagrams)
-- [ ] Task 20.1 — Month-1 recap (executive summary)
+- [x] Task 16.2 — ERD review checklist self-audit (PASS, 10/10, 2026-03-08)
+- [x] Task 16.3 — Update decision log from ERD work (PASS, 2026-03-08)
+- [x] Task 17.1 — Create high-level dataflow diagram (Mermaid) (PASS, 2026-03-08)
+- [x] Task 17.2 — Write 'map-first ready' contract (final) (PASS, 2026-03-08)
+- [x] Task 17.3 — Create repo review checklist (Month 1) (PASS, 2026-03-08)
+- [x] Task 18.1 — Docs index final pass (PASS, 2026-03-08)
+- [x] Task 18.2 — Traceability pass: cross-links (PASS, 2026-03-08)
+- [x] Task 18.3 — Consistency pass: terminology & naming (PASS, 2026-03-08)
+- [x] Task 18.4 — Limitations register final hardening (PASS, 2026-03-08)
+- [x] Task 19.1 — Define 'district brief' output spec (MVP narrative) (PASS, 2026-03-08)
+- [x] Task 19.2 — Create 'compare districts' view spec (PASS, 2026-03-08)
+- [x] Task 19.3 — Update learning resources (Week 4 docs/diagrams) (PASS, 2026-03-08)
+- [x] Task 20.1 — Month-1 recap (executive summary) (PASS, 2026-03-08)
 - [ ] Task 20.3 — Create Month-1 release/tag
 
 ---
 
-**Last updated:** 2026-03-08 (Task 16.1)
+**Last updated:** 2026-03-08 (Tasks 16.3–20.1 — Week 4 complete)

@@ -59,6 +59,7 @@ This register is informed by the MVP dataset risks, the problem statement scope 
 - Permits metric specs: [`docs/metrics/permits_monthly_count.md`](./metrics/permits_monthly_count.md), [`docs/metrics/permits_per_sqmi_land.md`](./metrics/permits_per_sqmi_land.md), [`docs/metrics/permits_composition.md`](./metrics/permits_composition.md)
 - Zoning metric specs: [`docs/metrics/zoning_composition_by_year.md`](./metrics/zoning_composition_by_year.md), [`docs/metrics/zoning_year_to_year_churn.md`](./metrics/zoning_year_to_year_churn.md)
 - ACS metric specs: [`docs/metrics/acs_income_proxy.md`](./metrics/acs_income_proxy.md), [`docs/metrics/acs_tenure_proxy.md`](./metrics/acs_tenure_proxy.md)
+- Map-first readiness contract: [`docs/policies/map_first_readiness_contract.md`](./policies/map_first_readiness_contract.md)
 
 ---
 
@@ -75,4 +76,5 @@ This register is informed by the MVP dataset risks, the problem statement scope 
 | 2026-03-08 | Updated L20 wording/mitigation to align with D10 tract-distribution ACS presentation and small-N caution rules | Farid  |
 | 2026-03-08 | Added L21 (cancelled/voided permits still counted) from permits metric spec drafting (Task 12.5) | Farid  |
 | 2026-03-08 | Added L22 (zoning Shape__Area CRS ambiguity) from zoning metric spec drafting (Task 13.4); updated links section with metric spec cross-references | Farid  |
+| 2026-03-08 | Final hardening (Task 18.4): confirmed 22 items total (≥20 required); confirmed ≥5 items (L3, L4, L5, L9, L21, L22) explicitly tied to metric spec impacts; added map_first_readiness_contract cross-reference to links | Farid  |
 

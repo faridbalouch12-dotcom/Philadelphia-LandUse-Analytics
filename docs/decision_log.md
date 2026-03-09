@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-03
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-08 (Task 16.3)
 **Status:** Draft
 
 ---
@@ -149,6 +149,42 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ---
 
+### D12. Use EOY surrogate date keys for all year-level and period-level fact-to-dimension joins
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-08 |
+| **Decision** | All year-level and period-level fact tables join to `dim_date` using an end-of-year (EOY) surrogate date column — e.g., `vintage_date` (zoning), `acs_period_end_date` (ACS), `boundary_version_eoy` (bridge) — rather than a raw integer year field. |
+| **Alternatives** | (1) Store the year as an integer column and join `dim_date` on `year = year`. (2) Store the year as the January 1st date (SOY) rather than December 31st. |
+| **Rationale** | Joining on `year` integer would match 365 rows in `dim_date` per fact row — a fan-out join that inflates row counts in any query that spans both the fact and the date dimension. An EOY date resolves to exactly one `dim_date` row, giving the fact table a clean, unambiguous FK. December 31st was chosen over January 1st because it is the natural period-end date: zoning vintages are annual state snapshots best described by their end date, and ACS period labels (e.g., "2019-2023") end on December 31st of the labeled end year. |
+| **Implications** | Every year-level or period-level fact table must include an explicit EOY date column (not just a year integer). Pipeline logic must compute and store these surrogate date values before loading. `dim_date` must cover the full analysis window plus boundary years. Analysts querying time attributes must join through `dim_date` — they should not filter directly on the integer year stored in fact tables. |
+
+---
+
+### D13. Separate polygon geometry from `dim_district` into a dedicated `geo_district_boundaries` table
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-08 |
+| **Decision** | Planning district polygon geometry is stored in a dedicated `geo_district_boundaries` table (E8), not in `dim_district` (E1). `dim_district` contains only lightweight scalar attributes: `district_id`, `district_name`, `land_area_sqmi`. |
+| **Alternatives** | (1) Store geometry in `dim_district` — simplifies schema by one table, all district attributes in one place. (2) Store geometry as a pre-computed WKT string column in `dim_district` — reduces spatial overhead while keeping schema flat. |
+| **Rationale** | Polygon geometry is large. Every analytics query that joins to `dim_district` to filter or label by district would carry a geometry column it does not need, increasing memory and I/O cost. Separating geometry means analytics joins stay lightweight and fast; geometry is only loaded when spatial operations or map rendering are needed. This also enforces a clean boundary between the analytics layer (`dim_district`) and the spatial/feature layer (`geo_district_boundaries`), consistent with the feature vs rollup policy. |
+| **Implications** | `dim_district` is a lightweight lookup table with no geometry. Any query requiring district polygon geometry must join to `geo_district_boundaries`. Map rendering tools must know to use the `geo_` table. dbt models building rollups should join to `dim_district`, not `geo_district_boundaries`. |
+
+---
+
+### D14. Use `fct_tract_acs` as a dimensional lookup for the bridge table rather than creating a separate `dim_census_tract`
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-08 |
+| **Decision** | `bridge_tract_district_overlap` joins to `fct_tract_acs` on `geoid_tract` to look up tract identity. No separate `dim_census_tract` is created. |
+| **Alternatives** | (1) Create a `dim_census_tract` dimension table containing just `geoid_tract` and tract metadata; let the bridge and the ACS fact table both join to it. |
+| **Rationale** | ACS data at the tract level is itself a measurement — it contains estimates and margins of error, not just descriptive attributes. Creating a `dim_census_tract` would either (a) duplicate `geoid_tract` metadata already stored in `fct_tract_acs`, or (b) create a dimension with no attributes beyond the key, which adds schema complexity without analytical benefit. The bridge already holds the spatial relationship (`overlap_area_sqft`, `pct_tract_area`, `assignment_method`). Using `fct_tract_acs` as a lookup is a deliberate, documented design decision — not an oversight. |
+| **Implications** | `bridge_tract_district_overlap` carries a FK to `fct_tract_acs`, making `fct_tract_acs` function partly as a lookup table. This is a documented non-standard Kimball pattern for this project. Analysts building custom district-level aggregations via the bridge must join to `fct_tract_acs` for estimates and MOEs — they do not need a separate dim table. |
+
+---
+
 ### D11. Cross-metric consistency fixes (Week 3 quality pass — Task 15.1)
 
 | Field | Detail |
@@ -186,3 +222,4 @@ and placeholder entries for decisions that have not actually been made yet.
 | 2026-03-08 | Added D9: represent income as tract median range, not aggregated district median | Farid |
 | 2026-03-08 | Added D10: present all ACS indicators at tract level on dashboard; no single-value district ACS KPI | Farid |
 | 2026-03-08 | Added D11: cross-metric consistency fixes from Task 15.1 quality pass | Farid |
+| 2026-03-08 | Added D12: EOY surrogate date key pattern; D13: geometry separation from dim_district; D14: fct_tract_acs as bridge lookup — all from ERD work (Task 16.3) | Farid |

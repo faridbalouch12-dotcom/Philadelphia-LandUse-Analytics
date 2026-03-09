@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-02-28
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-08 (Week 4 final pass)
 **Status:** Active
 
 ---
@@ -37,6 +37,7 @@ source file and gives a one-line summary of what that document is for.
 | [Glossary](./glossary.md) | Tracks working definitions for core warehouse, modeling, spatial, and ACS terminology. |
 | [Week 2 recap + Week 3 plan](./week2_recap.md) | Consolidates Week 2 outputs and defines the concrete task-by-task Week 3 execution plan. |
 | [Week 3 recap + Week 4 plan](./week3_recap.md) | Consolidates Week 3 modeling and metric spec outputs and defines the concrete task-by-task Week 4 execution plan. |
+| [Month 1 recap (executive summary)](./month1_recap.md) | Full executive summary of Month 1: what was built, key decisions, known limitations, and what Month 2 should start with. |
 
 ---
 
@@ -65,6 +66,7 @@ source file and gives a one-line summary of what that document is for.
 | [Land area denominator policy](./policies/land_area_denominator_policy.md) | Locks the land-only area denominator convention (sq miles) for intensity metrics. |
 | [ACS usage policy](./policies/acs_usage_policy.md) | Defines what ACS data is used for in this project and what comparisons are prohibited. |
 | [Standard disclaimer library](./policies/disclaimer_library.md) | Copy-paste ready disclaimer sentences and forbidden-claim examples for dashboards and docs. |
+| [Map-first readiness contract](./policies/map_first_readiness_contract.md) | Defines the 6 conditions a spatial feature layer must satisfy before it is considered map-first ready. |
 
 ---
 
@@ -115,6 +117,8 @@ source file and gives a one-line summary of what that document is for.
 | [Grain spec](./modeling/grain_spec.md) | Defines the row-level grain for all six MVP warehouse tables with example PKs and failure modes to avoid. |
 | [ERD text draft](./modeling/erd_text_draft.md) | Text-only entity-relationship draft listing entities, cardinalities, and join keys. |
 | [ERD diagram (Mermaid)](./diagrams/erd.mmd) | Mermaid erDiagram of the full MVP schema — 9 entities, 12 relationships, renders in GitHub. |
+| [ERD review checklist](./checklists/erd_review_checklist.md) | Self-audit of erd.mmd against visual quality, structural completeness, and spec consistency (all 19 checks pass). |
+| [Dataflow diagram (Mermaid)](./diagrams/dataflow.mmd) | Mermaid flowchart showing all 4 datasets flowing raw → staging → mart, with feature vs rollup layers and grain labels. |
 | [Table inventory](./modeling/table_inventory.md) | Classifies all 9 MVP tables by type (feature/rollup/dimension/bridge/geo), grain, and intended consumers. |
 
 ---
@@ -143,6 +147,24 @@ source file and gives a one-line summary of what that document is for.
 
 ---
 
+## Checklists
+
+| Document | Summary |
+|----------|---------|
+| [ERD review checklist](./checklists/erd_review_checklist.md) | Self-audit of the ERD diagram against visual quality, structural completeness, and spec consistency. |
+| [Month 1 repo review checklist](./checklists/month1_review_checklist.md) | Final Month 1 gate checklist — 10 sections, 48 checks covering all documentation deliverables. |
+
+---
+
+## Product specs
+
+| Document | Summary |
+|----------|---------|
+| [District brief spec](./product/district_brief_spec.md) | Output spec for the single-district narrative view: required sections, metrics, and disclaimers. |
+| [Compare districts spec](./product/district_compare_spec.md) | Output spec for the cross-district ranking view: metric list, ranking direction, and caveats. |
+
+---
+
 ## Templates
 
 | Document | Summary |
@@ -167,3 +189,5 @@ source file and gives a one-line summary of what that document is for.
 | 2026-03-08 | Added Week 2 recap + Week 3 plan link               | Farid  |
 | 2026-03-08 | Week 3 update: added Modeling specs section, Metric specs section, disclaimer library, and finalized zoning comparability plan | Farid  |
 | 2026-03-08 | Added Week 3 recap + Week 4 plan link (Task 15.2 fix) | Farid  |
+| 2026-03-08 | Week 4 final pass: added ERD review checklist, dataflow diagram, map-first contract, Checklists section, Product specs section (Tasks 16.2–19.2) | Farid  |
+| 2026-03-08 | Updated Last Updated field and change log | Farid  |

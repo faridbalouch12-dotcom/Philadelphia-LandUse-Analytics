@@ -127,6 +127,16 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 
 ---
 
+**[D23]** Mermaid.js. n.d. "Mermaid.js Documentation — Entity Relationship Diagram and Flowchart Syntax." Accessed 2026-03-08. <https://mermaid.js.org/syntax/entityRelationshipDiagram.html>
+
+- **Type:** Documentation
+- **Why relevant:** Reference for Mermaid `erDiagram` and `flowchart TD` syntax used in `docs/diagrams/erd.mmd` and `docs/diagrams/dataflow.mmd`; covers entity notation, cardinality, and flowchart node/edge syntax.
+
+- **Type:** Documentation
+- **Why relevant:** Reference for querying CARTO-hosted datasets via SQL over HTTP — the access method used to pull L&I permits data as documented in the source catalog.
+
+---
+
 ### Books
 
 **[B13]** Forrest, Matthew. 2023. "Spatial SQL: A Practical Approach to Modern GIS Using SQL." Accessed 2026-03-03. <https://locatepress.com/book/spatial-sql>
@@ -208,6 +218,20 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 
 ---
 
+**[V8]** dbt Labs. n.d. "dbt Fundamentals (dbt Learn video series)." Accessed 2026-03-08. <https://www.getdbt.com/dbt-learn>
+
+- **Type:** Video
+- **Why relevant:** Companion video series to D10; provides visual walkthroughs of staging models, mart models, and model lineage — directly relevant to understanding the staging → mart layer structure shown in the dataflow diagram.
+
+---
+
+**[V9]** Mermaid.js. n.d. "Mermaid Live Editor." Accessed 2026-03-08. <https://mermaid.live/>
+
+- **Type:** Video
+- **Why relevant:** Browser-based tool for previewing and validating Mermaid diagrams before committing; used to verify `erd.mmd` and `dataflow.mmd` render correctly.
+
+---
+
 ### Datasets
 
 **[S1]** City of Philadelphia / ArcGIS. n.d. "Planning Districts (Feature Layer)." Accessed 2026-03-05. <https://catalog.data.gov/dataset/planning-districts-6a446>
@@ -264,3 +288,4 @@ Each entry uses **Chicago Author-Date** style for the core citation, extended wi
 | 2026-03-05 | Added S1, S2, S3, S4 dataset entries (Task 5.9) | Farid |
 | 2026-03-06 | Added D16 (OpenDataPhilly About), D17 (ArcGIS REST API Feature Service), D19 (CARTO PostgreSQL Connections), D20 (CARTO SQL API) — permits/open data access references (Task 7.7) | Farid |
 | 2026-03-08 | Added V6 (PRB Data 101 ACS) — ACS MOE and reliability reference (Task 9.7) | Farid |
+| 2026-03-08 | Added D23 (Mermaid.js docs), V8 (dbt Learn video series), V9 (Mermaid Live Editor) — Week 4 diagram and product spec references (Task 19.3) | Farid |
