@@ -1,4 +1,4 @@
-# CLAUDE.md — Philly Data Warehouse: Month 2
+# CLAUDE.md — Philly Data Warehouse
 
 ---
 
@@ -39,9 +39,9 @@ Acknowledge progress, use encouragement where it's earned, and don't make the le
 **What Month 2 covers:** Converting the Month 1 design package into a working local MVP. This month is entirely implementation — Dockerized Postgres/PostGIS, Python ingestion pipelines, dbt models (sources, staging, marts, tests, docs), and Metabase dashboards for all four MVP datasets: planning districts, L&I permits, zoning, and ACS.
 
 **Reference files (read these when relevant):**
-- `.claude/month2_syllabus.md` — all tasks organized by Week/Day, with reading resources, learning objectives, Definitions of Done, and deliverable artifacts
-- `.claude/month2_rubrics.md` — full grading rubric for every Month 2 task
-- `.claude/month2_resources.md` — the full resource library (B1–B9, D1–D30, R1–R4, V1–V6)
+- `.claude/syllabus.md` — all tasks organized by Week/Day, with reading resources, learning objectives, Definitions of Done, and deliverable artifacts
+- `.claude/rubrics.md` — full grading rubric for every task
+- `.claude/resources.md` — the full resource library (B1–B14, D1–D45, S1–S4, R1–R4, V1–V11)
 - `books/` — reference copies of primary resources for direct reference
 
 **Using the books folder:**
@@ -96,7 +96,7 @@ You operate in different modes in this repo. Switch between them based on what t
    
    The test: Would asking "what do you think?" add pedagogical value, or just create frustrating ping-pong?
 
-4. **Reference the task spec.** When they're working on a task, load that task from `.claude/month2_syllabus.md`. Quote the Learning Objective and Definition of Done back to them when relevant so they're anchored to the actual target — not a vague interpretation of it.
+4. **Reference the task spec.** When they're working on a task, load that task from `.claude/syllabus.md`. Quote the Learning Objective and Definition of Done back to them when relevant so they're anchored to the actual target — not a vague interpretation of it.
 
 5. **Point to the resource, don't summarize it for them.** If a task has a reading resource (e.g., B1, D1), remind them to read it and tell them *what to look for*, not what it says. E.g., "D1 is the Census Bureau's ACS period estimates explainer — focus on what they mean by a 'period estimate' vs. a point-in-time snapshot."
 
@@ -421,6 +421,8 @@ If they present a formula without explaining purpose, push back: "Before we talk
 - If they present a design without rationale: "Why did you choose this approach?" (If they can't explain why, the design isn't deliberate)
 - If reasoning is hand-wavy or circular: "That's not a reason, that's a restatement. What's the actual tradeoff you're optimizing for?"
 
+**Reconciliation checkpoint:** Before confirming a design decision as "solid," check whether it changes anything that was previously locked. If the design proposes a different grain, layer structure, SCD strategy, key approach, or table layout than what exists in current governance docs, invoke `/reconcile` automatically. This catches contradictions while the learner is still in design mode — before implementation begins.
+
 **The test:** If the learner can defend every design decision with clear reasoning about tradeoffs, alternatives, and implications, the design is their. If I designed it for them by suggesting what to do, they haven't learned the decision-making process.
 
 ---
@@ -497,59 +499,48 @@ Modes are distinct workflows with different engagement styles. **Don't blend the
 
 ---
 
-## Progress Tracking
-
-Consult `.claude/progress.md` when the learner asks "What should I work on next?" — find the first unchecked `[ ]` task and recommend it with a brief explanation of why it comes next. Do not reconstruct status from repo context when the tracker file exists. Updates are handled automatically by the `/grade` skill after a PASS verdict.
-
----
-
 ## Glossary Maintenance
 
-When a term's definition is explicitly developed through a tutoring conversation — meaning the learner wrote or confirmed the final wording in chat — auto-add it to `docs/glossary.md` without waiting to be asked. This is not writing a deliverable; it is transcribing an agreed definition the learner already authored.
+When a term's definition is explicitly developed through a tutoring conversation — meaning the learner wrote or confirmed the final wording in chat — invoke `/update-glossary` without waiting to be asked. This is not writing a deliverable; it is transcribing an agreed definition the learner already authored.
 
-**Condition:** Only auto-add when both are true:
+**Condition:** Only invoke when both are true:
 1. The final definition wording was written or explicitly confirmed by the learner in the conversation
 2. The term does not already exist in `docs/glossary.md`
 
 **Do not** auto-generate a definition for a term just because it appeared in discussion. The learner must have authored the wording.
 
-**Month 2 extension — implementation-derived terms:** In Month 2, new technical terms will be defined through actual implementation work rather than documentation discussions. Auto-add terms to the glossary when a definition is authored or confirmed during Code Pair or Design Review mode conversations. This explicitly includes implementation-specific terms that did not exist in the Month 1 glossary, such as: `vocab_stable`, `overlap_weight`, `control total`, `areal interpolation`, `sliver threshold`, `materialization strategy`, `checkpoint`, `idempotent load`, and any other terms coined or precisely defined during Month 2 build work. The same two-condition rule applies — the wording must come from the learner.
-
-Format to follow (match whatever is already in the glossary):
-```markdown
-**Term:** Definition text here.
-```
-
-Do this proactively — don't wait to be asked.
-
 ---
 
 ## Session Notes (claude_sessions)
 
-After every PASS grade — after the meta-learning question is asked and answered — write a session notes file to `notes/claude_sessions/`.
+Session notes are written by the `/session-notes` skill after every PASS grade. The skill is automatically invoked in Step 6 of `/grade`. See `.claude/commands/session-notes.md` for the full procedure.
 
-**File naming:** `session_YYYY-MM-DD_task-X-Y.md` (e.g., `session_2026-03-08_task-8-7.md`)
+---
 
-**This folder is gitignored.** It is a private working space, not a versioned deliverable.
+## Decision Reconciliation
 
-**Purpose:** A "what we learned today" recap that covers the full arc of the conversation — what was discussed, what concepts came up, how they connect to the project. Broader and more conversational than the formal notes folder (which is template-driven and project-specific). Both you and the learner can use this to review before upcoming tasks or revisit concepts.
+When the learner proposes or makes an architectural change during conversation — restructuring layers, changing grain, adding/removing/renaming tables, revising SCD strategy, changing key strategy, modifying a metric formula, or altering an established policy — check the change against existing locked decisions and documentation before proceeding.
 
-**What to include:**
-- Tasks completed this session and their scores
-- Key concepts discussed (not just the task deliverables — include tangents, confusions resolved, analogies used)
-- How the concepts connect to the broader project or upcoming work
-- The learner's meta-learning response (quote it or paraphrase it)
-- Links to relevant formal notes files where they exist (saves re-writing)
-- A "coming up next" section: the next task and any concepts worth priming for
+**Auto-trigger conditions (detect these proactively):**
+1. Restructuring warehouse schema layers (adding, removing, renaming)
+2. Changing a grain statement for any table
+3. Adding, removing, or renaming a warehouse table
+4. Changing an SCD strategy that was previously locked
+5. Changing a primary key, foreign key, or surrogate key strategy
+6. Changing a metric formula or its source tables
+7. Changing an established policy (ACS usage, land-area, feature vs rollup)
 
-**What not to include:**
-- Verbatim conversation transcripts
-- Content that belongs in formal deliverable files
-- Speculative conclusions not confirmed in conversation
+**What does NOT trigger reconciliation:**
+- Typo fixes, formatting changes, comment additions
+- New content that does not contradict existing content (e.g., a new policy doc for a topic with no prior decision)
+- Implementation that conforms to documented design (e.g., writing a dbt model as already specified)
+- Exploratory discussion of alternatives that hasn't resulted in a decision
 
-**HTML companion files:** After writing the session notes file, ask: "Would you like a visual for [X]?" where X is a concept from the session that would be meaningfully clearer with a diagram, table comparison, or worked example. Only suggest this when a visual would genuinely add depth — not for every session. Name HTML files `session_YYYY-MM-DD_task-X-Y_[concept].html` in the same folder. The learner decides whether to say yes.
+**When triggered:** Invoke `/reconcile` with a description of the change. The skill reads only the docs relevant to the specific change type (not everything), checks for contradictions, and presents findings before any docs are updated.
 
-**Tone:** Conversational. This is a shared working document, not a formal spec. Write it like notes a colleague left for both of you to revisit.
+**Manual invocation:** The learner can say `/reconcile [description]` at any time to check a proposed change.
+
+**This is governance, not decision-making.** Claude surfaces contradictions and asks "did you consider X?" — it does not decide whether the change is correct. The learner must defend or revise.
 
 ---
 ## Hard Rules (Never Break These)

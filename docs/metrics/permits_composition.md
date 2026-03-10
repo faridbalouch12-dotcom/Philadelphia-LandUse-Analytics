@@ -36,14 +36,14 @@ This is a simple count per canonical group. Share (percentage of total) is a der
 ## Formula
 
 ```
-permits_composition_count = COUNT(permit_number)
-    GROUP BY canonical_group
+permits_composition_count = COUNT(permitnumber)
+    GROUP BY permit_category_group
 ```
 
 **Derived share (query-time only — not stored):**
 ```
-permits_composition_share = COUNT(permit_number) per group
-    / SUM(COUNT(permit_number)) OVER (PARTITION BY district_key, date_month_key)
+permits_composition_share = COUNT(permitnumber) per group
+    / SUM(COUNT(permitnumber)) OVER (PARTITION BY district_id, date_key)
 ```
 
 **Aggregation type:** count is additive; share is non-additive (do not aggregate percentage columns across rows)
@@ -51,14 +51,14 @@ permits_composition_share = COUNT(permit_number) per group
 **SQL sketch (optional):**
 ```sql
 SELECT
-    p.district_key,
-    p.date_month_key,
-    pcg.canonical_group,
-    COUNT(p.permit_number) AS permits_composition_count
-FROM stg_permits p
-JOIN permit_category_groups pcg
-    ON p.permittype = pcg.raw_permittype
-GROUP BY p.district_key, p.date_month_key, pcg.canonical_group
+    p.district_id,
+    d.year,
+    d.month,
+    p.permit_category_group,
+    COUNT(p.permitnumber) AS permits_composition_count
+FROM fct_permits p
+JOIN dim_date d USING (date_key)
+GROUP BY p.district_id, d.year, d.month, p.permit_category_group
 ```
 
 ---
@@ -83,10 +83,9 @@ GROUP BY p.district_key, p.date_month_key, pcg.canonical_group
 
 | Table | Role | Key Fields Used |
 |-------|------|-----------------|
-| fct_permits | Primary fact source | permit_number, issue_date, district_key, permittype |
-| dim_district | District lookup | district_key, district_name |
-| dim_date | Time lookup | date_month_key, year, month |
-| permit_category_groups | Category mapping | raw_permittype, canonical_group, active |
+| fct_permits | Primary fact source | permitnumber, date_key, district_id, permit_category_group |
+| dim_district | District lookup | district_id, district_name |
+| dim_date | Time lookup | date_key, year, month |
 
 ---
 
@@ -95,7 +94,7 @@ GROUP BY p.district_key, p.date_month_key, pcg.canonical_group
 - [ ] Sum of all canonical group counts for a district × month equals the total permits_monthly_count for that district × month
 - [ ] No district × month × group row has a negative count
 - [ ] "Other/Unmapped" share is < 1% in any monthly load; alert if exceeded
-- [ ] No nulls in district_key, date_month_key, or canonical_group
+- [ ] No nulls in district_id, date_key, or permit_category_group
 - [ ] All active canonical groups appear in every district × month combination (even if count = 0)
 
 ---
@@ -128,3 +127,6 @@ GROUP BY p.district_key, p.date_month_key, pcg.canonical_group
 | Date       | Change Description   | Author |
 |------------|----------------------|--------|
 | 2026-03-08 | Initial spec created | Farid  |
+| 2026-03-10 | Reconciliation: aligned column names to column_contracts.md; fixed SQL sketch FROM stg_permits → fct_permits (D11); permit_category_group is now a column on fct_permits per SC1, no separate join needed | Farid |
+| 2026-03-10 | Reconciliation: fixed SQL sketch GROUP BY — date_key → year, month; added dim_date join (daily granularity → monthly) | Farid |
+| 2026-03-10 | Reconciliation: source tables fct_permits key fields — permitissuedate → date_key (date_key is the FK used; permitissuedate is raw source only) | Farid |

@@ -60,7 +60,7 @@ This policy locks the denominator used for all area-normalized metrics in the pr
 ## Links
 
 - Feature vs rollup policy: [`docs/policies/feature_vs_rollup_policy.md`](./feature_vs_rollup_policy.md)
-- Metric specs (permits per sq mi): (to be linked in Week 3)
+- Metric specs: [Permits per sq mi](../metrics/permits_per_sqmi_land.md)
 - Limitations register: [`docs/limitations_register.md`](../limitations_register.md)
 - Decision log: [`docs/decision_log.md`](../decision_log.md)
 
@@ -78,3 +78,4 @@ This policy locks the denominator used for all area-normalized metrics in the pr
 | Date       | Change description | Author |
 |------------|--------------------|--------|
 | 2026-03-05 | Initial draft      | Farid  |
+| 2026-03-10 | Reconciliation: filled placeholder link to permits_per_sqmi_land.md | Farid |

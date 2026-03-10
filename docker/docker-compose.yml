@@ -8,18 +8,17 @@ services:
     ports:
       - "5432:5432"
     volumes:
-       # Mount the local 'init-scripts' directory to the container's init directory as read-only
+       # Mount the local postgres/init/ directory to the container's init directory as read-only
       - type: bind
-        source: ../sql/init-scripts/
+        source: ./postgres/init/
         target: /docker-entrypoint-initdb.d/
         read_only: true
       - type: volume
         source: postgres_data
         target: /var/lib/postgresql/data
     healthcheck:
-      # pg_isready checks TCP-level connection readiness only — no credentials
-      # needed
-      test: ["CMD", "pg_isready"]
+      # pg_isready -U specifies the user to avoid defaulting to the OS user (root) inside the container
+      test: ["CMD", "pg_isready", "-U", "philly", "-d", "philly_dw"]
       interval: 10s
       timeout: 5s
       retries: 5

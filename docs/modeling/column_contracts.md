@@ -109,6 +109,10 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 | `owner_occupied_pct_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `owner_occupied_pct`. NULL if not published. |
 | `total_pop` | `NUMERIC` | **NULLABLE** | ACS estimate: total population. NULL if not published. |
 | `total_pop_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `total_pop`. NULL if not published. |
+| `renter_occupied_units` | `NUMERIC` | **NULLABLE** | ACS estimate: renter-occupied housing units (count) (DP04_0047E). NULL if Census did not publish. |
+| `renter_occupied_units_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `renter_occupied_units`. NULL if not published. |
+| `occupied_units` | `NUMERIC` | **NULLABLE** | ACS estimate: occupied housing units, total (count) (DP04_0045E). Denominator for renter share. NULL if not published. |
+| `occupied_units_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `occupied_units`. NULL if not published. |
 
 **Key strategy:**
 - Composite natural PK: (`geoid_tract`, `acs_period_label`) — no surrogate
@@ -184,3 +188,4 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 |------|--------------------|--------|
 | 2026-03-09 | Initial draft — SC1 (`fct_permits`) column contract (Task 2.2) | Farid |
 | 2026-03-09 | Added SC2–SC6: remaining four high-risk tables + dim_district and dim_zoning (Task 2.3) | Farid |
+| 2026-03-10 | SC4: added renter_occupied_units, renter_occupied_units_moe, occupied_units, occupied_units_moe — raw count columns required by acs_tenure_proxy metric; supports overlap-weighted district-level aggregation | Farid |

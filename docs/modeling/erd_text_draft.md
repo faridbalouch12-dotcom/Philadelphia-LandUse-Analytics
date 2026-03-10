@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-08
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-10
 **Status:** Draft
 
 ---
@@ -16,7 +16,7 @@ Text-only entity-relationship draft for the Philadelphia data warehouse. Defines
 ## Scope
 
 **In scope:**
-- All MVP entities (fact tables, dimensions, bridge, aggregation, feature layer)
+- All MVP entities (fact tables, dimensions, bridge, aggregation, feature layer, intermediate transform tables)
 - Relationships with cardinality and join keys
 - Design decisions and assumptions surfaced during ERD work
 
@@ -64,7 +64,7 @@ Text-only entity-relationship draft for the Philadelphia data warehouse. Defines
 **Type:** Fact
 **Grain:** One issued permit event from L&I, filtered in staging to `status = 'Issued'`
 **PK:** `permitnumber`
-**Key columns:** `permitnumber`, `district_id`, `permitissuedate`, `permittype`, `point_geometry`
+**Key columns:** `permitnumber`, `district_id`, `date_key`, `permitissuedate`, `permittype`, `point_geometry`
 **Purpose:** Core permit event fact table. Used for monthly counts, permits-per-sqmi, and composition metrics at the district level. Contains point geometry for spatial assignment — retained at row level since it is one point per permit event.
 
 ---
@@ -94,7 +94,7 @@ Text-only entity-relationship draft for the Philadelphia data warehouse. Defines
 **Type:** Fact
 **Grain:** One census tract × one ACS 5-year period snapshot; each indicator (estimate + MOE) is a separate column
 **PK:** (`geoid_tract`, `acs_period_label`)
-**Key columns:** `geoid_tract`, `acs_period_label`, `acs_period_end_date`, `median_income`, `median_income_moe`, `total_pop`, `total_pop_moe`, *(additional indicators...)*
+**Key columns:** `geoid_tract`, `acs_period_label`, `acs_period_end_date`, `median_hh_income`, `median_hh_income_moe`, `total_pop`, `total_pop_moe`, *(additional indicators...)*
 **Purpose:** Raw ACS demographic context at census tract level. Wide table — one row per tract per period, all indicators as columns. `acs_period_end_date` stores the EOY date of the period's end year (e.g., `2023-12-31` for "2019-2023") and is used as the FK to `dim_date`. Supports MOE-aware custom aggregations by analysts. Source for `agg_district_acs_attributes_hist` (E9).
 
 ---
@@ -119,14 +119,70 @@ Text-only entity-relationship draft for the Philadelphia data warehouse. Defines
 
 ---
 
+## Intermediate layer entities (pipeline-only)
+
+These transform tables are pipeline-only infrastructure. They are not queried by analysts and are not shown in the analyst-facing ERD diagram (`erd.mmd`). Documented here for completeness since they are assigned entity numbers in the table inventory and represent the intermediate layer of the 5-layer architecture.
+
+---
+
+### E10 — `int_li_permits_issued`
+
+**Type:** Transform
+**Grain:** One permit record where `status = 'Issued'` (filtered from `stg_li_permits`)
+**PK:** `permitnumber` (inherited from staging)
+**Key columns:** `permitnumber`, `permitissuedate`, `permittype`, `address`, `point_geometry`
+**Purpose:** Filters staged permit records to issued-only. First step in the permits pipeline. Feeds `int_li_permits_issued_with_district` (E11). Rebuilt on each pipeline run.
+
+---
+
+### E11 — `int_li_permits_issued_with_district`
+
+**Type:** Transform
+**Grain:** One issued permit event with assigned planning district (after point-in-polygon spatial join)
+**PK:** `permitnumber` (one-to-one with E10; permits not spatially assigned are dropped or flagged)
+**Key columns:** `permitnumber`, `district_id`, `permitissuedate`, `permittype`, `point_geometry`
+**Purpose:** Spatially joins E10 to planning district boundaries to assign `district_id` to each permit. Direct input to `fct_permits` (E4). Rebuilt on each pipeline run.
+
+---
+
+### E12 — `int_tract_district_overlap`
+
+**Type:** Transform
+**Grain:** One census tract × one planning district spatial intersection pair (unfiltered — all geometric intersections including slivers)
+**PK:** (`geoid_tract`, `district_id`) — composite
+**Key columns:** `geoid_tract`, `district_id`, `overlap_area_sqft`, `pct_tract_area`
+**Purpose:** Raw spatial intersection table before the `pct_tract_area > 0.01` threshold filter is applied (D16). Feeds `bridge_tract_district_overlap` (E6). Rebuilt on each pipeline run.
+
+---
+
+### E13 — `int_zoning_district_intersections_{year}`
+
+**Type:** Transform
+**Grain:** One zoning polygon × one planning district spatial intersection, per vintage year
+**PK:** (`zoning_polygon_id`, `district_id`, `vintage_year`) — composite
+**Key columns:** `zoning_polygon_id`, `district_id`, `zoning_code`, `vintage_year`, `intersection_area_sqft`
+**Purpose:** Raw zoning × district polygon intersections before area-weight aggregation. One row per polygon-pair per year. Feeds E14. Rebuilt on each pipeline run.
+
+---
+
+### E14 — `int_zoning_district_year_composition_base`
+
+**Type:** Transform
+**Grain:** One planning district × one vintage year × one zoning code (area weights pre-aggregated across all intersecting polygons)
+**PK:** (`district_id`, `vintage_year`, `zoning_code`) — composite
+**Key columns:** `district_id`, `vintage_year`, `zoning_code`, `total_intersection_area_sqft`, `pct_district`
+**Purpose:** Aggregates E13 by summing polygon intersection areas per district-year-zoning-code combination. Consolidates polygon-level intersections into one row per composition unit before loading to `fct_district_year_zoning_composition` (E5). Rebuilt on each pipeline run.
+
+---
+
 ## Relationships
 
 | # | From | To | Cardinality | Join Key | Notes |
 |---|------|----|-------------|----------|-------|
 | R1 | `fct_permits` | `dim_district` | many-to-one | `district_id` | One permit belongs to one district |
-| R2 | `fct_permits` | `dim_date` | many-to-one | `permitissuedate → date_key` | One permit has one issue date |
+| R2 | `fct_permits` | `dim_date` | many-to-one | `date_key → date_key` | One permit has one issue date |
 | R3 | `fct_district_year_zoning_composition` | `dim_district` | many-to-one | `district_id` | Many zoning snapshots per district |
-| R4 | `fct_district_year_zoning_composition` | `dim_date` | many-to-one | `vintage_date → date_key` | EOY date of vintage year; avoids year-level fan-out |
+| R4 | `fct_district_year_zoning_composition` | `dim_date` | many-to-one | `vintage_year_key → date_key` | EOY date of vintage year; avoids year-level fan-out |
 | R5 | `fct_district_year_zoning_composition` | `dim_zoning` | many-to-one | `zoning_code` | One zoning code per row |
 | R6 | `bridge_tract_district_overlap` | `dim_district` | many-to-one | `district_id` | Many tract-district pairs per district |
 | R7 | `bridge_tract_district_overlap` | `fct_tract_acs` | many-to-one | `geoid_tract` | Bridge references tract fact table as lookup |
@@ -172,7 +228,7 @@ G2 is a pure snapshot table. Year-over-year change is computed at query time by 
 
 - Grain spec: [`docs/modeling/grain_spec.md`](./grain_spec.md)
 - Decision log: [`docs/decision_log.md`](../decision_log.md)
-- Zoning comparability plan: [`docs/zoning_comparability_plan_draft.md`](../zoning_comparability_plan_draft.md)
+- Zoning comparability plan: [`docs/zoning_comparability_plan.md`](../zoning_comparability_plan.md)
 - ACS alignment note: [`docs/feasibility/acs_to_district_alignment_note.md`](../feasibility/acs_to_district_alignment_note.md)
 
 ---
@@ -189,3 +245,7 @@ G2 is a pure snapshot table. Year-over-year change is computed at query time by 
 | Date | Change description | Author |
 |------|--------------------|--------|
 | 2026-03-08 | Initial draft — 9 entities, 12 relationships, 5 design decisions, 4 assumptions | Farid |
+| 2026-03-10 | Added E10–E14 intermediate layer entities to reflect 5-layer architecture | Farid |
+| 2026-03-10 | Reconciliation: E4 key columns corrected — added `date_key` as FK to dim_date; R2 join key updated from `permitissuedate → date_key` to `date_key → date_key` | Farid |
+| 2026-03-10 | Reconciliation: E5 `vintage_year_key` corrected to PK+FK; R4 join key updated from `vintage_date → date_key` to `vintage_year_key → date_key` | Farid |
+| 2026-03-10 | Reconciliation: E7 key columns `median_income/moe` → `median_hh_income/moe` to match SC4 and erd.mmd; links section `zoning_comparability_plan_draft.md` → `zoning_comparability_plan.md` (draft deleted) | Farid |

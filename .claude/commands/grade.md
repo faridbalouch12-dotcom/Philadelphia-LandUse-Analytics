@@ -6,13 +6,13 @@ Grade task $ARGUMENTS.
 
 ## Step 1: Load the task spec
 
-Read `..claude/month2_syllabus.md` to find the task. Identify:
+Read `..claude/syllabus.md` to find the task. Identify:
 - Task name and number
 - Learning Objective
 - Definition of Done
 - Deliverable Artifacts (exact file paths)
 
-Read `..claude/month2_rubrics.md` to find the task-specific rubric checks for criterion 5 (Task Objective Mastery).
+Read `..claude/rubrics.md` to find the task-specific rubric checks for criterion 5 (Task Objective Mastery).
 
 ---
 
@@ -45,7 +45,7 @@ Be honest — don't inflate scores. A 1 means "mostly there with real gaps," a 2
 3. **Traceability** — Are there source links, cross-links, evidence? Can claims be verified?
 4. **Consistency** — Does it align with the style guide, templates, and other artifacts?
    - File names follow `lowercase_with_underscores` convention
-   - Resources cited using IDs from `..claude/month2_resources.md` ([B3], [D7], etc.)
+   - Resources cited using IDs from `..claude/resources.md` ([B3], [D7], etc.)
    - Markdown formatting is consistent (headings, lists, links)
    - Cross-references use correct relative paths and resolve
    - Header block present with all required metadata fields (where template applies)
@@ -84,3 +84,5 @@ Be honest — don't inflate scores. A 1 means "mostly there with real gaps," a 2
    ```
    - **[Short descriptive name]:** [`path/to/file.md`](./path/to/file.md)
    ```
+
+4. **Write session notes:** Invoke the `/session-notes` skill.

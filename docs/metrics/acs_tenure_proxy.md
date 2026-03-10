@@ -25,16 +25,16 @@ How prevalent is rental housing across the tracts within each planning district?
 
 ## Numerator / Denominator
 
-**Numerator:** `DP04_0047E` — renter-occupied housing units (estimate), at census tract level.
+**Numerator:** `renter_occupied_units` — renter-occupied housing units (count), from ACS field DP04_0047E, at census tract level.
 
-**Denominator:** `DP04_0045E` — occupied housing units (estimate), at census tract level.
+**Denominator:** `occupied_units` — occupied housing units (count), from ACS field DP04_0045E, at census tract level.
 
 ---
 
 ## Formula
 
 ```
-acs_tenure_proxy = DP04_0047E / DP04_0045E
+acs_tenure_proxy = renter_occupied_units / occupied_units
     (renter-occupied share, at census tract level)
 ```
 
@@ -45,9 +45,9 @@ acs_tenure_proxy = DP04_0047E / DP04_0045E
 SELECT
     geoid_tract,
     acs_period_label,
-    DP04_0047E AS renter_occupied_units,
-    DP04_0045E AS occupied_units,
-    DP04_0047E::float / NULLIF(DP04_0045E, 0) AS renter_share
+    renter_occupied_units,
+    occupied_units,
+    renter_occupied_units::float / NULLIF(occupied_units, 0) AS renter_share
 FROM fct_tract_acs
 ```
 
@@ -59,7 +59,7 @@ FROM fct_tract_acs
 
 *Source table grain (G4):* `fct_tract_acs` — one row per `(geoid_tract, acs_period_label)`
 
-*Dashboard grain (G6):* `agg_district_acs_attributes_hist` — one row per `(district_id, boundary_version, census_attribute, bin_range)`
+*Dashboard grain (G6):* `agg_district_acs_attributes_hist` — one row per `(district_id, boundary_version_eoy, census_attribute, bin_range)`
 
 ---
 
@@ -77,18 +77,18 @@ FROM fct_tract_acs
 
 | Table | Role | Key Fields Used |
 |-------|------|-----------------|
-| fct_tract_acs | Raw ACS tract-level estimates (G4) | geoid_tract, acs_period_label, DP04_0047E (renter units estimate + MOE), DP04_0045E (occupied units estimate + MOE) |
+| fct_tract_acs | Raw ACS tract-level estimates (G4) | geoid_tract, acs_period_label, renter_occupied_units, renter_occupied_units_moe, occupied_units, occupied_units_moe |
 | bridge_tract_district_overlap | Tract → district spatial bridge (G3) | geoid_tract, district_id, boundary_version, pct_tract_area |
 | agg_district_acs_attributes_hist | Pre-aggregated histogram rollup (G6) | district_id, census_attribute, bin_range, tract_count |
-| dim_district | District lookup | district_key, district_name |
+| dim_district | District lookup | district_id, district_name |
 
 ---
 
 ## Test Ideas
 
 - [ ] No tract has renter_share > 1.0 or < 0.0
-- [ ] No nulls in DP04_0045E (denominator) for Philadelphia tracts; if null, renter_share is suppressed (NULL), not zero
-- [ ] MOE columns for both DP04_0047E and DP04_0045E are retained and non-null where estimates are non-null
+- [ ] No nulls in occupied_units (denominator) for Philadelphia tracts; if null, renter_share is suppressed (NULL), not zero
+- [ ] MOE columns for both renter_occupied_units and occupied_units are retained and non-null where estimates are non-null
 - [ ] Only non-overlapping ACS periods are compared in any dashboard or analysis output
 - [ ] ACS period label is present and matches the vintage year in all fct_tract_acs rows
 - [ ] Histogram bin counts in agg_district_acs_attributes_hist sum to the correct number of tracts per district
@@ -102,7 +102,7 @@ FROM fct_tract_acs
 - **Non-overlapping periods only:** Only compare ACS periods that do not overlap (e.g., 2015–2019 vs 2020–2024); see [ACS usage policy](../policies/acs_usage_policy.md).
 - **MAUP risk at district boundaries:** Tracts straddling planning district boundaries are allocated via area-weighted interpolation, which assumes uniform population distribution within tracts. This may misallocate tenure proportions near district edges; see [ACS to district alignment note](../feasibility/acs_to_district_alignment_note.md).
 - **MOE must be retained:** Margins of error for both numerator (DP04_0047E) and denominator (DP04_0045E) must be stored in the mart. Do not suppress them.
-- **Zero-denominator guard:** Tracts with zero occupied housing units (DP04_0045E = 0) must not produce a division-by-zero result; suppress renter_share as NULL for those tracts.
+- **Zero-denominator guard:** Tracts with zero occupied housing units (`occupied_units = 0`) must not produce a division-by-zero result; suppress renter_share as NULL for those tracts.
 
 ---
 
@@ -126,3 +126,6 @@ FROM fct_tract_acs
 | Date       | Change Description   | Author |
 |------------|----------------------|--------|
 | 2026-03-08 | Initial spec created | Farid  |
+| 2026-03-10 | Reconciliation: aligned district_key → district_id per column_contracts.md | Farid |
+| 2026-03-10 | Reconciliation: G6 dashboard grain — boundary_version → boundary_version_eoy (aligns with corrected G6 PK in grain_spec.md) | Farid |
+| 2026-03-10 | Reconciliation: replaced raw ACS field codes with SC4 warehouse column names — DP04_0047E → renter_occupied_units (+MOE), DP04_0045E → occupied_units (+MOE); SC4 expanded with these columns in column_contracts.md | Farid |

@@ -97,8 +97,8 @@ A table where **one row represents an aggregate** at a higher grain intended for
 **Grain:** 1 row = 1 zoning polygon in 1 vintage layer.
 **Purpose:** Spatial source of truth; supports map-first exploration and overlay QA.
 **Typical columns (conceptual):**
-- `objectid` + `vintage_year` (composite key)
-- `code`, `long_code`, `zoninggroup` (classification fields)
+- `objectid` + `vintage_year_key` (composite key)
+- `code`, `long_code`, `zoning_category` (classification fields)
 - geometry (polygon)
 - assigned `district_id` (from polygon overlay with planning districts)
 - derived `intersection_area_sqft` (area of polygon clipped to district)
@@ -113,24 +113,23 @@ A table where **one row represents an aggregate** at a higher grain intended for
 **Derived from:** zoning polygons feature table + district spine (for total district area).
 **Typical columns (conceptual):**
 - `district_id`
-- `vintage_year`
+- `vintage_year_key`
 - `zoning_code` (harmonized)
-- `area_sqft` (total intersection area for this code in this district-year)
-- `pct_district_area` (share of district land area — semi-additive fact)
+- `area_sqmi` (total intersection area for this code in this district-year)
+- `pct_district` (share of district land area — semi-additive fact)
 
 **Example questions this supports**
 - "What share of District 5's land area was residential in 2022 vs 2023?"
 - "Which districts saw the largest shift away from industrial zoning over 5 years?"
 
-**Note on semi-additivity:** `pct_district_area` can be summed across zoning codes within a single district-year (sums to ~100%), but must not be summed across vintage years — that operation is meaningless.
+**Note on semi-additivity:** `pct_district` can be summed across zoning codes within a single district-year (sums to ~100%), but must not be summed across vintage years — that operation is meaningless.
 
 ---
 
 ## Additional guidance (recommended)
 
-### Naming conventions (optional but recommended)
-- Feature tables: `feat_*` (e.g., `feat_permits`, `feat_zoning_polygons`)
-- Rollup tables: `fct_*` for facts, `dim_*` for dimensions (e.g., `fct_district_month_permits`, `dim_district`)
+### Naming conventions
+Naming conventions are defined in the decision log — see [D18](../decision_log.md) for the authoritative prefix scheme (`stg_*`, `int_*`, `fct_*`, `dim_*`, `bridge_*`, `geo_*`, `agg_*`).
 
 ### Auditability expectations
 - Rollups should document reconciliation expectations:
@@ -162,3 +161,5 @@ A table where **one row represents an aggregate** at a higher grain intended for
 |------------|--------------------|--------|
 | 2026-03-04 | Initial draft      | Farid  |
 | 2026-03-07 | Added Example B: zoning polygon feature table and district-year composition rollup (D7) | Farid |
+| 2026-03-10 | Reconciliation: replaced naming conventions with pointer to D18 (feat_* prefix never used; D18 defines authoritative scheme) | Farid |
+| 2026-03-10 | Reconciliation: aligned B1/B2 conceptual columns to SC2/SC6 — zoninggroup → zoning_category, vintage_year → vintage_year_key, area_sqft → area_sqmi, pct_district_area → pct_district | Farid |

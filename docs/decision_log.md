@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-03
-**Last Updated:** 2026-03-08 (Task 16.3)
+**Last Updated:** 2026-03-10
 **Status:** Draft
 
 ---
@@ -106,10 +106,18 @@ and placeholder entries for decisions that have not actually been made yet.
 | Field | Detail |
 |-------|--------|
 | **Date** | 2026-03-07 |
-| **Decision** | The warehouse will have two fact tables: `fct_permits` (transaction fact table, one row per permit event) and `fct_district_year_zoning_composition` (periodic snapshot fact table, grain: one row = one zoning code × one planning district × one vintage year). |
+| **Decision** | The warehouse includes the following fact tables. New fact tables are appended to this list as they are added. |
+
+**Warehouse fact tables:**
+
+| Table | Fact Type | Grain | Business Process | Measures |
+|-------|-----------|-------|------------------|----------|
+| `fct_permits` | Transaction | One issued permit event | L&I building permit issuance — tracks what construction activity was authorized, where, and when | Event count (implicit); `permit_category_group` enables composition breakdowns |
+| `fct_district_year_zoning_composition` | Periodic snapshot | One district × one vintage year × one zoning code | Regulatory land use composition — tracks how each district's zoning makeup is distributed and shifts over time | `area_sqmi`, `pct_district` |
+| `fct_tract_acs` | Periodic snapshot | One census tract × one ACS 5-year period | Demographic and housing context — captures income and tenure characteristics at tract level for district-level distribution analysis | `median_hh_income` (+ MOE), `owner_occupied_pct` (+ MOE), `total_pop` (+ MOE) |
 | **Alternatives** | (1) Model zoning as a slowly changing dimension (SCD Type 2) on the permits fact table. (2) Single fact table only, treating zoning composition as a derived metric computed at query time. |
 | **Rationale** | Permits and zoning answer two separate analytical questions — physical change over time (permits) and regulatory change over time (zoning). Zoning composition is a measurement (land area share by class per district per year), not descriptive context, so it belongs in a fact table rather than a dimension. An SCD Type 2 would track what a polygon's classification *is* over time, but cannot measure how much land area is in each class per district per year. A periodic snapshot is the correct Kimball pattern because the source data consists of annual state snapshots, not event transactions, and the metrics are semi-additive (can be summed across zoning codes within a district-year, but not across years). |
-| **Implications** | The warehouse now has two independent fact tables sharing conformed dimensions (district, date/vintage year). Metric specs, ERD, and the feature vs. rollup policy must all reflect two fact table paths. Zoning composition metrics are semi-additive and must not be summed across vintage years. |
+| **Implications** | The warehouse has three independent fact tables sharing conformed dimensions (district, date). Metric specs, ERD, and the feature vs. rollup policy must all reflect each fact table's path. Zoning composition metrics are semi-additive and must not be summed across vintage years. ACS estimates are non-additive and must be presented as tract-level distributions (D10). |
 
 ---
 
@@ -149,6 +157,18 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ---
 
+### D11. Cross-metric consistency fixes (Week 3 quality pass — Task 15.1)
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-08 |
+| **Decision** | Five naming inconsistencies identified across metric specs and modeling docs were resolved: (1) `stg_permits` → `fct_permits` in source tables of permits_monthly_count, permits_per_sqmi_land, and permits_composition — metric specs reference analyst-facing fact tables, not staging tables. (2) `dim_permit_type` → `permit_category_groups` in dimensions of permits_monthly_count and permits_per_sqmi_land — table inventory does not include a separate dim_permit_type; the lookup is permit_category_groups per the grouping memo. (3) `dim_zoning_code` → `dim_zoning` in zoning_comparability_plan final — table inventory (E3) uses dim_zoning as the canonical name. (4) Planning District dimension in ACS metric specs corrected from bridge_tract_district_overlap to dim_district — the bridge is infrastructure, not a sliceable dimension. (5) SQL sketch in permits_composition corrected from stg_permits to fct_permits for consistency with (1). |
+| **Alternatives** | Leave inconsistencies in place until Month 2 implementation forces resolution. |
+| **Rationale** | Naming inconsistencies in documentation specs create ambiguity that compounds when engineers implement models. Resolving them in documentation before any code is written is lower cost than reconciling divergent table names after pipeline work begins. |
+| **Implications** | All metric specs and the final zoning comparability plan now use consistent table names aligned to the table inventory. Month 2 pipeline implementation should treat these names as canonical. |
+
+---
+
 ### D12. Use EOY surrogate date keys for all year-level and period-level fact-to-dimension joins
 
 | Field | Detail |
@@ -185,15 +205,15 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ---
 
-### D17. SCD strategy for all warehouse dimensions
+### D15. `fct_permits` is a transaction fact table only in MVP; permit lifecycle snapshot deferred
 
 | Field | Detail |
 |-------|--------|
 | **Date** | 2026-03-09 |
-| **Decision** | `dim_district`: Type 1 (overwrite). `dim_date`: Static (generated once, never updated). `dim_zoning`: Type 1 (overwrite). Fact and bridge tables are not subject to SCD — they are immutable once loaded or versioned by design. |
-| **Alternatives** | Type 2 (track history) for `dim_district` or `dim_zoning` — would preserve the old row and add a new one when attributes change, keeping historical facts linked to the description accurate at the time. |
-| **Rationale** | `dim_district`: Philadelphia planning district names and boundaries are administratively stable. The boundary itself is tracked separately via `boundary_version` in `geo_district_boundaries` and `bridge_tract_district_overlap` — so geographic changes are already versioned at the appropriate layer, not in the dimension. `dim_date`: Calendar dates are immutable by definition. `dim_zoning`: Zoning categories (`zoning_label`, `zoning_category`) are broad and stable within the MVP window (recent 5 years). The raw `zoning_code` is preserved in `fct_district_year_zoning_composition` regardless of label changes, so historical composition data is not affected by a Type 1 overwrite — only the display label changes. Type 2 would add surrogate key complexity and version-tracking overhead not justified by the stability of these attributes at MVP scale. |
-| **Implications** | No surrogate key versioning columns (`effective_date`, `expiry_date`, `is_current`) are needed on any dimension for MVP. If a `dim_zoning` label is corrected in Month 2+, the correction silently applies to all historical display queries — this is acceptable and documented. If district boundaries change materially, the change is captured via a new `boundary_version` in the spatial tables, not via `dim_district`. |
+| **Decision** | The MVP uses `fct_permits` as a transaction/event fact table only — one row per issued permit, filtered in staging to `status = 'Issued'`. A separate `fct_permit_lifecycle_snapshot` (accumulating snapshot tracking milestone dates such as applied, issued, and completed) is explicitly deferred to a future phase. |
+| **Alternatives** | (1) MVP includes both a transaction fact and a lifecycle accumulating snapshot fact — more complete, but adds staging complexity and requires reliable milestone date coverage that the raw data does not currently guarantee. (2) MVP uses only an accumulating snapshot — simpler to answer lifecycle questions, but adds update complexity and doesn't align with how the raw data is naturally structured (it's filtered to issued events, not tracked through a full lifecycle). |
+| **Rationale** | The raw L&I data is filtered to `status = 'Issued'`, which means each permit row represents a single completed issuance event. A transaction fact is the natural pattern for this structure. Lifecycle questions (e.g., how long from application to issuance?) require reliable population of milestone columns (`permitapplicationdate`, `permitcompleteddate`) — fields that are currently sparse or inconsistently populated. Building an accumulating snapshot on incomplete milestone data would produce misleading duration metrics. Deferring it keeps the MVP clean and avoids fabricating lifecycle claims the data can't support. |
+| **Implications** | `fct_permits` must be treated as a transaction fact throughout all documentation, metric specs, ERD annotations, and implementation work. Any reference to permit lifecycle or accumulating snapshot must include explicit "deferred" language. When lifecycle data quality improves in Month 2+, a separate `fct_permit_lifecycle_snapshot` can be added without changing the existing transaction fact table. |
 
 ---
 
@@ -209,27 +229,27 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ---
 
-### D15. `fct_permits` is a transaction fact table only in MVP; permit lifecycle snapshot deferred
+### D17. SCD strategy for all warehouse dimensions
 
 | Field | Detail |
 |-------|--------|
 | **Date** | 2026-03-09 |
-| **Decision** | The MVP uses `fct_permits` as a transaction/event fact table only — one row per issued permit, filtered in staging to `status = 'Issued'`. A separate `fct_permit_lifecycle_snapshot` (accumulating snapshot tracking milestone dates such as applied, issued, and completed) is explicitly deferred to a future phase. |
-| **Alternatives** | (1) MVP includes both a transaction fact and a lifecycle accumulating snapshot fact — more complete, but adds staging complexity and requires reliable milestone date coverage that the raw data does not currently guarantee. (2) MVP uses only an accumulating snapshot — simpler to answer lifecycle questions, but adds update complexity and doesn't align with how the raw data is naturally structured (it's filtered to issued events, not tracked through a full lifecycle). |
-| **Rationale** | The raw L&I data is filtered to `status = 'Issued'`, which means each permit row represents a single completed issuance event. A transaction fact is the natural pattern for this structure. Lifecycle questions (e.g., how long from application to issuance?) require reliable population of milestone columns (`permitapplicationdate`, `permitcompleteddate`) — fields that are currently sparse or inconsistently populated. Building an accumulating snapshot on incomplete milestone data would produce misleading duration metrics. Deferring it keeps the MVP clean and avoids fabricating lifecycle claims the data can't support. |
-| **Implications** | `fct_permits` must be treated as a transaction fact throughout all documentation, metric specs, ERD annotations, and implementation work. Any reference to permit lifecycle or accumulating snapshot must include explicit "deferred" language. When lifecycle data quality improves in Month 2+, a separate `fct_permit_lifecycle_snapshot` can be added without changing the existing transaction fact table. |
+| **Decision** | `dim_district`: Type 1 (overwrite). `dim_date`: Static (generated once, never updated). `dim_zoning`: Type 1 (overwrite). Fact and bridge tables are not subject to SCD — they are immutable once loaded or versioned by design. |
+| **Alternatives** | Type 2 (track history) for `dim_district` or `dim_zoning` — would preserve the old row and add a new one when attributes change, keeping historical facts linked to the description accurate at the time. |
+| **Rationale** | `dim_district`: Philadelphia planning district names and boundaries are administratively stable. The boundary itself is tracked separately via `boundary_version` in `geo_district_boundaries` and `bridge_tract_district_overlap` — so geographic changes are already versioned at the appropriate layer, not in the dimension. `dim_date`: Calendar dates are immutable by definition. `dim_zoning`: Zoning categories (`zoning_label`, `zoning_category`) are broad and stable within the MVP window (recent 5 years). The raw `zoning_code` is preserved in `fct_district_year_zoning_composition` regardless of label changes, so historical composition data is not affected by a Type 1 overwrite — only the display label changes. Type 2 would add surrogate key complexity and version-tracking overhead not justified by the stability of these attributes at MVP scale. |
+| **Implications** | No surrogate key versioning columns (`effective_date`, `expiry_date`, `is_current`) are needed on any dimension for MVP. If a `dim_zoning` label is corrected in Month 2+, the correction silently applies to all historical display queries — this is acceptable and documented. If district boundaries change materially, the change is captured via a new `boundary_version` in the spatial tables, not via `dim_district`. |
 
 ---
 
-### D11. Cross-metric consistency fixes (Week 3 quality pass — Task 15.1)
+### D18. Use a 5-layer schema architecture: raw, staging, intermediate, marts, analytics
 
 | Field | Detail |
 |-------|--------|
-| **Date** | 2026-03-08 |
-| **Decision** | Five naming inconsistencies identified across metric specs and modeling docs were resolved: (1) `stg_permits` → `fct_permits` in source tables of permits_monthly_count, permits_per_sqmi_land, and permits_composition — metric specs reference analyst-facing fact tables, not staging tables. (2) `dim_permit_type` → `permit_category_groups` in dimensions of permits_monthly_count and permits_per_sqmi_land — table inventory does not include a separate dim_permit_type; the lookup is permit_category_groups per the grouping memo. (3) `dim_zoning_code` → `dim_zoning` in zoning_comparability_plan final — table inventory (E3) uses dim_zoning as the canonical name. (4) Planning District dimension in ACS metric specs corrected from bridge_tract_district_overlap to dim_district — the bridge is infrastructure, not a sliceable dimension. (5) SQL sketch in permits_composition corrected from stg_permits to fct_permits for consistency with (1). |
-| **Alternatives** | Leave inconsistencies in place until Month 2 implementation forces resolution. |
-| **Rationale** | Naming inconsistencies in documentation specs create ambiguity that compounds when engineers implement models. Resolving them in documentation before any code is written is lower cost than reconciling divergent table names after pipeline work begins. |
-| **Implications** | All metric specs and the final zoning comparability plan now use consistent table names aligned to the table inventory. Month 2 pipeline implementation should treat these names as canonical. |
+| **Date** | 2026-03-10 |
+| **Decision** | The warehouse uses 5 schemas: `raw` (API landing zone, Python-only writes), `staging` (cleaned/standardized data, dbt `stg_*` models), `intermediate` (complex grain-changing transforms, dbt `int_*` models), `marts` (analyst-facing fact/dimension/bridge tables, dbt `dim_*/fct_*/bridge_*/geo_*` models), `analytics` (Metabase-only aggregations, dbt `agg_*` models). |
+| **Alternatives** | (1) **2-layer (staging/marts)** — original conceptual design. Assumed raw data would sit as files on disk, but data arrives via API and is loaded directly into Postgres by Python. Conflated "raw API landing" with "cleaned data" in a single staging schema. (2) **3-layer (raw/staging/marts)** — added `raw` as the Python-only landing schema. Better, but staging → marts still required too much transformation in a single step: both simple column renames and complex spatial joins happened inside staging or were deferred to query time. |
+| **Rationale** | The key driver was the complexity of the spatial work. Staging should only do simple, repeatable transformations — renaming columns, standardizing types, CRS validation, applying crosswalks. Nothing that changes the grain or requires joining multiple sources. The spatial joins (point-in-polygon for permits, polygon intersection for zoning, tract-district overlap for ACS) are the hardest part of this pipeline: they change grain, require PostGIS operations, and are the most likely to break. Folding them into staging makes that layer hard to read and debug. Separating them into `intermediate` gives the dbt DAG a clean structure — stg_* cleans raw data, int_* does joins. The marts/analytics split was driven by `agg_district_acs_attributes_hist`: it answers a specific Metabase question and no SQL analyst would ever query it directly. Putting it in `analytics` makes that boundary explicit rather than leaving a Metabase-only table sitting next to analyst-facing fact tables in `marts`. The 5-layer design adds more tables to maintain and more documentation to update, but that cost is worth it given the complexity of the spatial joins and the clear boundary it establishes between "cleaning raw data" and "doing joins on data." |
+| **Implications** | Every dbt model now has an explicit schema home: `stg_*` → staging, `int_*` → intermediate, `dim_*/fct_*/bridge_*/geo_*` → marts, `agg_*` → analytics. `intermediate` is pipeline-only — analysts should not query it directly (enforced by the read/write policy in Task 5.3). `analytics` is Metabase-only — SQL analysts use `marts` for custom work. Python writes exclusively to `raw`; nothing else touches it. The dbt DAG will naturally organize into four pipeline phases, making it easier to read and debug. Five new intermediate tables (E10–E14) were added to the table inventory to represent this layer. |
 
 ---
 
@@ -262,3 +282,6 @@ and placeholder entries for decisions that have not actually been made yet.
 | 2026-03-09 | Added D15: fct_permits locked as transaction fact; permit lifecycle accumulating snapshot deferred (Month 1 closeout) | Farid |
 | 2026-03-09 | Added D16: bridge table minimum overlap threshold pct_tract_area > 0.01 (Month 1 closeout) | Farid |
 | 2026-03-09 | Added D17: SCD strategy for all dimensions — Type 1 for dim_district and dim_zoning, static for dim_date (Month 1 closeout) | Farid |
+| 2026-03-10 | Added D18: 5-layer schema architecture (raw/staging/intermediate/marts/analytics) | Farid |
+| 2026-03-10 | Amended D7: replaced stale "two fact tables" count with appendable fact table registry; added fct_tract_acs; updated Implications to reflect three fact tables | Farid |
+| 2026-03-10 | Reordered entries D11–D18 to sequential numeric order (D-numbers unchanged) | Farid |

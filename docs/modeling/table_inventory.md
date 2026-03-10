@@ -2,27 +2,30 @@
 
 **Author:** Farid
 **Created:** 2026-03-08
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-10
 **Status:** Draft
 
 ---
 
 ## Purpose
 
-This document inventories all planned warehouse tables for the Philadelphia data warehouse MVP. Each table is classified by type, grain, and intended consumers to clarify what each table is for and who should query it.
+This document inventories all planned warehouse tables for the Philadelphia data warehouse MVP. Each table is classified by schema layer, type, grain, and intended consumers to clarify what each table is for and who should query it.
 
 ---
 
 ## Scope
 
 **In scope:**
-- All 9 MVP entities defined in the ERD text draft
+- All analyst-facing MVP tables across marts and analytics layers
 - Type classification (feature / rollup / dimension / bridge / geo)
 - Grain statement (one row per …)
 - Intended consumers
 
 **Out of scope:**
-- Physical DDL and column-level specs (covered in data dictionaries)
+- Raw landing tables (documented in source catalog)
+- Staging tables (dbt `stg_*` — pipeline-only; documented in dataflow diagram)
+- Intermediate transform tables (dbt `int_*` — pipeline-only; documented in [erd_text_draft.md](./erd_text_draft.md) E10–E14 and [dataflow.mmd](../diagrams/dataflow.mmd))
+- Physical DDL and column-level specs (covered in column contracts)
 - dbt implementation details
 - Metric definitions (covered in metric specs)
 
@@ -35,12 +38,13 @@ This document inventories all planned warehouse tables for the Philadelphia data
 | **feature** | One row = one real-world object or event at atomic grain. Map-ready; supports drill-down. Not pre-aggregated. See [feature_vs_rollup_policy.md](../policies/feature_vs_rollup_policy.md). |
 | **rollup** | One row = one aggregate at a higher grain intended for dashboards and comparisons. Reproducible from upstream feature tables. See [feature_vs_rollup_policy.md](../policies/feature_vs_rollup_policy.md). |
 | **dimension** | Lookup / reference table providing descriptive attributes for joining to fact tables. |
-| **bridge** | Resolves a many-to-many relationship between two entities. Infrastructure table — not intended for direct dashboard queries. |
+| **bridge** | Resolves a many-to-many relationship between two entities. Infrastructure table — queryable by advanced analysts but not intended for direct dashboard queries. |
 | **geo** | Stores polygon geometry for spatial operations and map rendering. Not intended for analytics joins due to geometry overhead. |
-
 ---
 
 ## Table inventory
+
+### Marts layer (schema: `marts`)
 
 | Table | Entity | Type | Grain | SCD Strategy | Intended consumers |
 |-------|--------|------|-------|--------------|-------------------|
@@ -52,7 +56,12 @@ This document inventories all planned warehouse tables for the Philadelphia data
 | `bridge_tract_district_overlap` | E6 | bridge | One census tract × one planning district × one boundary version overlap, where `pct_tract_area > 0.01` | N/A — versioned by `boundary_version`; new boundary → new rows, old rows retained | Pipeline / dbt models (primary — used to aggregate `fct_tract_acs` to district level); advanced analysts building custom MOE-aware district aggregations (secondary) |
 | `fct_tract_acs` | E7 | feature | One census tract × one ACS 5-year period snapshot (wide — each indicator as separate column) | N/A — append-only by period; historical periods are never updated | SQL analysts (custom MOE-aware aggregations); pipeline / dbt models (source for `agg_district_acs_attributes_hist` via bridge) |
 | `geo_district_boundaries` | E8 | geo | One planning district boundary version | N/A — versioned by `boundary_version`; geometry rows are immutable once loaded | GIS tools / map rendering only; not for analytics joins (geometry overhead) |
-| `agg_district_acs_attributes_hist` | E9 | rollup | One planning district × one boundary version × one census attribute × one bin range | N/A — derived rollup; rebuilt from source on refresh | Metabase dashboards (district-level ACS histogram visualizations, hover tooltips) |
+
+### Analytics layer (schema: `analytics`)
+
+| Table | Entity | Type | Grain | SCD Strategy | Intended consumers |
+|-------|--------|------|-------|--------------|-------------------|
+| `agg_district_acs_attributes_hist` | E9 | rollup | One planning district × one boundary version × one census attribute × one bin range | N/A — derived rollup; rebuilt from source on refresh | Metabase dashboards only (district-level ACS histogram visualizations, hover tooltips) |
 
 ---
 
@@ -93,6 +102,7 @@ This document inventories all planned warehouse tables for the Philadelphia data
 - ERD text draft: [`docs/modeling/erd_text_draft.md`](./erd_text_draft.md)
 - Grain spec: [`docs/modeling/grain_spec.md`](./grain_spec.md)
 - Decision log: [`docs/decision_log.md`](../decision_log.md)
+- Schema layer redesign notes: [`notes/claude_sessions/session_2026-03-10_task-5-2_schema-redesign.md`](../../notes/claude_sessions/session_2026-03-10_task-5-2_schema-redesign.md)
 
 ---
 
@@ -108,3 +118,5 @@ This document inventories all planned warehouse tables for the Philadelphia data
 |------|--------------------|--------|
 | 2026-03-08 | Initial draft — 9 tables, type classifications, grain statements, consumer designations, assumptions and risks | Farid |
 | 2026-03-09 | Added SCD Strategy column for all 9 tables (Month 1 closeout) | Farid |
+| 2026-03-10 | Added 5-layer schema architecture; moved E9 to analytics layer | Farid |
+| 2026-03-10 | Reconciliation: removed intermediate tables (E10–E14) and transform type — pipeline-only tables documented in erd_text_draft.md and dataflow.mmd; tightened scope to marts + analytics; removed A4 | Farid |

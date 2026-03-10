@@ -60,7 +60,7 @@ so joins and metrics stay consistent.
 
 **Notes:**
 - Expected measures: `overlap_area_sqft`, `pct_tract_area`
-- Assignment metadata: `assignment_method = 'overlap_any'`
+- Assignment metadata: `assignment_method = 'overlap_weighted'`
 
 ---
 
@@ -90,7 +90,7 @@ so joins and metrics stay consistent.
 
 **Definition:** One planning district × one boundary version × one census attribute × one bin range; measure is count of census tracts falling in that bin.
 
-**Example PK:** (`district_id`, `boundary_version`, `census_attribute`, `bin_range`)
+**Example PK:** (`district_id`, `boundary_version_eoy`, `census_attribute`, `bin_range`)
 
 **Notes:**
 - Derived from G4 via G3 overlap bridge
@@ -232,3 +232,5 @@ G2 is a pure snapshot table — each row answers "what is the zoning composition
 | 2026-03-08 | Initial Task 11.1 draft with five grain statements, PK examples, and failure modes | Farid |
 | 2026-03-08 | Finalized through tutor discussion: added G6 (agg_district_acs_attributes_hist), corrected FM1/FM2, clarified G4 wide-table design rationale | Farid |
 | 2026-03-09 | Added schema contracts SC1–SC4 for all four high-risk tables; column types, nullability, key strategy, and grain validation rules (Month 1 closeout) | Farid |
+| 2026-03-10 | Reconciliation: G6 PK corrected from `boundary_version` to `boundary_version_eoy` — aligns with ERD and D12 EOY surrogate pattern | Farid |
+| 2026-03-10 | Reconciliation: G3 `assignment_method` corrected from `'overlap_any'` to `'overlap_weighted'` — aligns with D16 and SC3 | Farid |

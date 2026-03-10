@@ -1,7 +1,7 @@
 ---
 config:
   layout: elk
-title: Philadelphia Data Warehouse — High-Level Dataflow (Month 1 MVP)
+title: Philadelphia Data Warehouse — High-Level Dataflow (Month 2 MVP)
 ---
 flowchart TD
 
@@ -11,6 +11,11 @@ flowchart TD
         SRC2["L&I Permits — CARTO SQL API"]
         SRC3["Zoning Base Districts — ArcGIS FeatureServer (5 vintages)"]
         SRC4["ACS 5-Year Estimates — Census Bureau API"]
+    end
+
+    %% ── Seeds ────────────────────────────────────────────────────────
+    subgraph SEEDS["Seeds  (dbt seeds — static reference data)"]
+        SEED_XWALK["seed_zoning_code_crosswalk — hand-authored vintage mapping"]
     end
 
     %% ── Raw layer ────────────────────────────────────────────────────
@@ -24,15 +29,22 @@ flowchart TD
     %% ── Staging layer ────────────────────────────────────────────────
     subgraph STAGING["Staging layer  (schema: staging / dbt stg_*)"]
         STG_DISTRICTS["stg_planning_districts — CRS validated, land_area_sqmi"]
-        STG_PERMITS["stg_li_permits — Issued filter, category group, district join"]
-        STG_ZONING["stg_zoning_base_districts — crosswalk, vocab_stable, district join"]
+        STG_PERMITS["stg_li_permits — rename columns, standardize types"]
+        STG_ZONING["stg_zoning_base_districts — crosswalk applied, vocab_stable"]
         STG_ACS["stg_acs_tract — geoid standardized, period label, suppress nulls"]
-        STG_XWALK["stg_zoning_code_crosswalk — hand-authored vintage mapping"]
-        STG_BRIDGE["stg_tract_district_overlap — spatial intersection, pct_tract_area"]
+    end
+
+    %% ── Intermediate layer ───────────────────────────────────────────
+    subgraph INTERMEDIATE["Intermediate layer  (schema: intermediate / dbt int_*)"]
+        INT_PERMITS_ISSUED["int_li_permits_issued — filter status = Issued"]
+        INT_PERMITS_DISTRICT["int_li_permits_issued_with_district — spatial join to district"]
+        INT_TRACT_OVERLAP["int_tract_district_overlap — raw spatial intersection, pct_tract_area"]
+        INT_ZONING_INTERSECT["int_zoning_district_intersections_{year} — zoning × district spatial intersection"]
+        INT_ZONING_COMP["int_zoning_district_year_composition_base — area weights per district/zone/year"]
     end
 
     %% ── Mart layer ───────────────────────────────────────────────────
-    subgraph MART["Mart layer  (schema: mart)"]
+    subgraph MART["Mart layer  (schema: marts)"]
 
         subgraph MART_DIMS["Conformed dimensions"]
             DIM_DISTRICT["dim_district"]
@@ -46,11 +58,15 @@ flowchart TD
             GEO_BOUNDS["geo_district_boundaries  [E8]"]
         end
 
-        subgraph MART_ROLLUP["Rollup + Aggregation tables"]
+        subgraph MART_ROLLUP["Rollup + Bridge tables"]
             FCT_ZONING["fct_district_year_zoning_composition  [G2]"]
             MART_BRIDGE["bridge_tract_district_overlap  [G3]"]
-            AGG_ACS["agg_district_acs_attributes_hist  [G6]"]
         end
+    end
+
+    %% ── Analytics layer ──────────────────────────────────────────────
+    subgraph ANALYTICS["Analytics layer  (schema: analytics / dbt agg_*)"]
+        AGG_ACS["agg_district_acs_attributes_hist  [G6]"]
     end
 
     %% ── BI layer ─────────────────────────────────────────────────────
@@ -69,19 +85,26 @@ flowchart TD
     RAW_PERMITS   --> STG_PERMITS
     RAW_ZONING    --> STG_ZONING
     RAW_ACS       --> STG_ACS
-    STG_XWALK     --> STG_ZONING
-    STG_DISTRICTS --> STG_BRIDGE
-    STG_ACS       --> STG_BRIDGE
+    SEED_XWALK    --> STG_ZONING
 
-    STG_DISTRICTS --> DIM_DISTRICT
-    STG_ZONING    --> DIM_ZONING
+    STG_PERMITS          --> INT_PERMITS_ISSUED
+    INT_PERMITS_ISSUED   --> INT_PERMITS_DISTRICT
+    STG_DISTRICTS        --> INT_PERMITS_DISTRICT
+    STG_DISTRICTS        --> INT_TRACT_OVERLAP
+    STG_ACS              --> INT_TRACT_OVERLAP
+    STG_ZONING           --> INT_ZONING_INTERSECT
+    STG_DISTRICTS        --> INT_ZONING_INTERSECT
+    INT_ZONING_INTERSECT --> INT_ZONING_COMP
 
-    STG_DISTRICTS --> GEO_BOUNDS
-    STG_PERMITS   --> FCT_PERMITS
-    STG_ACS       --> FCT_ACS
+    STG_DISTRICTS        --> DIM_DISTRICT
+    STG_ZONING           --> DIM_ZONING
 
-    STG_ZONING  --> FCT_ZONING
-    STG_BRIDGE  --> MART_BRIDGE
+    STG_DISTRICTS        --> GEO_BOUNDS
+    INT_PERMITS_DISTRICT --> FCT_PERMITS
+    STG_ACS              --> FCT_ACS
+
+    INT_ZONING_COMP   --> FCT_ZONING
+    INT_TRACT_OVERLAP --> MART_BRIDGE
 
     FCT_ACS     --> AGG_ACS
     MART_BRIDGE --> AGG_ACS
@@ -94,3 +117,4 @@ flowchart TD
     %% Join relationships (FK/PK) are in erd.mmd — not shown here.
     %% Grain labels: G1–G6 reference grain_spec.md
     %% Feature vs rollup separation: see feature_vs_rollup_policy.md
+    %% Schema layer redesign rationale: see notes/claude_sessions/session_2026-03-10_task-5-2_schema-redesign.md

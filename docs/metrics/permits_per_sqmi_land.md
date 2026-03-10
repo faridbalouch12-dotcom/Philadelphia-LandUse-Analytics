@@ -25,7 +25,7 @@ Which districts have the highest construction intensity relative to their physic
 
 ## Numerator / Denominator
 
-**Numerator:** COUNT(permit_number) — total permits issued in the district for the month.
+**Numerator:** COUNT(permitnumber) — total permits issued in the district for the month.
 
 **Denominator:** `land_area_sqmi` — land-only area of the district in square miles, sourced from `dim_district` per [land-area denominator policy](../policies/land_area_denominator_policy.md). Water area excluded.
 
@@ -34,7 +34,7 @@ Which districts have the highest construction intensity relative to their physic
 ## Formula
 
 ```
-permits_per_sqmi_land = COUNT(permit_number) / land_area_sqmi
+permits_per_sqmi_land = COUNT(permitnumber) / land_area_sqmi
 ```
 
 **Aggregation type:** non-additive (ratio — cannot be summed across districts or months; citywide intensity must be recomputed from totals, not summed from district values)
@@ -42,12 +42,14 @@ permits_per_sqmi_land = COUNT(permit_number) / land_area_sqmi
 **SQL sketch (optional):**
 ```sql
 SELECT
-    p.district_key,
-    p.date_month_key,
-    COUNT(p.permit_number) / d.land_area_sqmi AS permits_per_sqmi_land
-FROM stg_permits p
-JOIN dim_district d USING (district_key)
-GROUP BY p.district_key, p.date_month_key, d.land_area_sqmi
+    p.district_id,
+    dd.year,
+    dd.month,
+    COUNT(p.permitnumber) / d.land_area_sqmi AS permits_per_sqmi_land
+FROM fct_permits p
+JOIN dim_district d USING (district_id)
+JOIN dim_date dd USING (date_key)
+GROUP BY p.district_id, dd.year, dd.month, d.land_area_sqmi
 ```
 
 ---
@@ -72,16 +74,16 @@ GROUP BY p.district_key, p.date_month_key, d.land_area_sqmi
 
 | Table | Role | Key Fields Used |
 |-------|------|-----------------|
-| fct_permits | Primary fact source | permit_number, issue_date, district_key |
-| dim_district | Land area lookup | district_key, district_name, land_area_sqmi |
-| dim_date | Time lookup | date_month_key, year, month |
+| fct_permits | Primary fact source | permitnumber, date_key, district_id |
+| dim_district | Land area lookup | district_id, district_name, land_area_sqmi |
+| dim_date | Time lookup | date_key, year, month |
 
 ---
 
 ## Test Ideas
 
 - [ ] No district has a negative value
-- [ ] No nulls in district_key or date_month_key
+- [ ] No nulls in district_id or date_key
 - [ ] Metric is NULL (not zero or infinity) for any district where land_area_sqmi is null or zero
 - [ ] Citywide intensity recomputed from totals matches weighted average of district values
 - [ ] land_area_sqmi values in dim_district are non-null and > 0 for all 18 districts
@@ -117,3 +119,6 @@ GROUP BY p.district_key, p.date_month_key, d.land_area_sqmi
 | Date       | Change Description   | Author |
 |------------|----------------------|--------|
 | 2026-03-08 | Initial spec created | Farid  |
+| 2026-03-10 | Reconciliation: aligned column names to column_contracts.md; fixed SQL sketch FROM stg_permits → fct_permits (D11) | Farid |
+| 2026-03-10 | Reconciliation: fixed SQL sketch GROUP BY — date_key → year, month; added dim_date join; renamed dim alias to dd to avoid collision with dim_district d (daily granularity → monthly) | Farid |
+| 2026-03-10 | Reconciliation: source tables fct_permits key fields — permitissuedate → date_key (date_key is the FK used; permitissuedate is raw source only) | Farid |

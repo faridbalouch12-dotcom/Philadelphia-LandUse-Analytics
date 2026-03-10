@@ -38,7 +38,8 @@ erDiagram
         string  GRAIN              "one issued permit event · status = Issued"
         varchar  permitnumber      PK
         varchar  district_id       FK
-        date     permitissuedate   FK
+        integer  date_key          FK
+        date     permitissuedate
         varchar  permittype
         varchar  permit_category_group
         geometry point_geometry
@@ -47,9 +48,9 @@ erDiagram
     fct_district_year_zoning_composition {
         string  GRAIN              "one district × one vintage year × one zoning code"
         varchar district_id        PK, FK
-        integer vintage_year_key   PK
+        integer vintage_year_key   PK, FK
         varchar zoning_code        PK, FK
-        date    vintage_date       FK
+        date    vintage_date
         numeric area_sqmi
         numeric pct_district
     }
@@ -65,6 +66,10 @@ erDiagram
         numeric owner_occupied_pct_moe
         numeric total_pop
         numeric total_pop_moe
+        numeric renter_occupied_units
+        numeric renter_occupied_units_moe
+        numeric occupied_units
+        numeric occupied_units_moe
     }
 
     %% ── Bridge · Aggregation · Feature Layer ─────────────────────────────
@@ -99,11 +104,11 @@ erDiagram
 
     %% Permits fact → dimensions
     fct_permits }o--|| dim_district : "R1 · district_id"
-    fct_permits }o--|| dim_date     : "R2 · permitissuedate → date_key (EOY)"
+    fct_permits }o--|| dim_date     : "R2 · date_key → date_key"
 
     %% Zoning composition fact → dimensions
     fct_district_year_zoning_composition }o--|| dim_district : "R3 · district_id"
-    fct_district_year_zoning_composition }o--|| dim_date     : "R4 · vintage_date → date_key (EOY)"
+    fct_district_year_zoning_composition }o--|| dim_date     : "R4 · vintage_year_key → date_key (EOY)"
     fct_district_year_zoning_composition }o--|| dim_zoning   : "R5 · zoning_code"
 
     %% Bridge → dimensions and ACS fact

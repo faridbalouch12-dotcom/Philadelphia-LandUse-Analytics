@@ -157,256 +157,256 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ## MONTH 2 — Local MVP Implementation
 
-### Week 1 — Month 1 Closeout + Local Platform Foundation
+### Week 5 — Month 1 Closeout + Local Platform Foundation
 
-**Day 1 — Resolve Month 1 contradictions**
-- [x] Task 1.1 — Re-read Month 1 gate documents (PASS, 8/10, 2026-03-09)
-- [x] Task 1.2 — Resolve the permits fact-table decision (PASS, 10/10, 2026-03-09)
-- [x] Task 1.3 — Propagate the permits decision across all affected docs (PASS, 10/10, 2026-03-09)
-- [x] Task 1.4 — Make the progress tracker real (PASS, 9/10, 2026-03-09)
-- [x] Task 1.5 — Re-grade Month 1 honestly (PASS, 9/10, 2026-03-09)
+**Day 21 — Resolve Month 1 contradictions**
+- [x] Task 21.1 — Re-read Month 1 gate documents (PASS, 8/10, 2026-03-09)
+- [x] Task 21.2 — Resolve the permits fact-table decision (PASS, 10/10, 2026-03-09)
+- [x] Task 21.3 — Propagate the permits decision across all affected docs (PASS, 10/10, 2026-03-09)
+- [x] Task 21.4 — Make the progress tracker real (PASS, 9/10, 2026-03-09)
+- [x] Task 21.5 — Re-grade Month 1 honestly (PASS, 9/10, 2026-03-09)
 
-**Day 2 — Implementation contract**
-- [x] Task 2.1 — Add SCD strategy to dimensions (PASS, 9/10, 2026-03-09)
-- [x] Task 2.2 — Upgrade `fct_permits` spec to DDL-ready (PASS, 10/10, 2026-03-09)
-- [x] Task 2.3 — Upgrade the remaining high-risk table specs (PASS, 10/10, 2026-03-09)
-- [x] Task 2.4 — Add grain annotations to the ERD (PASS, 10/10, 2026-03-09)
-- [x] Task 2.5 — Split "designed" vs "implemented" in the README (PASS, 10/10, 2026-03-09)
+**Day 22 — Implementation contract**
+- [x] Task 22.1 — Add SCD strategy to dimensions (PASS, 9/10, 2026-03-09)
+- [x] Task 22.2 — Upgrade `fct_permits` spec to DDL-ready (PASS, 10/10, 2026-03-09)
+- [x] Task 22.3 — Upgrade the remaining high-risk table specs (PASS, 10/10, 2026-03-09)
+- [x] Task 22.4 — Add grain annotations to the ERD (PASS, 10/10, 2026-03-09)
+- [x] Task 22.5 — Split "designed" vs "implemented" in the README (PASS, 10/10, 2026-03-09)
 
-**Day 3 — Python project scaffold**
-- [x] Task 3.1 — Create the Python project manifest (PASS, 10/10, 2026-03-09)
-- [x] Task 3.2 — Create the source package skeleton (PASS, 9/10, 2026-03-09)
-- [x] Task 3.3 — Add environment-variable handling (PASS, 8/10, 2026-03-09)
-- [x] Task 3.4 — Add task runner commands (PASS, 9/10, 2026-03-09)
-- [x] Task 3.5 — Write the local-dev runbook (PASS, 10/10, 2026-03-09)
+**Day 23 — Python project scaffold**
+- [x] Task 23.1 — Create the Python project manifest (PASS, 10/10, 2026-03-09)
+- [x] Task 23.2 — Create the source package skeleton (PASS, 9/10, 2026-03-09)
+- [x] Task 23.3 — Add environment-variable handling (PASS, 8/10, 2026-03-09)
+- [x] Task 23.4 — Add task runner commands (PASS, 9/10, 2026-03-09)
+- [x] Task 23.5 — Write the local-dev runbook (PASS, 10/10, 2026-03-09)
 
-**Day 4 — Docker Compose stack skeleton**
-- [x] Task 4.1 — Create the Compose file (PASS, 8/10, 2026-03-09)
-- [x] Task 4.2 — Add the PostGIS-backed database service (PASS, 9/10, 2026-03-09)
-- [x] Task 4.3 — Add the Metabase service (PASS, 7/10, 2026-03-09)
-- [ ] Task 4.4 — Add named volumes and healthchecks
-- [ ] Task 4.5 — Smoke-test the whole stack
+**Day 24 — Docker Compose stack skeleton**
+- [x] Task 24.1 — Create the Compose file (PASS, 8/10, 2026-03-09)
+- [x] Task 24.2 — Add the PostGIS-backed database service (PASS, 9/10, 2026-03-09)
+- [x] Task 24.3 — Add the Metabase service (PASS, 9/10, 2026-03-09)
+- [x] Task 24.4 — Add named volumes and healthchecks (PASS, 9/10, 2026-03-09)
+- [x] Task 24.5 — Smoke-test the whole stack (PASS, 9/10, 2026-03-09)
 
-**Day 5 — Database bootstrap and schema initialization**
-- [ ] Task 5.1 — Create database init SQL for extensions
-- [ ] Task 5.2 — Create database init SQL for schemas
-- [ ] Task 5.3 — Add a schema/read-write policy note
-- [ ] Task 5.4 — Create a safe reset workflow
-- [ ] Task 5.5 — Verify the database bootstrap manually
+**Day 25 — Database bootstrap and schema initialization**
+- [x] Task 25.1 — Create database init SQL for extensions (PASS, 10/10, 2026-03-10)
+- [x] Task 25.2 — Create database init SQL for schemas (PASS, 10/10, 2026-03-10)
+- [ ] Task 25.3 — Add a schema/read-write policy note
+- [ ] Task 25.4 — Create a safe reset workflow
+- [ ] Task 25.5 — Verify the database bootstrap manually
 
-**Day 6 — dbt project scaffold**
-- [ ] Task 6.1 — Initialize the dbt project
-- [ ] Task 6.2 — Configure dbt connection profiles
-- [ ] Task 6.3 — Create source declarations for all 4 MVP datasets
-- [ ] Task 6.4 — Create the dbt folder structure
-- [ ] Task 6.5 — Generate the first dbt docs site
-- [ ] Task 6.6 — Define the materialization strategy
+**Day 26 — dbt project scaffold**
+- [ ] Task 26.1 — Initialize the dbt project
+- [ ] Task 26.2 — Configure dbt connection profiles
+- [ ] Task 26.3 — Create source declarations for all 4 MVP datasets
+- [ ] Task 26.4 — Create the dbt folder structure
+- [ ] Task 26.5 — Generate the first dbt docs site
+- [ ] Task 26.6 — Define the materialization strategy
 
-**Day 7 — Tests, linting, and CI skeleton**
-- [ ] Task 7.1 — Add pytest configuration
-- [ ] Task 7.2 — Add the first real smoke test
-- [ ] Task 7.3 — Add lint/format tooling
-- [ ] Task 7.4 — Add pre-commit hooks
-- [ ] Task 7.5 — Add a GitHub Actions workflow
-
----
-
-### Week 2 — Planning Districts Vertical Slice
-
-**Day 8 — Raw ingestion**
-- [ ] Task 8.1 — Inspect the planning-district source endpoint
-- [ ] Task 8.2 — Build the raw extractor
-- [ ] Task 8.3 — Add raw snapshot manifest metadata
-- [ ] Task 8.4 — Land the first raw snapshot
-- [ ] Task 8.5 — Write the raw-ingest runbook
-
-**Day 9 — Raw QA**
-- [ ] Task 9.1 — Record row-count expectations
-- [ ] Task 9.2 — Verify the key fields
-- [ ] Task 9.3 — Verify geometry presence and type
-- [ ] Task 9.4 — Inspect CRS/SRID evidence
-- [ ] Task 9.5 — Add at least one raw-data validator test
-
-**Day 10 — Load and staging**
-- [ ] Task 10.1 — Create the raw landing table
-- [ ] Task 10.2 — Load the first snapshot into `raw`
-- [ ] Task 10.3 — Declare the planning-district source in dbt
-- [ ] Task 10.4 — Build `stg_planning_districts`
-- [ ] Task 10.5 — Add dbt tests for the staging model
-
-**Day 11 — CRS validation and area computation**
-- [ ] Task 11.1 — Confirm the geometry SRID in-database
-- [ ] Task 11.2 — Choose the projected CRS for area calculations
-- [ ] Task 11.3 — Compute `land_area_sqmi`
-- [ ] Task 11.4 — Reconcile the computed area with any source area field
-- [ ] Task 11.5 — Add an automated area sanity test
-
-**Day 12 — District dimensions and geometry tables**
-- [ ] Task 12.1 — Build `dim_date`
-- [ ] Task 12.2 — Build `dim_district`
-- [ ] Task 12.3 — Build `geo_district_boundaries`
-- [ ] Task 12.4 — Add dimension/geometry relationship tests
-- [ ] Task 12.5 — Update dbt documentation for the district layer
-
-**Day 13 — Connect to Metabase**
-- [ ] Task 13.1 — Connect Metabase to the Postgres database
-- [ ] Task 13.2 — Expose the district dimension and geometry tables
-- [ ] Task 13.3 — Create one district sanity question
-- [ ] Task 13.4 — Capture any district-slice issues discovered in Metabase
-- [ ] Task 13.5 — Update the docs index
-
-**Day 14 — Week 2 checkpoint and cleanup**
-- [ ] Task 14.1 — Run the district slice from clean start
-- [ ] Task 14.2 — Refactor obvious naming or structure debt
-- [ ] Task 14.3 — Add a district-slice QA checklist
-- [ ] Task 14.4 — Write the district-slice recap
-- [ ] Task 14.5 — Open the permits blocker list
+**Day 27 — Tests, linting, and CI skeleton**
+- [ ] Task 27.1 — Add pytest configuration
+- [ ] Task 27.2 — Add the first real smoke test
+- [ ] Task 27.3 — Add lint/format tooling
+- [ ] Task 27.4 — Add pre-commit hooks
+- [ ] Task 27.5 — Add a GitHub Actions workflow
 
 ---
 
-### Week 3 — Permits Vertical Slice
+### Week 6 — Planning Districts Vertical Slice
 
-**Day 15 — Extraction strategy**
-- [ ] Task 15.1 — Re-inspect the permits source
-- [ ] Task 15.2 — Choose the extraction key strategy
-- [ ] Task 15.3 — Build the permits extractor CLI/module
-- [ ] Task 15.4 — Land a small sample successfully
-- [ ] Task 15.5 — Write the backfill plan
+**Day 28 — Raw ingestion**
+- [ ] Task 28.1 — Inspect the planning-district source endpoint
+- [ ] Task 28.2 — Build the raw extractor
+- [ ] Task 28.3 — Add raw snapshot manifest metadata
+- [ ] Task 28.4 — Land the first raw snapshot
+- [ ] Task 28.5 — Write the raw-ingest runbook
 
-**Day 16 — Raw load and checkpointing**
-- [ ] Task 16.1 — Create the raw permits landing table
-- [ ] Task 16.2 — Load the first batch into `raw`
-- [ ] Task 16.3 — Add raw-batch manifest/checkpoint tracking
-- [ ] Task 16.4 — Validate row counts and key coverage
-- [ ] Task 16.5 — Run one safe rerun scenario
+**Day 29 — Raw QA**
+- [ ] Task 29.1 — Record row-count expectations
+- [ ] Task 29.2 — Verify the key fields
+- [ ] Task 29.3 — Verify geometry presence and type
+- [ ] Task 29.4 — Inspect CRS/SRID evidence
+- [ ] Task 29.5 — Add at least one raw-data validator test
 
-**Day 17 — Staging normalization**
-- [ ] Task 17.1 — Declare the permits raw source in dbt
-- [ ] Task 17.2 — Build `stg_li_permits_base`
-- [ ] Task 17.3 — Standardize core dates and categories
-- [ ] Task 17.4 — Add key logic and dedupe rules
-- [ ] Task 17.5 — Add staging tests
+**Day 30 — Load and staging**
+- [ ] Task 30.1 — Create the raw landing table
+- [ ] Task 30.2 — Load the first snapshot into `raw`
+- [ ] Task 30.3 — Declare the planning-district source in dbt
+- [ ] Task 30.4 — Build `stg_planning_districts`
+- [ ] Task 30.5 — Add dbt tests for the staging model
 
-**Day 18 — District assignment and spatial QA**
-- [ ] Task 18.1 — Confirm the permit geometry strategy
-- [ ] Task 18.2 — Build the permit geometry staging model
-- [ ] Task 18.3 — Build the spatial join to districts
-- [ ] Task 18.4 — Measure unassigned share
-- [ ] Task 18.5 — Record spatial-assignment caveats
+**Day 31 — CRS validation and area computation**
+- [ ] Task 31.1 — Confirm the geometry SRID in-database
+- [ ] Task 31.2 — Choose the projected CRS for area calculations
+- [ ] Task 31.3 — Compute `land_area_sqmi`
+- [ ] Task 31.4 — Reconcile the computed area with any source area field
+- [ ] Task 31.5 — Add an automated area sanity test
 
-**Day 19 — Build `fct_permits`**
-- [ ] Task 19.1 — Reconfirm the fact grain in code
-- [ ] Task 19.2 — Build the fact model
-- [ ] Task 19.3 — Add relationship and uniqueness tests
-- [ ] Task 19.4 — Validate row counts against the raw source
-- [ ] Task 19.5 — Validate the fact against the metric specs
+**Day 32 — District dimensions and geometry tables**
+- [ ] Task 32.1 — Build `dim_date`
+- [ ] Task 32.2 — Build `dim_district`
+- [ ] Task 32.3 — Build `geo_district_boundaries`
+- [ ] Task 32.4 — Add dimension/geometry relationship tests
+- [ ] Task 32.5 — Update dbt documentation for the district layer
 
-**Day 20 — Build the permits marts**
-- [ ] Task 20.1 — Build monthly permit counts
-- [ ] Task 20.2 — Build permits per land square mile
-- [ ] Task 20.3 — Build permits composition
-- [ ] Task 20.4 — Document the permits marts
-- [ ] Task 20.5 — Create 2–3 Metabase sanity questions for permits
+**Day 33 — Connect to Metabase**
+- [ ] Task 33.1 — Connect Metabase to the Postgres database
+- [ ] Task 33.2 — Expose the district dimension and geometry tables
+- [ ] Task 33.3 — Create one district sanity question
+- [ ] Task 33.4 — Capture any district-slice issues discovered in Metabase
+- [ ] Task 33.5 — Update the docs index
 
-**Day 21 — Permits checkpoint and hardening**
-- [ ] Task 21.1 — Run a full rebuild of the permits slice
-- [ ] Task 21.2 — Add performance-minded indexes where justified
-- [ ] Task 21.3 — Triage the slowest query or model
-- [ ] Task 21.4 — Update the limitations register
-- [ ] Task 21.5 — Write the permits vertical-slice recap
-- [ ] Task 21.6 — Re-check the Month 1 permits-related docs against the implementation
-
----
-
-### Week 4 — Zoning Vertical Slice
-
-**Day 22 — Raw ingestion**
-- [ ] Task 22.1 — Inventory the zoning vintages
-- [ ] Task 22.2 — Define the zoning raw-file layout
-- [ ] Task 22.3 — Land two vintages as a smoke test
-- [ ] Task 22.4 — Build the repeatable zoning raw loader
-- [ ] Task 22.5 — Write the zoning-ingest runbook
-
-**Day 23 — Staging, geometry validation, and CRS work**
-- [ ] Task 23.1 — Create the zoning raw landing table strategy
-- [ ] Task 23.2 — Declare zoning raw sources in dbt
-- [ ] Task 23.3 — Build the staging model for zoning polygons
-- [ ] Task 23.4 — Validate CRS and geometry quality
-- [ ] Task 23.5 — Compute zoning polygon area in the chosen projected CRS
-
-**Day 24 — Vocabulary EDA and crosswalk seed**
-- [ ] Task 24.1 — Extract distinct zoning codes by vintage
-- [ ] Task 24.2 — Compare code sets year-to-year
-- [ ] Task 24.3 — Create the initial crosswalk seed
-- [ ] Task 24.4 — Flag unstable or unresolved mappings
-- [ ] Task 24.5 — Update the claim-boundary docs
-
-**Day 25 — Zoning composition and churn marts**
-- [ ] Task 25.1 — Build `fct_district_year_zoning_composition`
-- [ ] Task 25.2 — Build the zoning composition metric model
-- [ ] Task 25.3 — Build the YoY churn model
-- [ ] Task 25.4 — Add zoning tests
-- [ ] Task 25.5 — Create one zoning sanity view in Metabase
-
-**Day 26 — `dim_zoning` and Metabase connection**
-- [ ] Task 26.1 — Build `dim_zoning`
-- [ ] Task 26.2 — Add zoning relationship tests
-- [ ] Task 26.3 — Expose zoning marts in Metabase
-- [ ] Task 26.4 — Create 2–3 Metabase zoning questions
-- [ ] Task 26.5 — Update zoning documentation
-
-**Day 27 — Zoning hardening and Week 4 closeout**
-- [ ] Task 27.1 — Run a full rebuild of the zoning slice
-- [ ] Task 27.2 — Validate composition area reconciliation
-- [ ] Task 27.3 — Update the limitations register for zoning
-- [ ] Task 27.4 — Write the zoning vertical-slice recap
-- [ ] Task 27.5 — Open the ACS blocker list
+**Day 34 — Week 2 checkpoint and cleanup**
+- [ ] Task 34.1 — Run the district slice from clean start
+- [ ] Task 34.2 — Refactor obvious naming or structure debt
+- [ ] Task 34.3 — Add a district-slice QA checklist
+- [ ] Task 34.4 — Write the district-slice recap
+- [ ] Task 34.5 — Open the permits blocker list
 
 ---
 
-### Week 5 — ACS + Dashboard Assembly + Month Closeout
+### Week 7 — Permits Vertical Slice
 
-**Day 28 — ACS extraction strategy and raw ingestion**
-- [ ] Task 28.1 — Finalize the ACS variable list and API setup
-- [ ] Task 28.2 — Build the ACS extractor
-- [ ] Task 28.3 — Land raw ACS estimates and MOE columns
-- [ ] Task 28.4 — Land tract geometry for district overlap
-- [ ] Task 28.5 — Declare ACS raw sources in dbt
+**Day 35 — Extraction strategy**
+- [ ] Task 35.1 — Re-inspect the permits source
+- [ ] Task 35.2 — Choose the extraction key strategy
+- [ ] Task 35.3 — Build the permits extractor CLI/module
+- [ ] Task 35.4 — Land a small sample successfully
+- [ ] Task 35.5 — Write the backfill plan
 
-**Day 29 — ACS staging and tract geometry staging**
-- [ ] Task 29.1 — Build `stg_acs_tract_estimates`
-- [ ] Task 29.2 — Build `stg_census_tract_boundaries`
-- [ ] Task 29.3 — Add ACS staging tests
-- [ ] Task 29.4 — Document the MOE handling policy
-- [ ] Task 29.5 — Validate tract geometry against district geometry
+**Day 36 — Raw load and checkpointing**
+- [ ] Task 36.1 — Create the raw permits landing table
+- [ ] Task 36.2 — Load the first batch into `raw`
+- [ ] Task 36.3 — Add raw-batch manifest/checkpoint tracking
+- [ ] Task 36.4 — Validate row counts and key coverage
+- [ ] Task 36.5 — Run one safe rerun scenario
 
-**Day 30 — Bridge table and ACS fact**
-- [ ] Task 30.1 — Build `bridge_tract_district_overlap`
-- [ ] Task 30.2 — Add bridge table QA tests
-- [ ] Task 30.3 — Build `fct_tract_acs`
-- [ ] Task 30.4 — Build `agg_district_acs_attributes_hist`
-- [ ] Task 30.5 — Build ACS proxy metric models
+**Day 37 — Staging normalization**
+- [ ] Task 37.1 — Declare the permits raw source in dbt
+- [ ] Task 37.2 — Build `stg_li_permits_base`
+- [ ] Task 37.3 — Standardize core dates and categories
+- [ ] Task 37.4 — Add key logic and dedupe rules
+- [ ] Task 37.5 — Add staging tests
 
-**Day 31 — ACS documentation, caveats, and Metabase**
-- [ ] Task 31.1 — Add ACS caveat documentation
-- [ ] Task 31.2 — Connect ACS marts to Metabase
-- [ ] Task 31.3 — Create ACS Metabase sanity questions
-- [ ] Task 31.4 — Update the ACS limitations register
-- [ ] Task 31.5 — Write the ACS vertical-slice recap
+**Day 38 — District assignment and spatial QA**
+- [ ] Task 38.1 — Confirm the permit geometry strategy
+- [ ] Task 38.2 — Build the permit geometry staging model
+- [ ] Task 38.3 — Build the spatial join to districts
+- [ ] Task 38.4 — Measure unassigned share
+- [ ] Task 38.5 — Record spatial-assignment caveats
 
-**Day 32 — Dashboard assembly**
-- [ ] Task 32.1 — Build the district brief dashboard
-- [ ] Task 32.2 — Build the compare-district question
-- [ ] Task 32.3 — Capture the product polish backlog
-- [ ] Task 32.4 — Update the docs index
+**Day 39 — Build `fct_permits`**
+- [ ] Task 39.1 — Reconfirm the fact grain in code
+- [ ] Task 39.2 — Build the fact model
+- [ ] Task 39.3 — Add relationship and uniqueness tests
+- [ ] Task 39.4 — Validate row counts against the raw source
+- [ ] Task 39.5 — Validate the fact against the metric specs
 
-**Day 33 — Final hardening and month closeout**
-- [ ] Task 33.1 — Run the full project from clean start
-- [ ] Task 33.2 — Run all automated checks
-- [ ] Task 33.3 — Write the Month 2 recap
-- [ ] Task 33.4 — Update the README for implemented architecture
-- [ ] Task 33.5 — Create the Month 3 backlog
+**Day 40 — Build the permits marts**
+- [ ] Task 40.1 — Build monthly permit counts
+- [ ] Task 40.2 — Build permits per land square mile
+- [ ] Task 40.3 — Build permits composition
+- [ ] Task 40.4 — Document the permits marts
+- [ ] Task 40.5 — Create 2–3 Metabase sanity questions for permits
+
+**Day 41 — Permits checkpoint and hardening**
+- [ ] Task 41.1 — Run a full rebuild of the permits slice
+- [ ] Task 41.2 — Add performance-minded indexes where justified
+- [ ] Task 41.3 — Triage the slowest query or model
+- [ ] Task 41.4 — Update the limitations register
+- [ ] Task 41.5 — Write the permits vertical-slice recap
+- [ ] Task 41.6 — Re-check the Month 1 permits-related docs against the implementation
 
 ---
 
-**Last updated:** 2026-03-09 (Task 4.3)
+### Week 8 — Zoning Vertical Slice
+
+**Day 42 — Raw ingestion**
+- [ ] Task 42.1 — Inventory the zoning vintages
+- [ ] Task 42.2 — Define the zoning raw-file layout
+- [ ] Task 42.3 — Land two vintages as a smoke test
+- [ ] Task 42.4 — Build the repeatable zoning raw loader
+- [ ] Task 42.5 — Write the zoning-ingest runbook
+
+**Day 43 — Staging, geometry validation, and CRS work**
+- [ ] Task 43.1 — Create the zoning raw landing table strategy
+- [ ] Task 43.2 — Declare zoning raw sources in dbt
+- [ ] Task 43.3 — Build the staging model for zoning polygons
+- [ ] Task 43.4 — Validate CRS and geometry quality
+- [ ] Task 43.5 — Compute zoning polygon area in the chosen projected CRS
+
+**Day 44 — Vocabulary EDA and crosswalk seed**
+- [ ] Task 44.1 — Extract distinct zoning codes by vintage
+- [ ] Task 44.2 — Compare code sets year-to-year
+- [ ] Task 44.3 — Create the initial crosswalk seed
+- [ ] Task 44.4 — Flag unstable or unresolved mappings
+- [ ] Task 44.5 — Update the claim-boundary docs
+
+**Day 45 — Zoning composition and churn marts**
+- [ ] Task 45.1 — Build `fct_district_year_zoning_composition`
+- [ ] Task 45.2 — Build the zoning composition metric model
+- [ ] Task 45.3 — Build the YoY churn model
+- [ ] Task 45.4 — Add zoning tests
+- [ ] Task 45.5 — Create one zoning sanity view in Metabase
+
+**Day 46 — `dim_zoning` and Metabase connection**
+- [ ] Task 46.1 — Build `dim_zoning`
+- [ ] Task 46.2 — Add zoning relationship tests
+- [ ] Task 46.3 — Expose zoning marts in Metabase
+- [ ] Task 46.4 — Create 2–3 Metabase zoning questions
+- [ ] Task 46.5 — Update zoning documentation
+
+**Day 47 — Zoning hardening and Week 4 closeout**
+- [ ] Task 47.1 — Run a full rebuild of the zoning slice
+- [ ] Task 47.2 — Validate composition area reconciliation
+- [ ] Task 47.3 — Update the limitations register for zoning
+- [ ] Task 47.4 — Write the zoning vertical-slice recap
+- [ ] Task 47.5 — Open the ACS blocker list
+
+---
+
+### Week 9 — ACS + Dashboard Assembly + Month Closeout
+
+**Day 48 — ACS extraction strategy and raw ingestion**
+- [ ] Task 48.1 — Finalize the ACS variable list and API setup
+- [ ] Task 48.2 — Build the ACS extractor
+- [ ] Task 48.3 — Land raw ACS estimates and MOE columns
+- [ ] Task 48.4 — Land tract geometry for district overlap
+- [ ] Task 48.5 — Declare ACS raw sources in dbt
+
+**Day 49 — ACS staging and tract geometry staging**
+- [ ] Task 49.1 — Build `stg_acs_tract_estimates`
+- [ ] Task 49.2 — Build `stg_census_tract_boundaries`
+- [ ] Task 49.3 — Add ACS staging tests
+- [ ] Task 49.4 — Document the MOE handling policy
+- [ ] Task 49.5 — Validate tract geometry against district geometry
+
+**Day 50 — Bridge table and ACS fact**
+- [ ] Task 50.1 — Build `bridge_tract_district_overlap`
+- [ ] Task 50.2 — Add bridge table QA tests
+- [ ] Task 50.3 — Build `fct_tract_acs`
+- [ ] Task 50.4 — Build `agg_district_acs_attributes_hist`
+- [ ] Task 50.5 — Build ACS proxy metric models
+
+**Day 51 — ACS documentation, caveats, and Metabase**
+- [ ] Task 51.1 — Add ACS caveat documentation
+- [ ] Task 51.2 — Connect ACS marts to Metabase
+- [ ] Task 51.3 — Create ACS Metabase sanity questions
+- [ ] Task 51.4 — Update the ACS limitations register
+- [ ] Task 51.5 — Write the ACS vertical-slice recap
+
+**Day 52 — Dashboard assembly**
+- [ ] Task 52.1 — Build the district brief dashboard
+- [ ] Task 52.2 — Build the compare-district question
+- [ ] Task 52.3 — Capture the product polish backlog
+- [ ] Task 52.4 — Update the docs index
+
+**Day 53 — Final hardening and month closeout**
+- [ ] Task 53.1 — Run the full project from clean start
+- [ ] Task 53.2 — Run all automated checks
+- [ ] Task 53.3 — Write the Month 2 recap
+- [ ] Task 53.4 — Update the README for implemented architecture
+- [ ] Task 53.5 — Create the Month 3 backlog
+
+---
+
+**Last updated:** 2026-03-10 (Task 25.2)

@@ -36,13 +36,13 @@ Median household income is a non-additive statistic. It is stored at tract level
 ## Formula
 
 ```
-acs_income_proxy = DP03_0062E
-    (ACS field: median household income estimate, at census tract level)
+acs_income_proxy = median_hh_income
+    (warehouse column in fct_tract_acs; sourced from ACS field DP03_0062E)
 ```
 
 **Aggregation type:** non-additive (medians cannot be averaged or summed across tracts; district-level aggregation requires special methods outside MVP scope)
 
-**Source field:** `DP03_0062E` from `fct_tract_acs` (G4)
+**Source field:** `median_hh_income` from `fct_tract_acs` (G4)
 
 **Dashboard surface:** `agg_district_acs_attributes_hist` (G6) — tract-level values aggregated into histogram bins per district, per ACS period.
 
@@ -54,7 +54,7 @@ acs_income_proxy = DP03_0062E
 
 *Source table grain (G4):* `fct_tract_acs` — one row per `(geoid_tract, acs_period_label)`
 
-*Dashboard grain (G6):* `agg_district_acs_attributes_hist` — one row per `(district_id, boundary_version, census_attribute, bin_range)`
+*Dashboard grain (G6):* `agg_district_acs_attributes_hist` — one row per `(district_id, boundary_version_eoy, census_attribute, bin_range)`
 
 ---
 
@@ -72,10 +72,10 @@ acs_income_proxy = DP03_0062E
 
 | Table | Role | Key Fields Used |
 |-------|------|-----------------|
-| fct_tract_acs | Raw ACS tract-level estimates (G4) | geoid_tract, acs_period_label, DP03_0062E (estimate), DP03_0062M (MOE) |
+| fct_tract_acs | Raw ACS tract-level estimates (G4) | geoid_tract, acs_period_label, median_hh_income, median_hh_income_moe |
 | bridge_tract_district_overlap | Tract → district spatial bridge (G3) | geoid_tract, district_id, boundary_version, pct_tract_area |
 | agg_district_acs_attributes_hist | Pre-aggregated histogram rollup (G6) | district_id, census_attribute, bin_range, tract_count |
-| dim_district | District lookup | district_key, district_name |
+| dim_district | District lookup | district_id, district_name |
 
 ---
 
@@ -120,3 +120,6 @@ acs_income_proxy = DP03_0062E
 | Date       | Change Description   | Author |
 |------------|----------------------|--------|
 | 2026-03-08 | Initial spec created | Farid  |
+| 2026-03-10 | Reconciliation: aligned district_key → district_id per column_contracts.md | Farid |
+| 2026-03-10 | Reconciliation: G6 dashboard grain — boundary_version → boundary_version_eoy (aligns with corrected G6 PK in grain_spec.md) | Farid |
+| 2026-03-10 | Reconciliation: replaced raw ACS field codes with SC4 warehouse column names — DP03_0062E → median_hh_income, DP03_0062M → median_hh_income_moe | Farid |

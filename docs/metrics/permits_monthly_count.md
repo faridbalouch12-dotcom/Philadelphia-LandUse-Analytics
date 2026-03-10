@@ -35,18 +35,20 @@ This is a simple count with no ratio.
 ## Formula
 
 ```
-permits_monthly_count = COUNT(permit_number)
+permits_monthly_count = COUNT(permitnumber)
 ```
 
 **Aggregation type:** additive
 **SQL sketch (optional):**
 ```sql
 SELECT
-    district_key,
-    date_month_key,
-    COUNT(permit_number) AS permits_monthly_count
-FROM stg_permits
-GROUP BY district_key, date_month_key
+    p.district_id,
+    d.year,
+    d.month,
+    COUNT(p.permitnumber) AS permits_monthly_count
+FROM fct_permits p
+JOIN dim_date d USING (date_key)
+GROUP BY p.district_id, d.year, d.month
 ```
 
 ---
@@ -71,9 +73,9 @@ GROUP BY district_key, date_month_key
 
 | Table | Role | Key Fields Used |
 |-------|------|-----------------|
-| fct_permits | Primary fact source | permit_number, issue_date, district_key |
-| dim_district | District lookup | district_key, district_name |
-| dim_date | Time lookup | date_month_key, year, month |
+| fct_permits | Primary fact source | permitnumber, date_key, district_id |
+| dim_district | District lookup | district_id, district_name |
+| dim_date | Time lookup | date_key, year, month |
 
 ---
 
@@ -81,9 +83,9 @@ GROUP BY district_key, date_month_key
 
 - [ ] Sum of all district counts for a given month equals citywide total for that month
 - [ ] No district has a negative count
-- [ ] No nulls in district_key or date_month_key
+- [ ] No nulls in district_id or date_key
 - [ ] Row count matches expected grain: 18 districts × months in window = total rows
-- [ ] No permit_number appears in more than one district for the same month
+- [ ] No permitnumber appears in more than one district for the same month
 
 ---
 
@@ -115,3 +117,6 @@ GROUP BY district_key, date_month_key
 | Date       | Change Description   | Author |
 |------------|----------------------|--------|
 | 2026-03-08 | Initial spec created | Farid  |
+| 2026-03-10 | Reconciliation: aligned column names to column_contracts.md; fixed SQL sketch FROM stg_permits → fct_permits (D11) | Farid |
+| 2026-03-10 | Reconciliation: fixed SQL sketch GROUP BY — date_key → year, month; added dim_date join (daily granularity → monthly) | Farid |
+| 2026-03-10 | Reconciliation: source tables fct_permits key fields — permitissuedate → date_key (date_key is the FK used; permitissuedate is raw source only) | Farid |

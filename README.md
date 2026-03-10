@@ -95,14 +95,14 @@ Month 2 is local implementation — building the actual pipeline from raw data t
 **Platform foundation**
 - Docker Compose stack: Postgres + PostGIS + Metabase
 - Python project scaffold with environment-variable handling
-- Database bootstrap SQL (schemas: `raw`, `staging`, `mart`; extensions: PostGIS)
+- Database bootstrap SQL (schemas: `raw`, `staging`, `intermediate`, `marts`, `analytics`; extensions: PostGIS)
 - dbt project scaffold with source declarations and materialization strategy
 
 **Vertical slices** (one dataset at a time, end-to-end)
-1. Planning districts — raw ingest → `dim_district` → `geo_district_boundaries`
-2. L&I permits — raw ingest → `stg_li_permits` → `fct_permits` → permits marts
-3. Zoning — raw ingest → `fct_district_year_zoning_composition` → zoning marts
-4. ACS — raw ingest → `fct_tract_acs` → bridge → `agg_district_acs_attributes_hist`
+1. Planning districts — raw ingest → `stg_planning_districts` → `dim_district` → `geo_district_boundaries`
+2. L&I permits — raw ingest → `stg_li_permits` → `int_li_permits_issued` → `int_li_permits_issued_with_district` → `fct_permits`
+3. Zoning — raw ingest → `stg_zoning_base_districts` → `int_zoning_district_intersections_{year}` → `int_zoning_district_year_composition_base` → `fct_district_year_zoning_composition`
+4. ACS — raw ingest → `stg_acs_tract` → `fct_tract_acs` → bridge → `agg_district_acs_attributes_hist`
 
 **Dashboard**
 - District brief dashboard in Metabase
@@ -254,3 +254,4 @@ then update the relevant doc in `/docs` and ensure it's linked from `docs/README
 - **Local environment setup runbook:** [`docs/runbooks/local_env_setup.md`](./docs/runbooks/local_env_setup.md)
 - **Task runner (Makefile):** [`Makefile`](./Makefile)
 - **Local dev runbook:** [`docs/runbooks/local_dev.md`](./docs/runbooks/local_dev.md)
+- **Stack smoke test runbook:** [`docs/runbooks/stack_smoke_test.md`](./docs/runbooks/stack_smoke_test.md)

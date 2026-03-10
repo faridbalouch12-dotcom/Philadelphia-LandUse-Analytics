@@ -47,17 +47,18 @@ Expressed in percentage points. A positive value indicates the zoning group's sh
 **SQL sketch (optional):**
 ```sql
 SELECT
-    curr.district_key,
+    curr.district_id,
     curr.vintage_year_key AS year_n,
     prev.vintage_year_key AS year_n_minus_1,
-    curr.zoninggroup,
-    curr.zoning_composition_share - prev.zoning_composition_share AS zoning_yoy_churn_pct_pts
+    z.zoning_category,
+    curr.pct_district - prev.pct_district AS zoning_yoy_churn_pct_pts
 FROM fct_district_year_zoning_composition curr
 JOIN fct_district_year_zoning_composition prev
-    ON curr.district_key = prev.district_key
+    ON curr.district_id = prev.district_id
     AND curr.zoning_code = prev.zoning_code
-    AND curr.vintage_year = prev.vintage_year + 1
-WHERE curr.vocab_stable = TRUE
+    AND curr.vintage_year_key = prev.vintage_year_key + 10000  -- EOY surrogate: 20231231 → 20221231
+JOIN dim_zoning z ON curr.zoning_code = z.zoning_code
+-- TODO: vocab_stable filter — column not yet in column contracts; see zoning comparability plan
 ```
 
 ---
@@ -76,7 +77,7 @@ WHERE curr.vocab_stable = TRUE
 |-----------|-------|-------|
 | Planning District | dim_district | 18 districts; conformed spine |
 | Vintage Year Pair | dim_date | Year N and Year N−1; annual cadence |
-| Zoning Group | dim_zoning | Coarse grouping (zoninggroup); retired codes included with active = FALSE |
+| Zoning Group | dim_zoning | Coarse grouping (zoning_category); retired codes remain in dim_zoning with no active flag (Type 1 SCD — no versioning columns per D17) |
 
 ---
 
@@ -84,9 +85,9 @@ WHERE curr.vocab_stable = TRUE
 
 | Table | Role | Key Fields Used |
 |-------|------|-----------------|
-| fct_district_year_zoning_composition | Self-join source for YoY diff | district_key, vintage_year_key, zoning_code, zoninggroup, zoning_composition_share, vocab_stable |
-| dim_district | District lookup | district_key, district_name |
-| dim_zoning | Zoning group lookup | zoning_code, zoninggroup |
+| fct_district_year_zoning_composition | Self-join source for YoY diff | district_id, vintage_year_key, zoning_code, area_sqmi, pct_district |
+| dim_district | District lookup | district_id, district_name |
+| dim_zoning | Zoning category lookup | zoning_code, zoning_category |
 
 ---
 
@@ -95,14 +96,14 @@ WHERE curr.vocab_stable = TRUE
 - [ ] Sum of churn values across all zoning codes for a given district × year transition ≈ 0 (gains and losses net out)
 - [ ] No churn values outside the range [−1.0, 1.0] (cannot gain or lose more than 100%)
 - [ ] Only `vocab_stable = TRUE` district-year pairs are included in reported churn; flagged pairs excluded or labeled
-- [ ] No nulls in district_key, vintage_year_key, or zoninggroup
+- [ ] No nulls in district_id, vintage_year_key, or zoning_category
 - [ ] Churn is NULL (not computed) for the earliest vintage year where no prior year exists
 
 ---
 
 ## Caveats / Limitations
 
-- **Vocabulary stability is required:** YoY pairs where `vocab_stable = FALSE` must not be reported as reliable churn. Apparent change in those pairs may reflect code renaming rather than actual rezoning activity; see [zoning comparability plan](../zoning_comparability_plan_draft.md).
+- **Vocabulary stability is required:** YoY pairs where `vocab_stable = FALSE` must not be reported as reliable churn. Apparent change in those pairs may reflect code renaming rather than actual rezoning activity; see [zoning comparability plan](../zoning_comparability_plan.md).
 - **Not pre-stored:** This metric is computed at query time via self-join. It should not be added as a column to `fct_district_year_zoning_composition` (per FM2 in grain spec).
 - **Small changes near district boundaries:** Tiny percentage-point shifts (< 0.5 pp) may reflect geometry precision differences across vintages rather than real rezoning.
 - **Non-additive:** Churn values cannot be summed across zoning codes (they net to approximately zero) or across districts (different land areas).
@@ -117,7 +118,7 @@ WHERE curr.vocab_stable = TRUE
 **Source Specs:**
 - [Grain spec](../modeling/grain_spec.md) — G2, FM2
 - [Table inventory](../modeling/table_inventory.md)
-- [Zoning comparability plan (draft)](../zoning_comparability_plan_draft.md)
+- [Zoning comparability plan](../zoning_comparability_plan.md)
 - [Zoning source catalog](../source_catalog/zoning_base_districts.md)
 
 ---
@@ -127,3 +128,6 @@ WHERE curr.vocab_stable = TRUE
 | Date       | Change Description   | Author |
 |------------|----------------------|--------|
 | 2026-03-08 | Initial spec created | Farid  |
+| 2026-03-10 | Reconciliation: aligned column names to column_contracts.md; zoninggroup → zoning_category; district_key → district_id; added TODO for vocab_stable (not yet in column contracts) | Farid |
+| 2026-03-10 | Reconciliation: removed active = FALSE from Dimensions Notes; fixed lingering zoninggroup → zoning_category in Notes column; clarified retired code handling per D17 | Farid |
+| 2026-03-10 | Reconciliation: zoning_comparability_plan_draft.md → zoning_comparability_plan.md (final doc supersedes draft) | Farid |

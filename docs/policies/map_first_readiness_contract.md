@@ -66,15 +66,11 @@ A feature-level spatial layer is map-first ready when all of the following condi
 
 ### C3 — Point geometry is populated for all assignable records (permits)
 
-**Requirement:** For `fct_permits`, every row must have either:
-- A valid `point_geometry` (geocoded to an assignable location), or
-- A non-null `unassigned_flag = TRUE` explaining why geometry is absent.
+**Requirement:** For `fct_permits`, every row must have a valid `point_geometry`. Permits with missing or invalid geometry are hard-rejected in staging and never loaded into the mart.
 
-Rows with null geometry and no flag are not permitted in the mart table.
+**Why:** Metabase map views will silently drop rows with null geometry. Hard-rejecting in staging ensures the mart is always spatially complete. Permits that are successfully geocoded but fall outside all 18 district polygons remain in the mart with `district_id IS NULL` — these are tracked as unassigned (per SC1), not geometry-absent.
 
-**Why:** Metabase map views will silently drop rows with null geometry. An explicit flag allows analysts to audit the unassigned share and surface it in dashboards, rather than having unassigned permits disappear invisibly.
-
-**Threshold:** If the unassigned share in any district-month exceeds **10%**, a visible quality warning should appear on any map view for that slice. (See [permits geocoding risk note](../feasibility/permits_geocoding_risk_note.md).)
+**Threshold:** If the unassigned share (`district_id IS NULL`) in any district-month exceeds **5%**, a visible quality warning should appear on any map view for that slice. (See [permits geocoding risk note](../feasibility/permits_geocoding_risk_note.md).)
 
 ---
 
@@ -90,17 +86,17 @@ Rows with null geometry and no flag are not permitted in the mart table.
 
 ### C5 — `district_id` assignment is complete for all geometry-bearing records
 
-**Requirement:** Every permit with a valid point geometry must have a non-null `district_id` assigned before the record enters the mart. District assignment is done via spatial join in staging (`stg_li_permits`).
+**Requirement:** Every permit with a valid point geometry that falls within one of the 18 district polygons must have a non-null `district_id` assigned before the record enters the mart. District assignment is done via spatial join in the intermediate layer (per D18).
 
 **Why:** District assignment is the bridge between the feature layer and all rollup tables. A permit without a `district_id` cannot contribute to any district-level metric.
 
-**Exceptions:** Permits that fall outside all 18 district polygons (e.g., geometry errors or addresses outside city limits) are assigned `unassigned_flag = TRUE` and excluded from rollups. They remain in `fct_permits` as auditable records.
+**Exceptions:** Permits whose point geometry falls outside all 18 district polygons have `district_id IS NULL` (per SC1) and are excluded from district-level rollups. They remain in `fct_permits` as auditable records, trackable via `WHERE district_id IS NULL`.
 
 ---
 
 ### C6 — Area metrics are computed by PostGIS, not taken from source fields
 
-**Requirement:** All area values (`land_area_sqmi`, `polygon_area_sqmi`) must be computed using PostGIS (`ST_Area()` with geography cast) after CRS validation. Raw source fields (e.g., `Shape__Area` from ArcGIS) must not be used as area denominators.
+**Requirement:** All area values (`land_area_sqmi`, `area_sqmi`) must be computed using PostGIS (`ST_Area()` with geography cast) after CRS validation. Raw source fields (e.g., `Shape__Area` from ArcGIS) must not be used as area denominators.
 
 **Why:** Source area fields use the source CRS's native units (which may be feet, meters, or degrees depending on the projection). Using them without CRS confirmation produces systematically wrong area values. (See L22 in [limitations register](../limitations_register.md).)
 
@@ -108,7 +104,7 @@ Rows with null geometry and no flag are not permitted in the mart table.
 
 ## What "map-first ready" does not guarantee
 
-- It does not guarantee that all records have geometry. Permits with `unassigned_flag = TRUE` remain in the table; map tools will drop them silently unless a filter is applied.
+- It does not guarantee that all records have a district assignment. Permits with `district_id IS NULL` remain in the mart as auditable records; they do not contribute to district-level rollups and will be excluded from any map view filtered by district.
 - It does not guarantee accuracy of permit addresses. Geocoding quality is a separate concern from geometry validity.
 - It does not guarantee that zoning polygons have stable boundaries across vintages. Geometry changes between vintage years can create false "churn" — see [zoning comparability plan](../zoning_comparability_plan.md).
 - It does not make rollup tables map-first ready. `fct_district_year_zoning_composition` and `agg_district_acs_attributes_hist` have no geometry columns and are not covered by this contract.
@@ -158,3 +154,4 @@ Rows with null geometry and no flag are not permitted in the mart table.
 | Date       | Change description | Author |
 |------------|--------------------|--------|
 | 2026-03-08 | Initial contract — 6 conditions, assumptions, risks, and links (Task 17.2) | Farid |
+| 2026-03-10 | Reconciliation: C3 — removed unassigned_flag; hard-reject in staging + district_id IS NULL per SC1. C5 — removed stg_li_permits; spatial join is in intermediate per D18. C3 threshold — 10% → 5% to align with A11. C6 — polygon_area_sqmi → area_sqmi per SC2 | Farid |
