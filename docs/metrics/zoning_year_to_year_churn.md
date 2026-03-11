@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-08
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-10
 **Metric ID:** zoning_year_to_year_churn
 
 ---
@@ -58,7 +58,7 @@ JOIN fct_district_year_zoning_composition prev
     AND curr.zoning_code = prev.zoning_code
     AND curr.vintage_year_key = prev.vintage_year_key + 10000  -- EOY surrogate: 20231231 → 20221231
 JOIN dim_zoning z ON curr.zoning_code = z.zoning_code
--- TODO: vocab_stable filter — column not yet in column contracts; see zoning comparability plan
+WHERE curr.vocab_stable = TRUE AND prev.vocab_stable = TRUE
 ```
 
 ---
@@ -131,3 +131,4 @@ JOIN dim_zoning z ON curr.zoning_code = z.zoning_code
 | 2026-03-10 | Reconciliation: aligned column names to column_contracts.md; zoninggroup → zoning_category; district_key → district_id; added TODO for vocab_stable (not yet in column contracts) | Farid |
 | 2026-03-10 | Reconciliation: removed active = FALSE from Dimensions Notes; fixed lingering zoninggroup → zoning_category in Notes column; clarified retired code handling per D17 | Farid |
 | 2026-03-10 | Reconciliation: zoning_comparability_plan_draft.md → zoning_comparability_plan.md (final doc supersedes draft) | Farid |
+| 2026-03-10 | Full reconciliation: SQL sketch TODO replaced with `WHERE vocab_stable = TRUE` filter (column now defined in SC2) | Farid |

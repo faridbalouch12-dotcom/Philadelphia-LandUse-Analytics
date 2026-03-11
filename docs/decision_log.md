@@ -253,6 +253,18 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ---
 
+### D19. Co-locate `tract_geometry` in `fct_tract_acs` rather than separating to a dedicated `geo_tract_boundaries` table
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-10 |
+| **Decision** | `fct_tract_acs` includes a `tract_geometry` (polygon, EPSG:4326) column alongside ACS measurements. No separate `geo_tract_boundaries` table is created for census tracts. |
+| **Alternatives** | (1) Follow the D13 geometry-separation pattern — create a dedicated `geo_tract_boundaries` table, join to it only for map rendering. (2) Store no tract geometry in marts at all — derive geometry only during intermediate spatial joins and discard afterward. |
+| **Rationale** | D13's geometry-separation reasoning applies specifically to `dim_district` because it is the universal analytics lookup joined by every domain query — pulling a geometry column into that join would affect every fact query in the warehouse. `fct_tract_acs` has a much lower join frequency: it is joined by `bridge_tract_district_overlap` (a pipeline-level dbt transform) and referenced by `agg_district_acs_attributes_hist`. Both consumers are dbt models that use explicit column selection via `ref()`, not `SELECT *`, so the geometry column is never pulled unintentionally. A dedicated `geo_tract_boundaries` table would add a join for Metabase map rendering with no analytical benefit. Census tract boundaries are defined by decennial census vintages (2010, 2020) — for MVP (a single ACS period), no geometry redundancy occurs. |
+| **Implications** | `fct_tract_acs` now serves three roles: (1) ACS measurement store, (2) dimensional lookup for the bridge (D14), and (3) geometry source for tract-level map rendering. dbt models consuming `fct_tract_acs` must use explicit column selection and must not use `SELECT *`. Analysts writing custom SQL should exclude `tract_geometry` from aggregation queries that don't need spatial output. If the project scales to multiple ACS periods using different decennial boundary vintages, geometry storage will be redundant across periods — revisit this decision at that point. |
+
+---
+
 ## References
 
 - **[B7]** The Pragmatic Programmer (20th Anniversary). See
@@ -285,3 +297,4 @@ and placeholder entries for decisions that have not actually been made yet.
 | 2026-03-10 | Added D18: 5-layer schema architecture (raw/staging/intermediate/marts/analytics) | Farid |
 | 2026-03-10 | Amended D7: replaced stale "two fact tables" count with appendable fact table registry; added fct_tract_acs; updated Implications to reflect three fact tables | Farid |
 | 2026-03-10 | Reordered entries D11–D18 to sequential numeric order (D-numbers unchanged) | Farid |
+| 2026-03-10 | Added D19: tract_geometry co-located in fct_tract_acs rather than separated to geo_tract_boundaries — D13 pattern explicitly not applied; rationale: low join frequency, explicit column selection, MVP scope | Farid |

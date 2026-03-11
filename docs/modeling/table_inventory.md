@@ -54,7 +54,7 @@ This document inventories all planned warehouse tables for the Philadelphia data
 | `fct_permits` | E4 | feature | One issued permit event (`status = 'Issued'`) | N/A — transaction fact; rows are immutable once loaded | SQL analysts (drill-down, custom aggregations); Metabase dashboards (permit counts, intensity metrics) |
 | `fct_district_year_zoning_composition` | E5 | rollup | One planning district × one vintage year × one zoning code | N/A — periodic snapshot; each vintage is a full reload, not an update | Metabase dashboards (zoning composition charts, YoY comparisons); SQL analysts (composition queries) |
 | `bridge_tract_district_overlap` | E6 | bridge | One census tract × one planning district × one boundary version overlap, where `pct_tract_area > 0.01` | N/A — versioned by `boundary_version`; new boundary → new rows, old rows retained | Pipeline / dbt models (primary — used to aggregate `fct_tract_acs` to district level); advanced analysts building custom MOE-aware district aggregations (secondary) |
-| `fct_tract_acs` | E7 | feature | One census tract × one ACS 5-year period snapshot (wide — each indicator as separate column) | N/A — append-only by period; historical periods are never updated | SQL analysts (custom MOE-aware aggregations); pipeline / dbt models (source for `agg_district_acs_attributes_hist` via bridge) |
+| `fct_tract_acs` | E7 | feature | One census tract × one ACS 5-year period snapshot (wide — each indicator as separate column) | N/A — append-only by period; historical periods are never updated | SQL analysts (custom MOE-aware aggregations); pipeline / dbt models (source for `agg_district_acs_attributes_hist` via bridge); GIS tools / map rendering (tract-level choropleth maps via `tract_geometry`) |
 | `geo_district_boundaries` | E8 | geo | One planning district boundary version | N/A — versioned by `boundary_version`; geometry rows are immutable once loaded | GIS tools / map rendering only; not for analytics joins (geometry overhead) |
 
 ### Analytics layer (schema: `analytics`)
@@ -83,7 +83,7 @@ This document inventories all planned warehouse tables for the Philadelphia data
 |----|------------|-----------------|------------|
 | A1 | `fct_permits` is the atomic feature layer for permits — no further-atomic source needed for MVP | If individual permit amendments/renewals need to be tracked separately, grain must change | Document in limitations register; revisit grain in Month 2 |
 | A2 | `bridge_tract_district_overlap` is not a target for Metabase dashboards — analysts who need custom aggregations will write SQL | If non-technical users need to explore tract-level data, a pre-built aggregation layer (similar to E9) would need to be added | Monitor usage patterns; add rollup table if demand emerges |
-| A3 | `geo_district_boundaries` is consumed only by GIS/map rendering, not analytics joins | If analysts need geometry columns in analytics queries, performance degradation and query complexity increase | Keep geometry separated by policy; enforce in dbt conventions |
+| A3 | `geo_district_boundaries` is consumed only by GIS/map rendering, not analytics joins. **Note:** `fct_tract_acs` is an explicit exception — it co-locates `tract_geometry` because its join frequency is low and its consumers use explicit column selection (see D19). The separation policy applies to `dim_district` / `geo_district_boundaries`, not as a universal rule. | If analysts query `fct_tract_acs` with `SELECT *` in analytical contexts, geometry column overhead is unnecessary | Enforce explicit column selection in all dbt models that consume `fct_tract_acs`; document in dbt model YAML |
 
 ---
 
@@ -120,3 +120,4 @@ This document inventories all planned warehouse tables for the Philadelphia data
 | 2026-03-09 | Added SCD Strategy column for all 9 tables (Month 1 closeout) | Farid |
 | 2026-03-10 | Added 5-layer schema architecture; moved E9 to analytics layer | Farid |
 | 2026-03-10 | Reconciliation: removed intermediate tables (E10–E14) and transform type — pipeline-only tables documented in erd_text_draft.md and dataflow.mmd; tightened scope to marts + analytics; removed A4 | Farid |
+| 2026-03-10 | Updated fct_tract_acs consumers to include GIS/map rendering via tract_geometry; updated A3 to scope geometry-separation policy to dim_district/geo_district_boundaries only (D19 exception noted) | Farid |

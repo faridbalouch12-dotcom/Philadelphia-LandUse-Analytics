@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-08
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-10
 **Metric ID:** acs_tenure_proxy
 
 ---
@@ -97,11 +97,11 @@ FROM fct_tract_acs
 
 ## Caveats / Limitations
 
-- **Non-additive:** Renter share cannot be averaged across tracts. District-level renter share must be computed by summing `DP04_0047E` across tracts (with overlap weights from bridge table) and dividing by similarly summed `DP04_0045E` — not by averaging tract-level percentages.
+- **Non-additive:** Renter share cannot be averaged across tracts. District-level renter share must be computed by summing `renter_occupied_units` across tracts (with overlap weights from bridge table) and dividing by similarly summed `occupied_units` — not by averaging tract-level percentages.
 - **Period estimates, not point-in-time:** ACS 5-year estimates represent an average across the collection period. The label "2020–2024" does not reflect conditions in 2024 specifically.
 - **Non-overlapping periods only:** Only compare ACS periods that do not overlap (e.g., 2015–2019 vs 2020–2024); see [ACS usage policy](../policies/acs_usage_policy.md).
 - **MAUP risk at district boundaries:** Tracts straddling planning district boundaries are allocated via area-weighted interpolation, which assumes uniform population distribution within tracts. This may misallocate tenure proportions near district edges; see [ACS to district alignment note](../feasibility/acs_to_district_alignment_note.md).
-- **MOE must be retained:** Margins of error for both numerator (DP04_0047E) and denominator (DP04_0045E) must be stored in the mart. Do not suppress them.
+- **MOE must be retained:** Margins of error for both numerator (`renter_occupied_units`) and denominator (`occupied_units`) must be stored in the mart. Do not suppress them.
 - **Zero-denominator guard:** Tracts with zero occupied housing units (`occupied_units = 0`) must not produce a division-by-zero result; suppress renter_share as NULL for those tracts.
 
 ---
@@ -129,3 +129,4 @@ FROM fct_tract_acs
 | 2026-03-10 | Reconciliation: aligned district_key → district_id per column_contracts.md | Farid |
 | 2026-03-10 | Reconciliation: G6 dashboard grain — boundary_version → boundary_version_eoy (aligns with corrected G6 PK in grain_spec.md) | Farid |
 | 2026-03-10 | Reconciliation: replaced raw ACS field codes with SC4 warehouse column names — DP04_0047E → renter_occupied_units (+MOE), DP04_0045E → occupied_units (+MOE); SC4 expanded with these columns in column_contracts.md | Farid |
+| 2026-03-10 | Full reconciliation: remaining DP04_0047E/0045E references in caveats replaced with warehouse column names | Farid |

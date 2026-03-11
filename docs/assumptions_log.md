@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-03
-**Last Updated:** 2026-03-03
+**Last Updated:** 2026-03-10
 **Status:** Draft
 
 ---
@@ -138,14 +138,14 @@ new assumptions introduced in later modeling or pipeline work.
 
 ---
 
-### A11. The spatial matching cascade will keep the unmapped permit rate at or below 5%
+### A11. The unassigned permit rate will stay at or below 5%
 
 | Field | Detail |
 |-------|--------|
-| **Statement** | The multi-attribute spatial matching cascade — point-in-polygon on lat/lng, address match, geocode match, and distance-based fallback — will keep the unmapped permit rate at or below 5%, low enough that district-level aggregations will not be materially skewed. |
-| **Rationale** | The cascade provides multiple independent matching paths. Even if point-in-polygon fails (e.g., coordinates fall just outside a boundary), lat/lng, address, and geocode fields should recover the majority of records. The distance-based fallback handles genuine boundary edge cases by assigning unmatched permits to the nearest district boundary. Each permit will carry a `match_method` audit field recording which path was used, enabling post-hoc QA of unmapped rates by district. |
-| **Validation plan** | After pipeline runs, compute unmapped rate by district using the `match_method` field. Flag any district exceeding 5% unmapped for manual review. Monitor for clustering of unmapped records in specific districts — a non-uniform distribution signals a systemic data quality issue rather than random noise. Analyze the distance distribution of fallback-matched permits to establish a maximum distance threshold beyond which records are flagged rather than assigned. |
-| **Impact if wrong** | Older districts with aging infrastructure and inconsistent address data are at higher risk of elevated unmapped rates. If the cascade fails disproportionately in those districts, permit activity will be systematically undercounted there, biasing district-level comparisons and potentially masking real development patterns in historically underinvested areas. |
+| **Statement** | Permits without valid point geometry are hard-rejected in staging (per SC1) and never loaded into the mart. Permits with valid geometry that fall outside all 18 district polygons are loaded with `district_id IS NULL` and tracked as unassigned. The unassigned share (`district_id IS NULL` rate) is expected to stay at or below 5% per district-month, low enough that district-level aggregations will not be materially skewed. |
+| **Rationale** | The source L&I dataset includes coordinates for the vast majority of permits. Hard-rejecting permits without geometry ensures the mart is always spatially complete (per map-first readiness contract C3). Permits with valid geometry are assigned to districts via point-in-polygon spatial join in the intermediate layer (per D18). Unassigned permits (valid geometry but outside all district polygons) are retained for auditability but excluded from district-level rollups. |
+| **Validation plan** | After pipeline runs, compute the unassigned rate per district-month using `WHERE district_id IS NULL` on `fct_permits`. Flag any district-month exceeding 5% unassigned for manual review. Monitor for clustering of unassigned records in specific districts — a non-uniform distribution signals a systemic data quality issue rather than random noise. Track the hard-reject rate (permits dropped in staging for missing geometry) as a separate pipeline quality metric. |
+| **Impact if wrong** | Older districts with aging infrastructure and inconsistent address data are at higher risk of elevated unassigned rates. If point-in-polygon assignment fails disproportionately in those districts, permit activity will be systematically undercounted there, biasing district-level comparisons and potentially masking real development patterns in historically underinvested areas. |
 
 ---
 
@@ -162,3 +162,4 @@ new assumptions introduced in later modeling or pipeline work.
 | Date       | Change description | Author |
 |------------|--------------------|--------|
 | 2026-03-03 | Initial draft      | Farid  |
+| 2026-03-10 | A11 updated: replaced cascade/match_method description with hard-reject design (SC1) and district_id IS NULL tracking | Farid |

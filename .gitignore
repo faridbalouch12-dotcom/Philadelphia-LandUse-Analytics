@@ -47,3 +47,12 @@ Thumbs.db
 # Claude session notes (private, not for version control)
 notes/claude_sessions/
 arhive/
+
+# Serena IDE plugin
+.serena/
+
+# dbt artifacts
+dbt/philly_dw/target/
+dbt/philly_dw/logs/
+dbt/philly_dw/.user.yml
+dbt/philly_dw/dbt_packages/

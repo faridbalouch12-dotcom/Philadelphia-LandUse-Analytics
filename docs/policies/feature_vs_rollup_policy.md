@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-04
-**Last Updated:** 2026-03-04
+**Last Updated:** 2026-03-10
 **Status:** Draft
 
 ## Purpose
@@ -140,11 +140,11 @@ Naming conventions are defined in the decision log — see [D18](../decision_log
 ---
 
 ## Links
-- Grain spec:
-- Metric specs:
-- Land-only area denominator policy:
-- Limitations register:
-- Decision log entries relevant to this policy:
+- Grain spec: [`docs/modeling/grain_spec.md`](../modeling/grain_spec.md)
+- Metric specs: [`permits_monthly_count.md`](../metrics/permits_monthly_count.md), [`zoning_composition_by_year.md`](../metrics/zoning_composition_by_year.md)
+- Land-only area denominator policy: [`land_area_denominator_policy.md`](./land_area_denominator_policy.md)
+- Limitations register: [`docs/limitations_register.md`](../limitations_register.md)
+- Decision log entries relevant to this policy: [`docs/decision_log.md`](../decision_log.md) — D3, D7, D13, D18
 
 ---
 
@@ -163,3 +163,4 @@ Naming conventions are defined in the decision log — see [D18](../decision_log
 | 2026-03-07 | Added Example B: zoning polygon feature table and district-year composition rollup (D7) | Farid |
 | 2026-03-10 | Reconciliation: replaced naming conventions with pointer to D18 (feat_* prefix never used; D18 defines authoritative scheme) | Farid |
 | 2026-03-10 | Reconciliation: aligned B1/B2 conceptual columns to SC2/SC6 — zoninggroup → zoning_category, vintage_year → vintage_year_key, area_sqft → area_sqmi, pct_district_area → pct_district | Farid |
+| 2026-03-10 | Full reconciliation: filled 5 empty links in Links section (grain spec, metric specs, land-area policy, limitations register, decision log) | Farid |

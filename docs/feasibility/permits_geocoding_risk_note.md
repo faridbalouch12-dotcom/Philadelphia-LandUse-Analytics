@@ -1,4 +1,4 @@
-# Permits geocoding risk note — L&I Building and Zoning Permits (S2)
+ye# Permits geocoding risk note — L&I Building and Zoning Permits (S2)
 
 **Author:** Farid
 **Created:** 2026-03-06

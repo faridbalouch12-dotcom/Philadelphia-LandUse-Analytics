@@ -1,16 +1,4 @@
----
-title: Philadelphia Data Warehouse — ERD (Month 1 MVP)
----
-%%
-  9 entities · 12 relationships
-  Source: docs/modeling/erd_text_draft.md + docs/modeling/grain_spec.md
-  EOY = end-of-year surrogate date join (avoids year-level fan-out in dim_date)
-  GRAIN rows are inline annotations — not physical columns
-%%
-
 erDiagram
-
-    %% ── Conformed Dimensions ──────────────────────────────────────────────
 
     dim_district {
         varchar district_id       PK
@@ -32,8 +20,6 @@ erDiagram
         varchar zoning_category
     }
 
-    %% ── Fact Tables ───────────────────────────────────────────────────────
-
     fct_permits {
         string  GRAIN              "one issued permit event · status = Issued"
         varchar  permitnumber      PK
@@ -53,26 +39,26 @@ erDiagram
         date    vintage_date
         numeric area_sqmi
         numeric pct_district
+        boolean vocab_stable
     }
 
     fct_tract_acs {
-        string  GRAIN              "one census tract × one ACS 5-year period snapshot"
-        varchar geoid_tract          PK
-        varchar acs_period_label     PK
-        date    acs_period_end_date  FK
-        numeric median_hh_income
-        numeric median_hh_income_moe
-        numeric owner_occupied_pct
-        numeric owner_occupied_pct_moe
-        numeric total_pop
-        numeric total_pop_moe
-        numeric renter_occupied_units
-        numeric renter_occupied_units_moe
-        numeric occupied_units
-        numeric occupied_units_moe
+        string   GRAIN              "one census tract × one ACS 5-year period snapshot"
+        varchar  geoid_tract          PK
+        varchar  acs_period_label     PK
+        date     acs_period_end_date  FK
+        geometry tract_geometry
+        numeric  median_hh_income
+        numeric  median_hh_income_moe
+        numeric  owner_occupied_pct
+        numeric  owner_occupied_pct_moe
+        numeric  total_pop
+        numeric  total_pop_moe
+        numeric  renter_occupied_units
+        numeric  renter_occupied_units_moe
+        numeric  occupied_units
+        numeric  occupied_units_moe
     }
-
-    %% ── Bridge · Aggregation · Feature Layer ─────────────────────────────
 
     bridge_tract_district_overlap {
         string  GRAIN              "one tract × one district × one boundary version · pct_tract_area > 0.01"
@@ -99,29 +85,14 @@ erDiagram
         varchar  boundary_version  PK
         geometry polygon_geometry
     }
-
-    %% ── Relationships (R1–R12) ────────────────────────────────────────────
-
-    %% Permits fact → dimensions
-    fct_permits }o--|| dim_district : "R1 · district_id"
-    fct_permits }o--|| dim_date     : "R2 · date_key → date_key"
-
-    %% Zoning composition fact → dimensions
-    fct_district_year_zoning_composition }o--|| dim_district : "R3 · district_id"
-    fct_district_year_zoning_composition }o--|| dim_date     : "R4 · vintage_year_key → date_key (EOY)"
-    fct_district_year_zoning_composition }o--|| dim_zoning   : "R5 · zoning_code"
-
-    %% Bridge → dimensions and ACS fact
-    bridge_tract_district_overlap }o--|| dim_district  : "R6 · district_id"
-    bridge_tract_district_overlap }o--|| fct_tract_acs : "R7 · geoid_tract (fact as lookup)"
-    bridge_tract_district_overlap }o--|| dim_date      : "R8 · boundary_version_eoy → date_key (EOY)"
-
-    %% ACS fact → date dimension
-    fct_tract_acs }o--|| dim_date : "R9 · acs_period_end_date → date_key (EOY)"
-
-    %% Aggregation → dimensions
-    agg_district_acs_attributes_hist }o--|| dim_district : "R10 · district_id"
-    agg_district_acs_attributes_hist }o--|| dim_date     : "R11 · boundary_version_eoy → date_key (EOY)"
-
-    %% Geo feature layer → district dimension
-    geo_district_boundaries }o--|| dim_district : "R12 · district_id"
+    
+    dim_district ||--o{ fct_permits : "R12 · district_id"
+    dim_date ||--o{ fct_permits : "R12 · date_key"
+    dim_zoning ||--o{ fct_district_year_zoning_composition : "R12 · zoning_code"
+    dim_district ||--o{ fct_district_year_zoning_composition : "R12 · district_id"
+    fct_permits ||--o{ bridge_tract_district_overlap : "R12 · permitnumber"
+    dim_district ||--o{ bridge_tract_district_overlap : "R12 · district_id"
+    bridge_tract_district_overlap ||--o{ fct_tract_acs : "R12 · geoid_tract"
+    fct_district_year_zoning_composition ||--o{ agg_district_acs_attributes_hist : "R12 · district_id"
+    fct_district_year_zoning_composition ||--o{ agg_district_acs_attributes_hist : "R12 · vintage_year_key"
+    dim_district ||--o{ geo_district_boundaries : "R12 · district_id"

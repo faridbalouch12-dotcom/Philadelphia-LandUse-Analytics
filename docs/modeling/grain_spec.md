@@ -2,7 +2,7 @@
 
 **Author:** Farid  
 **Created:** 2026-03-08  
-**Last Updated:** 2026-03-08  
+**Last Updated:** 2026-03-10
 **Status:** Draft  
 
 ---
@@ -54,7 +54,7 @@ so joins and metrics stay consistent.
 
 **Purpose:** Spatial bridge table resolving the many-to-many relationship between census tracts and planning districts. Enables ACS tract-level data to be aggregated to the district level via weighted overlap. Versioned by district boundary to support future boundary changes.
 
-**Definition:** One census tract × one planning district × one boundary version overlap relationship, where overlap exists.
+**Definition:** One census tract × one planning district × one boundary version overlap relationship, where `pct_tract_area > 0.01` (1% threshold per D16).
 
 **Example PK:** (`geoid_tract`, `district_id`, `boundary_version`)
 
@@ -139,6 +139,7 @@ so joins and metrics stay consistent.
 | `vintage_date` | `DATE` | NOT NULL | EOY date for the vintage year (e.g., `2023-12-31`). Used to join `dim_date`. |
 | `area_sqmi` | `NUMERIC` | NOT NULL | Area of this zoning code within this district for this vintage. Must be > 0. |
 | `pct_district` | `NUMERIC` | NOT NULL | Share of district land area covered by this zoning code. Must be > 0. |
+| `vocab_stable` | `BOOLEAN` | NOT NULL | Whether the zoning code vocabulary is confirmed stable for this district × vintage year. Set during staging per the zoning comparability plan. When `FALSE`, YoY claims must be suppressed or caveated. |
 
 **Key strategy:**
 - Composite natural PK: (`district_id`, `vintage_year_key`, `zoning_code`) — no surrogate
@@ -148,6 +149,7 @@ so joins and metrics stay consistent.
 1. `(district_id, vintage_year_key, zoning_code)` must be unique
 2. `SUM(pct_district)` per (`district_id`, `vintage_year_key`) should approximate 1.0 — large deviations indicate missing zoning codes or geometry gaps
 3. `area_sqmi` and `pct_district` must be > 0 — zero-area rows indicate a staging error
+4. `vocab_stable = FALSE` rows must not be included in YoY churn calculations without explicit caveats
 
 ---
 
@@ -187,6 +189,11 @@ so joins and metrics stay consistent.
 | `owner_occupied_pct_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `owner_occupied_pct`. NULL if not published. |
 | `total_pop` | `NUMERIC` | **NULLABLE** | ACS estimate: total population. NULL if not published. |
 | `total_pop_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `total_pop`. NULL if not published. |
+| `renter_occupied_units` | `NUMERIC` | **NULLABLE** | ACS estimate: renter-occupied housing units (count) (DP04_0047E). NULL if Census did not publish. |
+| `renter_occupied_units_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `renter_occupied_units`. NULL if not published. |
+| `occupied_units` | `NUMERIC` | **NULLABLE** | ACS estimate: occupied housing units, total (count) (DP04_0045E). Denominator for renter share. NULL if not published. |
+| `occupied_units_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `occupied_units`. NULL if not published. |
+| `tract_geometry` | `GEOMETRY(MULTIPOLYGON, 4326)` | NOT NULL | Census tract polygon for map rendering. Not for analytics joins — consumers should explicitly exclude this column in aggregation queries. See D19. |
 
 **Key strategy:**
 - Composite natural PK: (`geoid_tract`, `acs_period_label`) — no surrogate
@@ -234,3 +241,5 @@ G2 is a pure snapshot table — each row answers "what is the zoning composition
 | 2026-03-09 | Added schema contracts SC1–SC4 for all four high-risk tables; column types, nullability, key strategy, and grain validation rules (Month 1 closeout) | Farid |
 | 2026-03-10 | Reconciliation: G6 PK corrected from `boundary_version` to `boundary_version_eoy` — aligns with ERD and D12 EOY surrogate pattern | Farid |
 | 2026-03-10 | Reconciliation: G3 `assignment_method` corrected from `'overlap_any'` to `'overlap_weighted'` — aligns with D16 and SC3 | Farid |
+| 2026-03-10 | Full reconciliation: header date synced; G3 definition updated to include D16 threshold (`pct_tract_area > 0.01`); SC2 `vocab_stable` column added; SC4 synced with column_contracts (added 4 renter/occupied columns) | Farid |
+| 2026-03-10 | Added `tract_geometry` to SC4 — co-located in fct_tract_acs per D19 | Farid |

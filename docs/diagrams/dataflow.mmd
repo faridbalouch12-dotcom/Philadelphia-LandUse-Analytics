@@ -18,6 +18,9 @@ flowchart TD
         SEED_XWALK["seed_zoning_code_crosswalk — hand-authored vintage mapping"]
     end
 
+    %% ── Generated reference data ────────────────────────────────────
+    GEN_DATE["dbt macro — date spine generator"]
+
     %% ── Raw layer ────────────────────────────────────────────────────
     subgraph RAW["Raw layer  (schema: raw)"]
         RAW_DISTRICTS["raw.planning_districts"]
@@ -98,6 +101,7 @@ flowchart TD
 
     STG_DISTRICTS        --> DIM_DISTRICT
     STG_ZONING           --> DIM_ZONING
+    GEN_DATE             --> DIM_DATE
 
     STG_DISTRICTS        --> GEO_BOUNDS
     INT_PERMITS_DISTRICT --> FCT_PERMITS

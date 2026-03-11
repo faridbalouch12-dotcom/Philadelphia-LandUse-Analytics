@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-09
-**Last Updated:** 2026-03-09
+**Last Updated:** 2026-03-10
 **Status:** Draft
 
 ---
@@ -11,7 +11,7 @@
 
 This document defines DDL-ready column contracts for the highest-risk warehouse tables — those where schema ambiguity would most likely cause grain violations, broken joins, or incorrect metrics. For each table: exact column names, SQL types, nullability, key strategy, and grain validation rules are specified.
 
-**Scope:** All five high-risk tables: `fct_permits` (SC1), `fct_district_year_zoning_composition` (SC2), `bridge_tract_district_overlap` (SC3), `fct_tract_acs` (SC4), `dim_district` (SC5), `dim_zoning` (SC6).
+**Scope:** All six high-risk tables: `fct_permits` (SC1), `fct_district_year_zoning_composition` (SC2), `bridge_tract_district_overlap` (SC3), `fct_tract_acs` (SC4), `dim_district` (SC5), `dim_zoning` (SC6).
 
 > **Related document:** Grain statements and failure modes are in [`docs/modeling/grain_spec.md`](./grain_spec.md). This document provides the DDL-level detail that `grain_spec.md` does not cover.
 
@@ -57,6 +57,7 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 | `vintage_date` | `DATE` | NOT NULL | EOY date for the vintage year (e.g., `2023-12-31`). Used to join `dim_date`. |
 | `area_sqmi` | `NUMERIC` | NOT NULL | Area of this zoning code within this district for this vintage. Must be > 0. |
 | `pct_district` | `NUMERIC` | NOT NULL | Share of district land area covered by this zoning code. Must be > 0. |
+| `vocab_stable` | `BOOLEAN` | NOT NULL | Whether the zoning code vocabulary is confirmed stable for this district × vintage year. Set during staging per the [zoning comparability plan](../zoning_comparability_plan.md). When `FALSE`, YoY composition claims for this row must be suppressed or caveated. |
 
 **Key strategy:**
 - Composite natural PK: (`district_id`, `vintage_year_key`, `zoning_code`) — no surrogate (periodic snapshot fact; stable vintage key)
@@ -66,6 +67,7 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 1. `(district_id, vintage_year_key, zoning_code)` must be unique
 2. `SUM(pct_district)` per (`district_id`, `vintage_year_key`) should approximate 1.0 — large deviations indicate missing zoning codes or geometry gaps
 3. `area_sqmi` and `pct_district` must be > 0 — zero-area rows indicate a staging error
+4. `vocab_stable = FALSE` rows must not be included in YoY churn calculations without explicit caveats
 
 ---
 
@@ -113,6 +115,7 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 | `renter_occupied_units_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `renter_occupied_units`. NULL if not published. |
 | `occupied_units` | `NUMERIC` | **NULLABLE** | ACS estimate: occupied housing units, total (count) (DP04_0045E). Denominator for renter share. NULL if not published. |
 | `occupied_units_moe` | `NUMERIC` | **NULLABLE** | Margin of error for `occupied_units`. NULL if not published. |
+| `tract_geometry` | `GEOMETRY(MULTIPOLYGON, 4326)` | NOT NULL | Census tract polygon geometry (EPSG:4326). Source for tract-level map rendering. Not for analytics joins — dbt consumers must use explicit column selection. See D19. |
 
 **Key strategy:**
 - Composite natural PK: (`geoid_tract`, `acs_period_label`) — no surrogate
@@ -189,3 +192,5 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 | 2026-03-09 | Initial draft — SC1 (`fct_permits`) column contract (Task 2.2) | Farid |
 | 2026-03-09 | Added SC2–SC6: remaining four high-risk tables + dim_district and dim_zoning (Task 2.3) | Farid |
 | 2026-03-10 | SC4: added renter_occupied_units, renter_occupied_units_moe, occupied_units, occupied_units_moe — raw count columns required by acs_tenure_proxy metric; supports overlap-weighted district-level aggregation | Farid |
+| 2026-03-10 | Full reconciliation: header date synced; scope count corrected (five → six); SC2 `vocab_stable` column added with validation rule | Farid |
+| 2026-03-10 | SC4: added `tract_geometry GEOMETRY(MULTIPOLYGON, 4326) NOT NULL` — co-located per D19 | Farid |

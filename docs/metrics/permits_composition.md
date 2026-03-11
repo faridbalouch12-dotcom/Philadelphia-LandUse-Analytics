@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-08
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-10
 **Metric ID:** permits_composition_count
 
 ---
@@ -75,7 +75,7 @@ GROUP BY p.district_id, d.year, d.month, p.permit_category_group
 |-----------|-------|-------|
 | Planning District | dim_district | 18 districts; conformed spine |
 | Calendar Month | dim_date | Joined via month surrogate key |
-| Canonical Permit Group | permit_category_groups | Lookup table mapping raw permittype → canonical group; includes "Other/Unmapped" catch-all |
+| Canonical Permit Group | `permit_category_group` (column on `fct_permits`) | Grouping applied in staging per permit_category_grouping_memo.md; includes "Other/Unmapped" catch-all |
 
 ---
 
@@ -130,3 +130,4 @@ GROUP BY p.district_id, d.year, d.month, p.permit_category_group
 | 2026-03-10 | Reconciliation: aligned column names to column_contracts.md; fixed SQL sketch FROM stg_permits → fct_permits (D11); permit_category_group is now a column on fct_permits per SC1, no separate join needed | Farid |
 | 2026-03-10 | Reconciliation: fixed SQL sketch GROUP BY — date_key → year, month; added dim_date join (daily granularity → monthly) | Farid |
 | 2026-03-10 | Reconciliation: source tables fct_permits key fields — permitissuedate → date_key (date_key is the FK used; permitissuedate is raw source only) | Farid |
+| 2026-03-10 | Full reconciliation: `permit_category_groups` table reference → `permit_category_group` column on `fct_permits` (no separate lookup table) | Farid |

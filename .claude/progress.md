@@ -190,12 +190,12 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 **Day 25 — Database bootstrap and schema initialization**
 - [x] Task 25.1 — Create database init SQL for extensions (PASS, 10/10, 2026-03-10)
 - [x] Task 25.2 — Create database init SQL for schemas (PASS, 10/10, 2026-03-10)
-- [ ] Task 25.3 — Add a schema/read-write policy note
-- [ ] Task 25.4 — Create a safe reset workflow
-- [ ] Task 25.5 — Verify the database bootstrap manually
+- [x] Task 25.3 — Add a schema/read-write policy note (PASS, 10/10, 2026-03-10)
+- [x] Task 25.4 — Create a safe reset workflow (PASS, 10/10, 2026-03-10)
+- [x] Task 25.5 — Verify the database bootstrap manually (PASS, 10/10, 2026-03-11)
 
 **Day 26 — dbt project scaffold**
-- [ ] Task 26.1 — Initialize the dbt project
+- [x] Task 26.1 — Initialize the dbt project (PASS, 9/10, 2026-03-11)
 - [ ] Task 26.2 — Configure dbt connection profiles
 - [ ] Task 26.3 — Create source declarations for all 4 MVP datasets
 - [ ] Task 26.4 — Create the dbt folder structure
@@ -409,4 +409,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-10 (Task 25.2)
+**Last updated:** 2026-03-11 (Task 26.1)

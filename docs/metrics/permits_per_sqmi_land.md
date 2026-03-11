@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-08
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-10
 **Metric ID:** permits_per_sqmi_land
 
 ---
@@ -66,7 +66,7 @@ GROUP BY p.district_id, dd.year, dd.month, d.land_area_sqmi
 |-----------|-------|-------|
 | Planning District | dim_district | 18 districts; land_area_sqmi sourced here |
 | Calendar Month | dim_date | Joined via month surrogate key |
-| Permit Type | permit_category_groups | Optional filter; composition slice |
+| Permit Type | `permit_category_group` (column on `fct_permits`) | Optional filter; composition slice |
 
 ---
 
@@ -122,3 +122,4 @@ GROUP BY p.district_id, dd.year, dd.month, d.land_area_sqmi
 | 2026-03-10 | Reconciliation: aligned column names to column_contracts.md; fixed SQL sketch FROM stg_permits → fct_permits (D11) | Farid |
 | 2026-03-10 | Reconciliation: fixed SQL sketch GROUP BY — date_key → year, month; added dim_date join; renamed dim alias to dd to avoid collision with dim_district d (daily granularity → monthly) | Farid |
 | 2026-03-10 | Reconciliation: source tables fct_permits key fields — permitissuedate → date_key (date_key is the FK used; permitissuedate is raw source only) | Farid |
+| 2026-03-10 | Full reconciliation: `permit_category_groups` table reference → `permit_category_group` column on `fct_permits` (no separate lookup table) | Farid |

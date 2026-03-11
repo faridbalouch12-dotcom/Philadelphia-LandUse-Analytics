@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-03-08
-**Last Updated:** 2026-03-08
+**Last Updated:** 2026-03-10
 **Metric ID:** acs_income_proxy
 
 ---
@@ -81,8 +81,8 @@ acs_income_proxy = median_hh_income
 
 ## Test Ideas
 
-- [ ] No null values in DP03_0062E for tracts in the Philadelphia 5-county area (flag but do not drop nulls — some tracts legitimately suppress median income)
-- [ ] MOE column (DP03_0062M) is retained and non-null for all rows with non-null estimates
+- [ ] No null values in `median_hh_income` for tracts in the Philadelphia 5-county area (flag but do not drop nulls — some tracts legitimately suppress median income)
+- [ ] MOE column (`median_hh_income_moe`) is retained and non-null for all rows with non-null estimates
 - [ ] Only non-overlapping ACS periods are compared in any dashboard or analysis output
 - [ ] ACS period label is present and matches the vintage year in all fct_tract_acs rows
 - [ ] Histogram bin counts in agg_district_acs_attributes_hist sum to the correct number of tracts per district
@@ -95,7 +95,7 @@ acs_income_proxy = median_hh_income
 - **Period estimates, not point-in-time:** ACS 5-year estimates represent an average across the collection period. The label "2020–2024" does not reflect conditions in 2024 specifically.
 - **Non-overlapping periods only:** Only compare ACS periods that do not overlap (e.g., 2015–2019 vs 2020–2024). Overlapping period comparisons are statistically invalid; see [ACS usage policy](../policies/acs_usage_policy.md).
 - **MAUP risk at district boundaries:** Tracts straddling planning district boundaries are allocated via area-weighted interpolation, which assumes uniform population distribution within tracts. Districts near boundaries with large split tracts carry higher uncertainty; see [ACS to district alignment note](../feasibility/acs_to_district_alignment_note.md).
-- **MOE must be retained:** Margin of error (DP03_0062M) must be stored in the mart and available for analysts; do not suppress it.
+- **MOE must be retained:** Margin of error (`median_hh_income_moe`) must be stored in the mart and available for analysts; do not suppress it.
 - **Income suppression:** The Census Bureau suppresses median income estimates for tracts with small populations. Suppressed values (typically coded as -666666666 or null in the API) must be treated as missing, not zero.
 
 ---
@@ -123,3 +123,4 @@ acs_income_proxy = median_hh_income
 | 2026-03-10 | Reconciliation: aligned district_key → district_id per column_contracts.md | Farid |
 | 2026-03-10 | Reconciliation: G6 dashboard grain — boundary_version → boundary_version_eoy (aligns with corrected G6 PK in grain_spec.md) | Farid |
 | 2026-03-10 | Reconciliation: replaced raw ACS field codes with SC4 warehouse column names — DP03_0062E → median_hh_income, DP03_0062M → median_hh_income_moe | Farid |
+| 2026-03-10 | Full reconciliation: remaining DP03_0062E/M references in test ideas and caveats replaced with warehouse column names | Farid |
