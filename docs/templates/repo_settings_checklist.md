@@ -1,9 +1,9 @@
 # Repository settings checklist template
 
-**Author:** Farid  
-**Created:** YYYY-MM-DD  
-**Last Updated:** YYYY-MM-DD  
-**Status:** Draft | In Review | Final  
+**Author:** Farid
+**Created:** YYYY-MM-DD
+**Last Updated:** YYYY-MM-DD
+**Status:** Draft | In Review | Final
 
 ---
 
@@ -31,8 +31,8 @@ settings matter for the project.]
 
 ### 1. [Setting name]
 
-**Setting:** [What to enable or configure]  
-**GitHub Path:** [Settings path in the GitHub UI]  
+**Setting:** [What to enable or configure]
+**GitHub Path:** [Settings path in the GitHub UI]
 **Configuration:**
 - [Required option 1]
 - [Required option 2]
@@ -43,8 +43,8 @@ settings matter for the project.]
 
 ### 2. [Setting name]
 
-**Setting:** [What to enable or configure]  
-**GitHub Path:** [Settings path in the GitHub UI]  
+**Setting:** [What to enable or configure]
+**GitHub Path:** [Settings path in the GitHub UI]
 **Configuration:**
 - [Required option 1]
 - [Required option 2 or explicitly state that the option is disabled]

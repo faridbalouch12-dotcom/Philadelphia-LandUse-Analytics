@@ -63,10 +63,10 @@ All specification documents (data model specs, metric definitions, dataset catal
 ```markdown
 # Document Title
 
-**Author:** Farid  
-**Created:** YYYY-MM-DD  
-**Last Updated:** YYYY-MM-DD  
-**Status:** Draft | In Review | Final  
+**Author:** Farid
+**Created:** YYYY-MM-DD
+**Last Updated:** YYYY-MM-DD
+**Status:** Draft | In Review | Final
 ```
 
 #### 2. **Purpose** (required for specs)
@@ -140,7 +140,7 @@ reference docs (R1–R2), and videos (V1–V9).
 **Inline Citation Example:**
 
 ```markdown
-The Kimball methodology recommends conformed dimensions [B3] to enable 
+The Kimball methodology recommends conformed dimensions [B3] to enable
 consistent cross-process analysis.
 ```
 
@@ -149,7 +149,7 @@ consistent cross-process analysis.
 ```markdown
 ## References
 
-- **[B3]** Kimball, R., & Ross, M. (2013). *The Data Warehouse Toolkit* (3rd ed.). 
+- **[B3]** Kimball, R., & Ross, M. (2013). *The Data Warehouse Toolkit* (3rd ed.).
   See [Resources](../claude/resources.md#b3) for full details.
 ```
 

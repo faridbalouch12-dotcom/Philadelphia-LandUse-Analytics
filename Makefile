@@ -1,4 +1,4 @@
-.PHONY: up down reset-analytics reset-transforms reset-data reset-nuclear ingest-districts ingest-permits ingest-zoning ingest-acs ingest-all dbt-run test help
+.PHONY: up down reset-analytics reset-transforms reset-data reset-nuclear ingest-districts ingest-permits ingest-zoning ingest-acs ingest-all dbt-run test lint help
 
 up: ## Start Postgres and Metabase services
 	docker compose -f docker/docker-compose.yml up -d
@@ -60,6 +60,9 @@ dbt-run: ## Run dbt transformations
 test: ## Run pytest suite
 	pytest tests/
 
+lint: ## Run pylint on source and tests
+	pylint src/ tests/
+
 help: ## Show available commands
 	@echo "Philadelphia Data Warehouse — available commands:"
 	@echo ""
@@ -79,4 +82,5 @@ help: ## Show available commands
 	@echo "  make ingest-all           Ingest all datasets in sequence"
 	@echo "  make dbt-run              Run dbt transformations"
 	@echo "  make test                 Run pytest suite"
+	@echo "  make lint                 Run pylint on source and tests"
 	@echo "  make help                 Show this message"

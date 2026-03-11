@@ -1,9 +1,9 @@
 # [Document Title]
 
-**Author:** Farid  
-**Created:** YYYY-MM-DD  
-**Last Updated:** YYYY-MM-DD  
-**Status:** Draft | In Review | Final  
+**Author:** Farid
+**Created:** YYYY-MM-DD
+**Last Updated:** YYYY-MM-DD
+**Status:** Draft | In Review | Final
 
 ---
 

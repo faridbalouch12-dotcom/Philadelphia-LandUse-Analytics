@@ -67,7 +67,7 @@
 - Why you chose this grain
 - What alternatives you rejected and why
 
-**Good answer:** 
+**Good answer:**
 > "One row per permit issuance event. I chose this because it matches the source data and supports 'count permits by month' queries. I rejected 'one row per building' because buildings have many permits over time."
 
 **Why it matters:** If you can't defend your grain choice, you don't understand dimensional modeling.
@@ -78,7 +78,7 @@
 
 **Test:** Explain why SCD Type 2 matters for demographics_dim
 
-**Good answer:** 
+**Good answer:**
 > "Demographics change over time (income goes from $45K to $52K). Type 1 would overwrite, making 2021 analysis use 2023 data incorrectly. Type 2 keeps both rows so I join to the correct historical snapshot."
 
 **Why it matters:** SCD is fundamental to time-based analysis. You need to understand it, not just know it exists.

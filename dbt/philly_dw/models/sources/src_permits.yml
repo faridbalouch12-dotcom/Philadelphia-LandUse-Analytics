@@ -1,0 +1,16 @@
+sources:
+  - name: open_data_philly
+    database: philly_dw
+    schema: raw
+    tables:
+      # li_permits is a single append-only table, not vintage-partitioned.
+      # When new permit batches are ingested, no new table declaration is needed here.
+      - name: li_permits
+        description: >
+          L&I building permit records from OpenDataPhilly.
+          Loaded via Python ingestion from the CARTO SQL API.
+        columns:
+          - name: permitnumber
+            tests:
+              - not_null
+              - unique

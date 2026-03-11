@@ -1,9 +1,9 @@
 # [Resource Title or Topic] — Notes
 
-**Author:** Farid  
-**Created:** YYYY-MM-DD  
-**Last Updated:** YYYY-MM-DD  
-**Source:** [Resource ID from `claude/resources.md`, e.g., B3, D7, V1]  
+**Author:** Farid
+**Created:** YYYY-MM-DD
+**Last Updated:** YYYY-MM-DD
+**Source:** [Resource ID from `claude/resources.md`, e.g., B3, D7, V1]
 
 ---
 

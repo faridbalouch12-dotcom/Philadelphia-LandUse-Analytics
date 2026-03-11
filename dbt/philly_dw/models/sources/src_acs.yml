@@ -1,0 +1,17 @@
+sources:
+  - name: open_data_philly
+    database: philly_dw
+    schema: raw
+    tables:
+      # ACS tract estimates are ingested as one table per 5-year period end year.
+      # Table name suffix = last year of the ACS period (e.g. acs_tract_2025 = 2021-2025 estimate).
+      # When a new period is ingested (e.g. acs_tract_2026), add a new entry here.
+      - name: acs_tract_2025
+        description: >
+          ACS 5-year tract-level estimates ending in 2025 (2021-2025 period).
+          Loaded via Python ingestion from the Census Bureau API.
+        columns:
+          - name: geoid
+            tests:
+              - not_null
+              - unique

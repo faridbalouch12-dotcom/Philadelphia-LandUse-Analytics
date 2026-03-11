@@ -10,8 +10,8 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Overview
-**What it is:** A plain-language description of the dataset and what a “record” represents.  
-**Project relevance:** Explain how this dataset supports the Philly district-first platform (e.g., district spine, permits time series, zoning snapshots, ACS context).  
+**What it is:** A plain-language description of the dataset and what a “record” represents.
+**Project relevance:** Explain how this dataset supports the Philly district-first platform (e.g., district spine, permits time series, zoning snapshots, ACS context).
 **Intended outputs:** List the main artifacts this dataset feeds (feature-level layer, district rollups, dashboards).
 
 **Fill in:**
@@ -23,7 +23,7 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Access
-**What it is:** How to obtain the data, including preferred access method and any constraints.  
+**What it is:** How to obtain the data, including preferred access method and any constraints.
 **Include:** endpoint(s), format(s), authentication needs (if any), and size/performance warnings.
 
 **Fill in:**
@@ -36,7 +36,7 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Time Fields
-**What it is:** Which fields define time and how they should be interpreted.  
+**What it is:** Which fields define time and how they should be interpreted.
 **Why it matters:** District-first metrics depend on a single canonical time field for aggregation; snapshots (zoning) need explicit vintage/year; ACS needs explicit period labels.
 
 **Fill in:**
@@ -49,7 +49,7 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Geometry
-**What it is:** Spatial representation and how it links to planning districts.  
+**What it is:** Spatial representation and how it links to planning districts.
 **Include:** geometry type, CRS (if known), and how spatial assignment will be done conceptually.
 
 **Fill in:**
@@ -62,7 +62,7 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Keys
-**What it is:** How you uniquely identify records and maintain stable joins over time.  
+**What it is:** How you uniquely identify records and maintain stable joins over time.
 **Why it matters:** Prevents duplicates, enables incremental refresh later, and makes downstream facts trustworthy.
 
 **Fill in:**
@@ -75,7 +75,7 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Key Columns
-**What it is:** The minimum set of columns required to support the MVP and future extensions.  
+**What it is:** The minimum set of columns required to support the MVP and future extensions.
 **Guidance:** Mark fields as Required vs Optional, and note any columns known to be messy.
 
 **Fill in:**
@@ -87,7 +87,7 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Update Cadence
-**What it is:** How often the dataset updates and what “freshness” means for your product.  
+**What it is:** How often the dataset updates and what “freshness” means for your product.
 **Include:** whether updates are daily, weekly, monthly, ad hoc; and whether historical records change.
 
 **Fill in:**
@@ -99,7 +99,7 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Risks
-**What it is:** Concrete ways this dataset can produce wrong or misleading analysis.  
+**What it is:** Concrete ways this dataset can produce wrong or misleading analysis.
 **Requirement:** List risks that matter for *this project*, not generic “data may be messy.”
 
 **Fill in:**
@@ -112,7 +112,7 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Notes
-**What it is:** Any additional context that doesn’t fit above but will matter later.  
+**What it is:** Any additional context that doesn’t fit above but will matter later.
 **Examples:** known quirks, edge-case handling expectations, open questions to validate.
 
 **Fill in:**
@@ -123,7 +123,7 @@ Use this template for every dataset you onboard. Keep sections concise but speci
 ---
 
 ## Links
-**What it is:** One place to find the authoritative source and supporting references.  
+**What it is:** One place to find the authoritative source and supporting references.
 **Include:** dataset page, metadata page, API docs, schema docs, related city docs, etc.
 
 **Fill in:**

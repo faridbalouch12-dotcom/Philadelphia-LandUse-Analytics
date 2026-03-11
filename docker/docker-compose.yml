@@ -26,7 +26,7 @@ services:
       # 30s grace period accounts for first-boot init scripts in
       # /docker-entrypoint-initdb.d, volume setup, and internal service startup
       start_period: 30s
-    
+
   metabase:
     image: metabase/metabase:latest
     container_name: metabase
@@ -53,4 +53,3 @@ services:
 volumes:
   postgres_data:
   metabase_data:
-      

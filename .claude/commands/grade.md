@@ -80,9 +80,6 @@ Be honest — don't inflate scores. A 1 means "mostly there with real gaps," a 2
    - Mark the task: `[x] Task X.Y — [name] (PASS, X/10, YYYY-MM-DD)`
    - Update the "Last updated" timestamp at the bottom
 
-3. **Check README.md links:** Scan the Deliverable Artifacts from the task. For each file, confirm it appears in the "Links to Docs Index" section of `README.md`. If any are missing, add them in the format:
-   ```
-   - **[Short descriptive name]:** [`path/to/file.md`](./path/to/file.md)
-   ```
+3. **Check docs index links:** Scan the Deliverable Artifacts from the task. For each `.md` file, confirm it appears in `docs/README.md`. If any are missing, add a row to the appropriate table section matching the existing format.
 
 4. **Write session notes:** Invoke the `/session-notes` skill.

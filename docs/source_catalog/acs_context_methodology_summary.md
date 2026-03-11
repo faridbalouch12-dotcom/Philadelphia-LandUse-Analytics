@@ -1,9 +1,9 @@
 # ACS (American Community Survey) - Metadata Summary (Project Fit)
 
-**Prepared for:** Philly Planning District Change Explorer (district-first MVP)  
-**Dataset ID:** D1 (ACS demographic context)  
-**Prepared by:** Farid  
-**Date:** 2026-03-08  
+**Prepared for:** Philly Planning District Change Explorer (district-first MVP)
+**Dataset ID:** D1 (ACS demographic context)
+**Prepared by:** Farid
+**Date:** 2026-03-08
 
 ## What this dataset is
 The **ACS 5-Year Data Profiles** provide tract-level demographic, social, economic, and housing estimates. In this project, ACS is used as **context** for district change metrics (permits, zoning), not as an explanatory/causal dataset.

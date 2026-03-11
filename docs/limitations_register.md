@@ -77,4 +77,3 @@ This register is informed by the MVP dataset risks, the problem statement scope 
 | 2026-03-08 | Added L21 (cancelled/voided permits still counted) from permits metric spec drafting (Task 12.5) | Farid  |
 | 2026-03-08 | Added L22 (zoning Shape__Area CRS ambiguity) from zoning metric spec drafting (Task 13.4); updated links section with metric spec cross-references | Farid  |
 | 2026-03-08 | Final hardening (Task 18.4): confirmed 22 items total (≥20 required); confirmed ≥5 items (L3, L4, L5, L9, L21, L22) explicitly tied to metric spec impacts; added map_first_readiness_contract cross-reference to links | Farid  |
-

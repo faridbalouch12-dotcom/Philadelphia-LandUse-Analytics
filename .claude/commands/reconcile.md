@@ -85,7 +85,7 @@ Based on the category, read **only** these files:
 - `docs/diagrams/dataflow.mmd` — current dataflow
 
 ### All changes
- - Read all files above. 
+ - Read all files above.
 ---
 
 ## Step 3: Check for contradictions

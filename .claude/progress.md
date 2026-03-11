@@ -196,17 +196,17 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 **Day 26 — dbt project scaffold**
 - [x] Task 26.1 — Initialize the dbt project (PASS, 9/10, 2026-03-11)
-- [ ] Task 26.2 — Configure dbt connection profiles
-- [ ] Task 26.3 — Create source declarations for all 4 MVP datasets
-- [ ] Task 26.4 — Create the dbt folder structure
-- [ ] Task 26.5 — Generate the first dbt docs site
-- [ ] Task 26.6 — Define the materialization strategy
+- [x] Task 26.2 — Configure dbt connection profiles (PASS, 9/10, 2026-03-11)
+- [x] Task 26.3 — Create source declarations for all 4 MVP datasets (PASS, 8/10, 2026-03-11)
+- [x] Task 26.4 — Create the dbt folder structure (PASS, 9/10, 2026-03-11)
+- [x] Task 26.5 — Generate the first dbt docs site (PASS, 9/10, 2026-03-11)
+- [x] Task 26.6 — Define the materialization strategy (PASS, 10/10, 2026-03-11)
 
 **Day 27 — Tests, linting, and CI skeleton**
-- [ ] Task 27.1 — Add pytest configuration
-- [ ] Task 27.2 — Add the first real smoke test
-- [ ] Task 27.3 — Add lint/format tooling
-- [ ] Task 27.4 — Add pre-commit hooks
+- [x] Task 27.1 — Add pytest configuration (PASS, 10/10, 2026-03-11)
+- [x] Task 27.2 — Add the first real smoke test (PASS, 10/10, 2026-03-11)
+- [x] Task 27.3 — Add lint/format tooling (PASS, 10/10, 2026-03-11)
+- [x] Task 27.4 — Add pre-commit hooks (PASS, 10/10, 2026-03-11)
 - [ ] Task 27.5 — Add a GitHub Actions workflow
 
 ---
@@ -409,4 +409,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-11 (Task 26.1)
+**Last updated:** 2026-03-11 (Task 27.4)

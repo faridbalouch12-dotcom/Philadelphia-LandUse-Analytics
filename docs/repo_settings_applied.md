@@ -1,9 +1,9 @@
 # Repository settings applied — evidence
 
-**Author:** Farid  
-**Created:** 2026-02-28  
-**Last Updated:** 2026-03-01  
-**Status:** Final  
+**Author:** Farid
+**Created:** 2026-02-28
+**Last Updated:** 2026-03-01
+**Status:** Final
 
 ---
 
@@ -29,8 +29,8 @@ This document provides evidence that the GitHub repository settings outlined in 
 
 ### 1. Branch protection for main
 
-**Status:** ✅ Applied  
-**Date Applied:** 2026-02-28  
+**Status:** ✅ Applied
+**Date Applied:** 2026-02-28
 
 **Configuration:**
 - Branch name pattern: `main`
@@ -42,8 +42,8 @@ This document provides evidence that the GitHub repository settings outlined in 
 
 ### 2. Pull request requirements
 
-**Status:** ✅ Applied  
-**Date Applied:** 2026-03-01  
+**Status:** ✅ Applied
+**Date Applied:** 2026-03-01
 
 **Configuration:**
 - ✅ Require a pull request before merging into `main`
@@ -55,8 +55,8 @@ This document provides evidence that the GitHub repository settings outlined in 
 
 ### 3. Status check requirements
 
-**Status:** ✅ Applied  
-**Date Applied:** 2026-02-28  
+**Status:** ✅ Applied
+**Date Applied:** 2026-02-28
 
 **Configuration:**
 - ✅ Require status checks to pass before merging

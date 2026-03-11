@@ -19,5 +19,26 @@ dependencies = [
   "requests",
   "pandas",
   "geopandas",
-  "dbt-postgres"
+  "dbt-postgres",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "python-dotenv",
+  "pylint",
+  "pre-commit",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint.messages_control]
+disable = [
+  "missing-module-docstring",
+  "too-few-public-methods",
 ]

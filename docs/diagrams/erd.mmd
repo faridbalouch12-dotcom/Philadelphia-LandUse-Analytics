@@ -85,7 +85,7 @@ erDiagram
         varchar  boundary_version  PK
         geometry polygon_geometry
     }
-    
+
     dim_district ||--o{ fct_permits : "R12 · district_id"
     dim_date ||--o{ fct_permits : "R12 · date_key"
     dim_zoning ||--o{ fct_district_year_zoning_composition : "R12 · zoning_code"

@@ -8,8 +8,8 @@
 ---
 
 ## Overview
-**What it is:** ACS 5-year tract-level demographic, social, economic, and housing profile estimates (Data Profiles DP02-DP05).  
-**Project relevance:** Provides planning-district context by showing tract-level ACS distributions alongside permits (physical change) and zoning (regulatory change).  
+**What it is:** ACS 5-year tract-level demographic, social, economic, and housing profile estimates (Data Profiles DP02-DP05).
+**Project relevance:** Provides planning-district context by showing tract-level ACS distributions alongside permits (physical change) and zoning (regulatory change).
 **Intended outputs:** tract staging table; tract ACS mart with estimate + MOE columns; tract-to-district grouping metadata for dashboard context interactions; optional tract map layer once joined to tract polygons. No single-value district ACS KPI table is published for MVP dashboards.
 
 ---

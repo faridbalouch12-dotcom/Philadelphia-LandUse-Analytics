@@ -1,0 +1,17 @@
+sources:
+  - name: open_data_philly
+    database: philly_dw
+    schema: raw
+    tables:
+      # Zoning base districts are ingested as one table per vintage year.
+      # When a new vintage is ingested (e.g. zoning_base_districts_2026),
+      # add a new entry here before building the staging model for that vintage.
+      - name: zoning_base_districts_2025
+        description: >
+          Zoning base district polygons — 2025 vintage.
+          Loaded via Python ingestion from the ArcGIS FeatureServer.
+        columns:
+          - name: objectid
+            tests:
+              - not_null
+              - unique

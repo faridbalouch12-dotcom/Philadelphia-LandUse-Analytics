@@ -13,3 +13,26 @@ target-path: "target"
 clean-targets:
   - "target"
   - "dbt_packages"
+
+models:
+  philly_dw:
+    staging:
+      # Views: lightweight renames/casts on top of raw. Cost paid once at dbt run
+      # time when intermediate tables are built — never hit directly by Metabase.
+      +schema: staging
+      +materialized: view
+    intermediate:
+      # Tables: spatial joins and complex transforms worth caching so marts don't
+      # re-run expensive operations on every build.
+      +schema: intermediate
+      +materialized: table
+    marts:
+      # Tables: primary query layer — facts, dimensions, bridge, geometry.
+      # Stable storage required for consistent Metabase query performance.
+      +schema: marts
+      +materialized: table
+    analytics:
+      # Tables: pre-aggregated rollups queried directly by Metabase dashboards.
+      # Must be stored — re-running aggregations on every dashboard load is not acceptable.
+      +schema: analytics
+      +materialized: table

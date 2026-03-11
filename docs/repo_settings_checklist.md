@@ -1,9 +1,9 @@
 # Repository Settings Checklist
 
-**Author:** Farid  
-**Created:** 2026-02-28  
-**Last Updated:** 2026-02-28  
-**Status:** Final  
+**Author:** Farid
+**Created:** 2026-02-28
+**Last Updated:** 2026-02-28
+**Status:** Final
 
 ---
 
@@ -32,8 +32,8 @@ This checklist documents the intended GitHub repository settings for the Philly 
 
 ### 1. Branch Protection Rules
 
-**Setting:** Enable branch protection for `main`  
-**GitHub Path:** Settings → Branches → Branch protection rules → Add rule  
+**Setting:** Enable branch protection for `main`
+**GitHub Path:** Settings → Branches → Branch protection rules → Add rule
 **Configuration:**
 - Branch name pattern: `main`
 
@@ -43,8 +43,8 @@ This checklist documents the intended GitHub repository settings for the Philly 
 
 ### 2. Require Pull Request Before Merging
 
-**Setting:** Require a pull request before merging into `main`  
-**GitHub Path:** Settings → Branches → Branch protection rules → `main` rule → "Require a pull request before merging"  
+**Setting:** Require a pull request before merging into `main`
+**GitHub Path:** Settings → Branches → Branch protection rules → `main` rule → "Require a pull request before merging"
 **Configuration:**
 - ✅ Require a pull request before merging
 - Require approvals: 1
@@ -56,8 +56,8 @@ This checklist documents the intended GitHub repository settings for the Philly 
 
 ### 3. Require Status Checks
 
-**Setting:** Require status checks to pass before merging  
-**GitHub Path:** Settings → Branches → Branch protection rules → `main` rule → "Require status checks to pass before merging"  
+**Setting:** Require status checks to pass before merging
+**GitHub Path:** Settings → Branches → Branch protection rules → `main` rule → "Require status checks to pass before merging"
 **Configuration:**
 - ✅ Require status checks to pass before merging
 - ✅ Require branches to be up to date before merging
@@ -68,8 +68,8 @@ This checklist documents the intended GitHub repository settings for the Philly 
 
 ### 4. Configure .gitignore for Books Folder
 
-**Setting:** Add `books/` folder to `.gitignore` to prevent committing copyrighted PDFs to public repo  
-**Location:** Root directory `.gitignore` file  
+**Setting:** Add `books/` folder to `.gitignore` to prevent committing copyrighted PDFs to public repo
+**Location:** Root directory `.gitignore` file
 **Configuration:**
 ```
 # Books and reference materials (copyrighted PDFs)
@@ -77,7 +77,7 @@ books/
 books/*.pdf
 ```
 
-**Rationale:** 
+**Rationale:**
 - Books in `books/` folder are for personal educational use
 - Should not be distributed via public GitHub repos
 - Learner should maintain their own local copy

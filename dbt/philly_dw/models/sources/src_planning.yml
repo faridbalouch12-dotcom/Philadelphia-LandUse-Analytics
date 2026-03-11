@@ -1,0 +1,14 @@
+sources:
+  - name: open_data_philly
+    database: philly_dw
+    schema: raw
+    tables:
+      - name: planning_districts
+        description: >
+          Philadelphia planning district boundaries (18 districts).
+          Loaded via Python ingestion from the ArcGIS FeatureServer.
+        columns:
+          - name: dist_name
+            tests:
+              - not_null
+              - unique

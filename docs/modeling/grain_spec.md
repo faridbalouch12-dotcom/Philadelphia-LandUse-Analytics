@@ -1,9 +1,9 @@
 # Grain spec
 
-**Author:** Farid  
-**Created:** 2026-03-08  
+**Author:** Farid
+**Created:** 2026-03-08
 **Last Updated:** 2026-03-10
-**Status:** Draft  
+**Status:** Draft
 
 ---
 

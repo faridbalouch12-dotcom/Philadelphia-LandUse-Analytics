@@ -55,8 +55,8 @@ A table where **one row represents an aggregate** at a higher grain intended for
 ### Example A: Permits (feature-level) vs District-month permits (rollup)
 
 #### A1) Permit events — feature table
-**Grain:** 1 row = 1 permit record (event-level).  
-**Purpose:** drill-down, auditing, and future map-first exploration.  
+**Grain:** 1 row = 1 permit record (event-level).
+**Purpose:** drill-down, auditing, and future map-first exploration.
 **Typical columns (conceptual):**
 - permit identifier (best available unique ID)
 - canonical event date field (chosen for aggregation)
@@ -70,9 +70,9 @@ A table where **one row represents an aggregate** at a higher grain intended for
 - “Where are permit hotspots within District 6?”
 
 #### A2) District-month permits — rollup table
-**Grain:** 1 row = 1 district × 1 month.  
-**Purpose:** district-first time series, comparisons, and stable dashboard metrics.  
-**Derived from:** permit events feature table + district spine (for land-only area).  
+**Grain:** 1 row = 1 district × 1 month.
+**Purpose:** district-first time series, comparisons, and stable dashboard metrics.
+**Derived from:** permit events feature table + district spine (for land-only area).
 **Typical columns (conceptual):**
 - `district_id`
 - `month` (canonical month key)

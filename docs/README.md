@@ -67,6 +67,7 @@ source file and gives a one-line summary of what that document is for.
 | [ACS usage policy](./policies/acs_usage_policy.md) | Defines what ACS data is used for in this project and what comparisons are prohibited. |
 | [Standard disclaimer library](./policies/disclaimer_library.md) | Copy-paste ready disclaimer sentences and forbidden-claim examples for dashboards and docs. |
 | [Map-first readiness contract](./policies/map_first_readiness_contract.md) | Defines the 6 conditions a spatial feature layer must satisfy before it is considered map-first ready. |
+| [dbt materialization policy](./policies/dbt_materialization_policy.md) | Defines the materialization strategy (view vs table) for each dbt model layer, with rationale and known override candidates. |
 
 ---
 
@@ -175,6 +176,20 @@ source file and gives a one-line summary of what that document is for.
 | [Feasibility checklist template](./templates/feasibility_checklist.md) | Reusable template for dataset feasibility assessments. |
 | [Data dictionary template](./templates/data_dictionary_template.md) | Reusable template for critical fields data dictionaries. |
 | [Repository settings checklist template](./templates/repo_settings_checklist.md) | Reusable template for documenting GitHub repository configuration checks. |
+
+---
+
+## Runbooks
+
+| Document | Summary |
+|----------|---------|
+| [Local environment setup](./runbooks/local_env_setup.md) | Step-by-step guide for setting up the local development environment from scratch. |
+| [Local dev](./runbooks/local_dev.md) | Day-to-day local development workflow: start stack, run ingestion, run dbt. |
+| [Stack smoke test](./runbooks/stack_smoke_test.md) | Checklist for verifying the full Docker Compose stack is healthy after `docker compose up`. |
+| [Local reset](./runbooks/local_reset.md) | Safe workflow for wiping and rebuilding the local database from a clean state. |
+| [DB bootstrap verification](./runbooks/db_bootstrap_verification.md) | Steps to verify schemas, extensions, and roles were created correctly after bootstrap. |
+| [dbt local setup](./runbooks/dbt_local_setup.md) | Prerequisites, env var config, and step-by-step instructions for getting dbt running locally. |
+| [dbt docs site](./runbooks/dbt_docs.md) | How to generate and serve the dbt docs site locally, navigate source nodes, and verify descriptions rendered correctly. |
 
 ---
 
