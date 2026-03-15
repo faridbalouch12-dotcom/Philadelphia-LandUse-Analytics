@@ -207,32 +207,32 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [x] Task 27.2 — Add the first real smoke test (PASS, 10/10, 2026-03-11)
 - [x] Task 27.3 — Add lint/format tooling (PASS, 10/10, 2026-03-11)
 - [x] Task 27.4 — Add pre-commit hooks (PASS, 10/10, 2026-03-11)
-- [ ] Task 27.5 — Add a GitHub Actions workflow
+- [x] Task 27.5 — Add a GitHub Actions workflow (PASS, 10/10, 2026-03-11)
 
 ---
 
 ### Week 6 — Planning Districts Vertical Slice
 
 **Day 28 — Raw ingestion**
-- [ ] Task 28.1 — Inspect the planning-district source endpoint
-- [ ] Task 28.2 — Build the raw extractor
-- [ ] Task 28.3 — Add raw snapshot manifest metadata
-- [ ] Task 28.4 — Land the first raw snapshot
-- [ ] Task 28.5 — Write the raw-ingest runbook
+- [x] Task 28.1 — Inspect the planning-district source endpoint (PASS, 7/10, 2026-03-14)
+- [x] Task 28.2 — Build the raw extractor (loads directly to PostGIS `raw` schema; absorbs 28.4, 30.1, 30.2) (PASS, 7/10, 2026-03-14)
+- [x] Task 28.3 — Add ingestion log tracking (`raw.ingestion_logs` table) (PASS, 8/10, 2026-03-14)
+- ~~Task 28.4~~ *(collapsed into 28.2)*
+- [x] Task 28.5 — Write the raw-ingest runbook (PASS, 9/10, 2026-03-14)
 
 **Day 29 — Raw QA**
-- [ ] Task 29.1 — Record row-count expectations
-- [ ] Task 29.2 — Verify the key fields
-- [ ] Task 29.3 — Verify geometry presence and type
-- [ ] Task 29.4 — Inspect CRS/SRID evidence
-- [ ] Task 29.5 — Add at least one raw-data validator test
+- [x] Task 29.1 — Raw QA documentation (collapses 29.1–29.4) (PASS, 9/10, 2026-03-14)
+- ~~Task 29.2~~ *(collapsed into 29.1)*
+- ~~Task 29.3~~ *(collapsed into 29.1)*
+- ~~Task 29.4~~ *(collapsed into 29.1)*
+- [x] Task 29.5 — Add at least one raw-data validator test (PASS, 8/10, 2026-03-14)
 
-**Day 30 — Load and staging**
-- [ ] Task 30.1 — Create the raw landing table
-- [ ] Task 30.2 — Load the first snapshot into `raw`
-- [ ] Task 30.3 — Declare the planning-district source in dbt
-- [ ] Task 30.4 — Build `stg_planning_districts`
-- [ ] Task 30.5 — Add dbt tests for the staging model
+**Day 30 — Staging**
+- ~~Task 30.1~~ *(removed — `to_postgis()` creates table automatically)*
+- ~~Task 30.2~~ *(collapsed into 28.2)*
+- [x] Task 30.3 — Declare the planning-district source in dbt (PASS, 9/10, 2026-03-14)
+- [x] Task 30.4 — Build `stg_planning_districts` (PASS, 9/10, 2026-03-14)
+- [x] Task 30.5 — Add dbt tests for the staging model (PASS, 10/10, 2026-03-14)
 
 **Day 31 — CRS validation and area computation**
 - [ ] Task 31.1 — Confirm the geometry SRID in-database
@@ -409,4 +409,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-11 (Task 27.4)
+**Last updated:** 2026-03-14 (Task 30.5)

@@ -960,33 +960,31 @@ By the end of Month 2, the repo should contain:
 ---
 
 **Task 28.2 — Build the raw extractor**
-- Description: Create the Python extraction command for planning districts, including explicit out-fields and geometry handling.
+- Description: Create the Python extraction command for planning districts that pulls from the API and loads directly into the PostGIS `raw` schema, including explicit out-fields and geometry handling.
 - Learning Objective: Learn to write repeatable extracts instead of one-off notebook pulls.
-- Definition of Done: One command lands a raw snapshot locally from the source endpoint.
+- Definition of Done: One command extracts planning districts from the API and loads them into the PostGIS `raw` schema.
 - Deliverables: `src/philly_dw/ingest/planning_districts.py`
 - Reading: D30, D45
+- Note: Replaces original local-file approach. Also absorbs original Task 28.4 (landing the snapshot) and Tasks 30.1–30.2 (table creation and DB load) — `to_postgis()` handles table creation and loading in one step.
 
 ---
 
-**Task 28.3 — Add raw snapshot manifest metadata**
-- Description: Save metadata with each raw extract: extraction time, row count, source URL, and file hash if feasible.
+**Task 28.3 — Add ingestion log tracking**
+- Description: Create a `raw.ingestion_logs` table and write a row with each extraction: source URL, extraction timestamp, row count, and target table name.
 - Learning Objective: Make raw loads traceable and restartable.
-- Definition of Done: A manifest file is created alongside the raw payload and contains extraction metadata.
-- Deliverables: `data/raw/planning_districts/<snapshot_date>/manifest.json`
+- Definition of Done: Each extraction writes a row to `raw.ingestion_log` with source URL, timestamp, row count, and table name.
+- Deliverables: `raw.ingestion_log` table + log entry per extraction
 - Reading: B3
+- Note: Replaces original local manifest.json approach. Traceability lives in the DB alongside the data.
 
 ---
 
-**Task 28.4 — Land the first raw snapshot**
-- Description: Run the extractor and save the first snapshot into the repo’s raw-data layout.
-- Learning Objective: Turn the ingestion code into evidence, not aspiration.
-- Definition of Done: The raw snapshot exists locally and can be inspected independently of the extractor code.
-- Deliverables: `data/raw/planning_districts/<snapshot_date>/planning_districts_raw.*`
+~~**Task 28.4 — Land the first raw snapshot**~~ *(COLLAPSED into Task 28.2 — landing the data is running the extractor)*
 
 ---
 
 **Task 28.5 — Write the raw-ingest runbook**
-- Description: Document how to rerun the extract, where the files land, and what “good” output looks like.
+- Description: Document how to run the extractor, what “good” output looks like in the database (row counts, ingestion log entry), and how to reset/re-extract.
 - Learning Objective: Treat extraction as an operational workflow.
 - Definition of Done: The runbook is specific enough that you could rerun the step after forgetting the command.
 - Deliverables: `docs/runbooks/planning_districts_raw_ingest.md`
@@ -997,38 +995,25 @@ By the end of Month 2, the repo should contain:
 
 ---
 
-**Task 29.1 — Record row-count expectations**
-- Description: Compare the landed snapshot’s row count to the expected district count and document any mismatch.
-- Learning Objective: Start every dataset with count sanity checks before transformation.
-- Definition of Done: The QA note states the expected row count, actual row count, and disposition.
+**Task 29.1 — Raw QA documentation**
+- Description: Document row count, key fields, geometry presence/type, and CRS/SRID evidence for the landed planning districts data. Covers row count expectations, business key confirmation, geometry validation, and in-database SRID verification.
+- Learning Objective: Profile raw data systematically before transformation — counts, keys, geometry, CRS.
+- Definition of Done: QA doc records expected vs actual row count, business key decision, geometry type/null counts, and known vs inferred CRS at both API and DB level.
 - Deliverables: `docs/qa/planning_districts_raw_qa.md`
+- Reading: D11, D27, D28, D30
+- Note: Collapses original tasks 29.1–29.4. Analysis was done during Day 28 endpoint inspection and DB-level SRID verification.
 
 ---
 
-**Task 29.2 — Verify the key fields**
-- Description: Confirm the candidate business key(s), district name fields, and any area-related fields from the raw snapshot.
-- Learning Objective: Verify field assumptions before you hardcode them into models.
-- Definition of Done: The QA note explicitly states which field(s) will become the district business key and why.
-- Deliverables: `docs/qa/planning_districts_raw_qa.md (updated)`
-- Reading: D11
+~~**Task 29.2 — Verify the key fields**~~ *(COLLAPSED into Task 29.1)*
 
 ---
 
-**Task 29.3 — Verify geometry presence and type**
-- Description: Check whether the raw snapshot contains geometry, what geometry type it is, and whether any rows are null or invalid.
-- Learning Objective: Learn to profile geometry early, not after spatial joins start failing.
-- Definition of Done: The QA note records geometry presence, geometry type, and null/invalid counts.
-- Deliverables: `docs/qa/planning_districts_raw_qa.md (updated)`
-- Reading: D27, D30
+~~**Task 29.3 — Verify geometry presence and type**~~ *(COLLAPSED into Task 29.1)*
 
 ---
 
-**Task 29.4 — Inspect CRS/SRID evidence**
-- Description: Determine what the source explicitly says about spatial reference and what still needs verification in-database.
-- Learning Objective: Stop treating CRS as an afterthought.
-- Definition of Done: You have a written statement of what is known, what is inferred, and what still needs DB-level confirmation.
-- Deliverables: `docs/qa/planning_districts_raw_qa.md (updated), docs/limitations_register.md (updated)`
-- Reading: D27, D28
+~~**Task 29.4 — Inspect CRS/SRID evidence**~~ *(COLLAPSED into Task 29.1)*
 
 ---
 
@@ -1045,21 +1030,11 @@ By the end of Month 2, the repo should contain:
 
 ---
 
-**Task 30.1 — Create the raw landing table**
-- Description: Create the raw table definition for planning districts in Postgres/PostGIS.
-- Learning Objective: Move from filesystem snapshots into warehouse-managed raw storage.
-- Definition of Done: A raw table exists in the DB and matches the intended landing shape.
-- Deliverables: `sql/raw/planning_districts_raw.sql OR src/philly_dw/load/planning_districts_raw.py`
-- Reading: D11, D24
+~~**Task 30.1 — Create the raw landing table**~~ *(REMOVED — `to_postgis()` in Task 28.2 creates the table automatically)*
 
 ---
 
-**Task 30.2 — Load the first snapshot into `raw`**
-- Description: Load the landed planning-district snapshot into the raw schema.
-- Learning Objective: Build the full extract-to-load path before writing transformations.
-- Definition of Done: The raw table contains the loaded snapshot and row counts match the raw file.
-- Deliverables: `src/philly_dw/load/planning_districts_raw.py OR docs/runbooks/planning_districts_raw_load.md`
-- Reading: D31
+~~**Task 30.2 — Load the first snapshot into `raw`**~~ *(COLLAPSED into Task 28.2 — extraction and DB load are one step)*
 
 ---
 

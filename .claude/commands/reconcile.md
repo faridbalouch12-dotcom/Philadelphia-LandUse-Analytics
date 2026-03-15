@@ -22,6 +22,7 @@ Read the description (from $ARGUMENTS or conversation context) and classify into
 | **METRIC** | Changing a metric formula, grain, source table, or dimension | Changing permits_monthly_count source from stg to fct |
 | **POLICY** | Changing an established policy | Allowing district-level ACS aggregation |
 | **DIAGRAM** | Changes that affect ERD or dataflow structure | Adding a new entity, changing relationship cardinality |
+| **FULL** | Broad reconciliation across all docs — no specific change required | `/reconcile full` |
 
 If the change spans multiple categories, identify the primary and note secondary impacts.
 
@@ -83,6 +84,22 @@ Based on the category, read **only** these files:
 - `docs/modeling/table_inventory.md` — table existence
 - `docs/diagrams/erd.mmd` — current ERD
 - `docs/diagrams/dataflow.mmd` — current dataflow
+
+### FULL changes
+Read all of the following:
+- `docs/modeling/table_inventory.md`
+- `docs/modeling/grain_spec.md`
+- `docs/modeling/column_contracts.md`
+- `docs/modeling/erd_text_draft.md`
+- `docs/diagrams/erd.mmd`
+- `docs/diagrams/dataflow.mmd`
+- `docs/decision_log.md`
+- `docs/assumptions_log.md`
+- `docs/limitations_register.md`
+- `docs/metrics/` — all files
+- `docs/policies/` — all files
+
+Run all four contradiction checks from Step 3 across every file. Report every contradiction, stale reference, assumption at risk, and superseded decision found.
 
 ### All changes
  - Read all files above.

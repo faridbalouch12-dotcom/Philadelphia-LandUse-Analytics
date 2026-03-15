@@ -34,7 +34,7 @@ Text-only entity-relationship draft for the Philadelphia data warehouse. Defines
 **Type:** Dimension
 **Grain:** One planning district
 **PK:** `district_id`
-**Key columns:** `district_id`, `district_name`, `land_area_sqmi`
+**Key columns:** `district_id` (integer), `district_name`, `district_abbrev`, `land_area_sqmi`
 **Purpose:** Lightweight district lookup table used by all fact and aggregation tables. Geometry is intentionally excluded — polygon geometry lives in `geo_district_boundaries` (E8) to avoid storage and join overhead.
 
 ---

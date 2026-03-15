@@ -45,23 +45,23 @@
 ## Required Fields Summary (MVP)
 
 - **Key / ID fields:**
-  - `DIST_NUM` (preferred, from authoritative API) — or `objectid` as interim fallback
+  - `objectid` (confirmed natural key — `DIST_NUM` absent from API; renamed to `district_id` in staging)
 - **Display / label fields:**
-  - `DIST_NAME` / `dist_name` (full name, required)
-  - `LABEL` / `abbrev` (short label, recommended)
+  - `dist_name` (full name, required — renamed to `district_name` in staging)
+  - `abbrev` (short label, required — renamed to `district_abbrev` in staging)
 - **Geometry:**
-  - `geometry` (polygon, required for spatial joins and area derivation)
-- **Derived field (not stored in source):**
-  - `land_area_sqmi` — computed from geometry in a standardized CRS; do NOT use `Shape__Area` or `AREA` until units are validated
+  - `geometry` (polygon, EPSG:4326 at source; reprojected to EPSG:2272 in staging)
+- **Derived field:**
+  - `land_area_sqmi` — computed in staging via `ST_Area(ST_Transform(geometry, 2272)) / 27878400`
 
 ---
 
-## Notes for Implementation Later
+## Implementation Notes (Month 2 — resolved)
 
-- Compute and store `land_area_sqmi` from geometry in a standardized projected CRS (e.g., EPSG:2272 — Pennsylvania State Plane South) during Month 2 ingestion.
-- Reconcile `abbrev` (GeoJSON) vs. `LABEL` (schema) — determine if they are equivalent and which to expose as the canonical short label.
-- If district boundaries change, version the district dimension (SCD2) and backfill rollups by boundary version.
-- Validate `DIST_NUM` from the authoritative API and update this dictionary to mark it as confirmed in extract.
+- ~~Compute and store `land_area_sqmi`~~ — **Done:** derived in `stg_planning_districts` via EPSG:2272 reprojection.
+- ~~Reconcile `abbrev` vs. `LABEL`~~ — **Done:** `abbrev` used as canonical short label (`district_abbrev`). `LABEL` not present in API response.
+- ~~Validate `DIST_NUM`~~ — **Done:** `DIST_NUM` confirmed absent from API. `objectid` adopted as `district_id`.
+- If district boundaries change, version the district dimension (SCD2) and backfill rollups by boundary version. *(Still applies — deferred.)*
 
 ---
 

@@ -48,7 +48,7 @@ This document inventories all planned warehouse tables for the Philadelphia data
 
 | Table | Entity | Type | Grain | SCD Strategy | Intended consumers |
 |-------|--------|------|-------|--------------|-------------------|
-| `dim_district` | E1 | dimension | One planning district | **Type 1** — district names and area are administratively stable; corrections overwrite in place | SQL analysts (joins); Metabase dashboards (district filter) |
+| `dim_district` | E1 | dimension | One planning district | **Type 1** — district names and area are administratively stable; corrections overwrite in place | SQL analysts (joins); Metabase dashboards (district filter) | Key columns: `district_id` (integer PK), `district_name`, `district_abbrev`, `land_area_sqmi` |
 | `dim_date` | E2 | dimension | One calendar date | **Static** — calendar dates never change; table is generated once and never updated | Pipeline / dbt models (all fact tables join via EOY surrogate date keys) |
 | `dim_zoning` | E3 | dimension | One zoning code | **Type 1** — zoning categories are broad and stable within the MVP window; label corrections overwrite in place | SQL analysts (joins); Metabase dashboards (zoning filter) |
 | `fct_permits` | E4 | feature | One issued permit event (`status = 'Issued'`) | N/A — transaction fact; rows are immutable once loaded | SQL analysts (drill-down, custom aggregations); Metabase dashboards (permit counts, intensity metrics) |

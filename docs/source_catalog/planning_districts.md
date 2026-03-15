@@ -22,8 +22,8 @@
 ## Access
 
 - **Primary source/host:** OpenDataPhilly — Planning Districts (S1)
-- **Access method(s):** GeoJSON / SHP / ArcGIS FeatureServer API
-- **Preferred method for this project:** Local GeoJSON extract for Month-1 profiling; authoritative API pull for Month-2 ingestion pipeline
+- **Access method(s):** ArcGIS Hub Download API (GeoJSON)
+- **Preferred method for this project:** ArcGIS Hub download URL for Month-2 ingestion pipeline (`https://hub.arcgis.com/api/v3/datasets/0960ea0f38f44146bb562f2b212075aa_0/downloads/data?format=geojson&spatialRefId=4326&where=1%3D1`)
 - **Known limits / constraints:** Update cadence and boundary version not stated in extract metadata — validate before operationalizing
 - **Expected size / volume notes:** Small dataset (18 features); no size or rate-limit concerns
 

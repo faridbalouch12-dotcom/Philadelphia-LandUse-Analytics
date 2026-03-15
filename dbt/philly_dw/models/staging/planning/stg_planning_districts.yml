@@ -1,0 +1,25 @@
+models:
+  - name: stg_planning_districts
+    description: "Staging table for planning districts in Philadelphia."
+    columns:
+      - name: district_id
+        tests:
+          - not_null
+          - unique
+        description: "Unique identifier for the planning district."
+      - name: district_name
+        tests:
+          - not_null
+        description: "Name of the planning district."
+      - name: district_abbrev
+        description: "Abbreviation for the planning district."
+      - name: geom
+        tests:
+          - not_null
+          - unique
+        description: "Geometry of the planning district in EPSG:2272."
+      - name: land_area_sqmi
+        tests :
+          - not_null
+          - unique
+        description: "Land area of the planning district in square miles."

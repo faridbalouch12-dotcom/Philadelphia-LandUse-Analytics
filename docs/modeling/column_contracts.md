@@ -26,7 +26,7 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 | Column | Type | Nullable | Business meaning |
 |--------|------|----------|-----------------|
 | `permitnumber` | `VARCHAR` | NOT NULL | Natural PK from L&I source system. Unique per issued permit. |
-| `district_id` | `VARCHAR` | **NULLABLE** | FK → `dim_district`. NULL when geocoding fails; unassigned permits are tracked separately as a quality metric. |
+| `district_id` | `INTEGER` | **NULLABLE** | FK → `dim_district`. NULL when geocoding fails; unassigned permits are tracked separately as a quality metric. |
 | `date_key` | `INTEGER` | NOT NULL | FK → `dim_date` (surrogate). Derived from `permitissuedate`. |
 | `permitissuedate` | `DATE` | NOT NULL | Raw issuance date from source. Required — permits filtered to `status = 'Issued'` must have an issue date. |
 | `permittype` | `VARCHAR` | NOT NULL | Permit type from source (e.g., `BP_ADDITION`, `ZONING/USE`). Must be populated before load. |
@@ -51,7 +51,7 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 
 | Column | Type | Nullable | Business meaning |
 |--------|------|----------|-----------------|
-| `district_id` | `VARCHAR` | NOT NULL | PK component, FK → `dim_district`. |
+| `district_id` | `INTEGER` | NOT NULL | PK component, FK → `dim_district`. |
 | `vintage_year_key` | `INTEGER` | NOT NULL | PK component, FK → `dim_date` (EOY surrogate, e.g. `20231231`). |
 | `zoning_code` | `VARCHAR` | NOT NULL | PK component, FK → `dim_zoning`. |
 | `vintage_date` | `DATE` | NOT NULL | EOY date for the vintage year (e.g., `2023-12-31`). Used to join `dim_date`. |
@@ -78,7 +78,7 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 | Column | Type | Nullable | Business meaning |
 |--------|------|----------|-----------------|
 | `geoid_tract` | `VARCHAR` | NOT NULL | PK component, FK → `fct_tract_acs`. Census tract GEOID (11-digit). |
-| `district_id` | `VARCHAR` | NOT NULL | PK component, FK → `dim_district`. |
+| `district_id` | `INTEGER` | NOT NULL | PK component, FK → `dim_district`. |
 | `boundary_version` | `VARCHAR` | NOT NULL | PK component. String label for the district boundary vintage (e.g., `'2020'`). |
 | `boundary_version_eoy` | `DATE` | NOT NULL | EOY date for the boundary version. FK → `dim_date`. |
 | `overlap_area_sqft` | `NUMERIC` | NOT NULL | Raw area of the tract–district intersection in sq ft. Must be > 0. |
@@ -134,12 +134,13 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 
 | Column | Type | Nullable | Business meaning |
 |--------|------|----------|-----------------|
-| `district_id` | `VARCHAR` | NOT NULL | Natural PK. Stable administrative identifier from source (e.g., `'CC'` for Center City). |
+| `district_id` | `INTEGER` | NOT NULL | Natural PK. Source `objectid` from ArcGIS Hub, renamed in staging. Stable for 18 static districts. |
 | `district_name` | `VARCHAR` | NOT NULL | Human-readable district name. Subject to Type 1 overwrite if name is corrected. |
-| `land_area_sqmi` | `NUMERIC` | NOT NULL | Land-only area in square miles, computed via PostGIS after CRS validation (unblocked by L14). |
+| `district_abbrev` | `VARCHAR` | NOT NULL | Short district abbreviation for charts and map tooltips. |
+| `land_area_sqmi` | `NUMERIC` | NOT NULL | Land-only area in square miles, derived from geometry reprojected to EPSG:2272 in staging. |
 
 **Key strategy:**
-- Natural PK: `district_id` (administratively stable; no surrogate needed)
+- Natural PK: `district_id` (integer, source `objectid`; stable for 18 static districts)
 - No FK versioning columns (`effective_date`, `expiry_date`, `is_current`) — Type 1 SCD, boundary changes tracked via `boundary_version` in `geo_district_boundaries` (D17)
 
 **Grain validation rules:**

@@ -68,6 +68,7 @@ source file and gives a one-line summary of what that document is for.
 | [Standard disclaimer library](./policies/disclaimer_library.md) | Copy-paste ready disclaimer sentences and forbidden-claim examples for dashboards and docs. |
 | [Map-first readiness contract](./policies/map_first_readiness_contract.md) | Defines the 6 conditions a spatial feature layer must satisfy before it is considered map-first ready. |
 | [dbt materialization policy](./policies/dbt_materialization_policy.md) | Defines the materialization strategy (view vs table) for each dbt model layer, with rationale and known override candidates. |
+| [Write access by layer policy](./policies/write_access_by_layer.md) | Defines which pipeline component is the sole writer to each database schema. |
 
 ---
 
@@ -148,6 +149,14 @@ source file and gives a one-line summary of what that document is for.
 
 ---
 
+## QA docs
+
+| Document | Summary |
+|----------|---------|
+| [Planning districts raw QA](./qa/planning_districts_raw_qa.md) | Raw data QA: row count, key fields, geometry validation, and CRS/SRID evidence for planning districts. |
+
+---
+
 ## Checklists
 
 | Document | Summary |
@@ -190,6 +199,8 @@ source file and gives a one-line summary of what that document is for.
 | [DB bootstrap verification](./runbooks/db_bootstrap_verification.md) | Steps to verify schemas, extensions, and roles were created correctly after bootstrap. |
 | [dbt local setup](./runbooks/dbt_local_setup.md) | Prerequisites, env var config, and step-by-step instructions for getting dbt running locally. |
 | [dbt docs site](./runbooks/dbt_docs.md) | How to generate and serve the dbt docs site locally, navigate source nodes, and verify descriptions rendered correctly. |
+| [Planning districts extract plan](./runbooks/planning_districts_extract_plan.md) | Endpoint inspection: URL, expected fields, CRS, and key decisions for the planning districts extractor. |
+| [Planning districts raw ingest](./runbooks/planning_districts_raw_ingest.md) | Operational runbook for running the planning districts extraction pipeline. |
 
 ---
 

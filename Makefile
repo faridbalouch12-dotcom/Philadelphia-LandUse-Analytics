@@ -41,7 +41,7 @@ reset-nuclear: ## Destroy Docker volume and rebuild from scratch — last resort
 	python -m philly_dw.agg_district_acs_attributes_hist
 
 ingest-districts: ## Ingest planning districts data
-	python -m philly_dw.ingest_districts
+	python -m philly_dw.ingest.planning_districts
 
 ingest-permits: ## Ingest L&I permits data
 	python -m philly_dw.ingest_permits
