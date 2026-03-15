@@ -121,6 +121,7 @@ source file and gives a one-line summary of what that document is for.
 | [ERD diagram (Mermaid)](./diagrams/erd.mmd) | Mermaid erDiagram of the full MVP schema — 9 entities, 12 relationships, renders in GitHub. |
 | [ERD review checklist](./checklists/erd_review_checklist.md) | Self-audit of erd.mmd against visual quality, structural completeness, and spec consistency (all 19 checks pass). |
 | [Dataflow diagram (Mermaid)](./diagrams/dataflow.mmd) | Mermaid flowchart showing all 4 datasets flowing raw → staging → mart, with feature vs rollup layers and grain labels. |
+| [Column contracts](./modeling/column_contracts.md) | DDL-ready column contracts for the six highest-risk warehouse tables (SC1–SC6). |
 | [Table inventory](./modeling/table_inventory.md) | Classifies all 9 MVP tables by type (feature/rollup/dimension/bridge/geo), grain, and intended consumers. |
 
 ---

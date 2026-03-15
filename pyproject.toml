@@ -19,13 +19,14 @@ dependencies = [
   "requests",
   "pandas",
   "geopandas",
+  "sqlalchemy",
+  "python-dotenv",
   "dbt-postgres",
 ]
 
 [project.optional-dependencies]
 dev = [
   "pytest",
-  "python-dotenv",
   "pylint",
   "pre-commit",
 ]
