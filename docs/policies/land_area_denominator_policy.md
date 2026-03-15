@@ -27,7 +27,7 @@ This policy locks the denominator used for all area-normalized metrics in the pr
 
 ### 3) Source of land-only area
 
-**Rule:** Land-only area values are derived from the planning districts geometry layer (district spine), computed via PostGIS or equivalent spatial calculation at ingestion time. Values are stored in `dim_district` and joined to rollup tables — they are not recalculated at query time.
+**Rule:** Land-only area values are derived from the planning districts geometry layer (district spine), computed via PostGIS in the dbt staging model (`stg_planning_districts`). Values are stored in `dim_district` and joined to rollup tables — they are not recalculated at query time.
 
 ---
 

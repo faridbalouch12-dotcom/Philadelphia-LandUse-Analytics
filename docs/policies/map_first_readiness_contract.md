@@ -50,7 +50,7 @@ A feature-level spatial layer is map-first ready when all of the following condi
 
 **Validation step:** Confirm CRS from the authoritative ArcGIS FeatureServer metadata in Month 2 EDA. Use `ST_SRID()` in PostGIS to verify before computing any derived spatial metrics.
 
-**Current status:** CRS is unconfirmed for both the planning districts and zoning datasets. Area metrics (`land_area_sqmi`, `polygon_area_sqmi`) and density metrics must be suppressed until CRS is validated. (See L14, L22 in [limitations register](../limitations_register.md).)
+**Current status:** Planning districts CRS confirmed as EPSG:4326 at both API and DB level (L14 resolved 2026-03-14). Zoning datasets CRS still unconfirmed (L22 open). Planning district area metrics are unblocked; zoning area metrics must be suppressed until CRS is validated.
 
 ---
 
@@ -96,7 +96,7 @@ A feature-level spatial layer is map-first ready when all of the following condi
 
 ### C6 — Area metrics are computed by PostGIS, not taken from source fields
 
-**Requirement:** All area values (`land_area_sqmi`, `area_sqmi`) must be computed using PostGIS (`ST_Area()` with geography cast) after CRS validation. Raw source fields (e.g., `Shape__Area` from ArcGIS) must not be used as area denominators.
+**Requirement:** All area values (`land_area_sqmi`, `area_sqmi`) must be computed using PostGIS (`ST_Area()` after reprojection to a suitable projected CRS, e.g., EPSG:2272 for Pennsylvania) after source CRS validation. Raw source fields (e.g., `Shape__Area` from ArcGIS) must not be used as area denominators.
 
 **Why:** Source area fields use the source CRS's native units (which may be feet, meters, or degrees depending on the projection). Using them without CRS confirmation produces systematically wrong area values. (See L22 in [limitations register](../limitations_register.md).)
 
