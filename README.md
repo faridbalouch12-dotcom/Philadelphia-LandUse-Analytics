@@ -16,8 +16,8 @@ An analytics platform that explains how Philadelphia's 18 planning districts cha
 | Docker Compose stack (Postgres + PostGIS + Metabase) | ✅ Running |
 | Database bootstrap (schemas, extensions) | ✅ Verified |
 | Python project scaffold | ✅ Complete |
-| dbt project scaffold | 🔧 In progress (Day 26) |
-| Planning districts vertical slice | 🔲 Week 6 |
+| dbt project scaffold | ✅ Complete |
+| Planning districts vertical slice | 🔧 In progress (Days 28–31 done) |
 | Permits vertical slice | 🔲 Week 7 |
 | Zoning vertical slice | 🔲 Week 8 |
 | ACS + dashboards | 🔲 Week 9 |
