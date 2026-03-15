@@ -1069,38 +1069,19 @@ By the end of Month 2, the repo should contain:
 
 ---
 
-**Task 31.1 — Confirm the geometry SRID in-database**
-- Description: Inspect the loaded district geometry in PostGIS and confirm what SRID the DB thinks it has.
-- Learning Objective: Move CRS confirmation out of guesswork and into actual DB inspection.
-- Definition of Done: A note exists stating the source SRID and how it was verified.
-- Deliverables: `docs/qa/planning_districts_crs_validation.md`
-- Reading: D27, D28
+~~**Task 31.1 — Confirm the geometry SRID in-database**~~ *(COLLAPSED into Day 30 — SRID confirmed as 4326 via `ST_SRID` query on all 18 rows; documented in `docs/qa/planning_districts_raw_qa.md`)*
 
 ---
 
-**Task 31.2 — Choose the projected CRS for area calculations**
-- Description: Choose and document the projected CRS you will use for area calculations and why.
-- Learning Objective: Learn that area calculations require an intentional projection choice.
-- Definition of Done: The selected projected CRS is recorded and justified in one place.
-- Deliverables: `docs/decision_log.md (updated), docs/qa/planning_districts_crs_validation.md (updated)`
-- Reading: D28, D29
+~~**Task 31.2 — Choose the projected CRS for area calculations**~~ *(COLLAPSED into Day 30 — EPSG:2272 (PA State Plane South) chosen and implemented in `stg_planning_districts`)*
 
 ---
 
-**Task 31.3 — Compute `land_area_sqmi`**
-- Description: Transform the geometry to the chosen projected CRS and compute district land area in square miles.
-- Learning Objective: Turn the Month 1 denominator policy into a working warehouse field.
-- Definition of Done: A model or SQL statement exists that computes non-null positive `land_area_sqmi`.
-- Deliverables: `dbt/philly_dw/models/intermediate/planning/int_planning_district_area.sql`
-- Reading: D28, D29
+~~**Task 31.3 — Compute `land_area_sqmi`**~~ *(COLLAPSED into Day 30 — computed in `stg_planning_districts` via `ST_Area(ST_Transform(geometry, 2272)) / 27878400`)*
 
 ---
 
-**Task 31.4 — Reconcile the computed area with any source area field**
-- Description: If the source exposes area-like fields, compare them to your computed value and note the differences.
-- Learning Objective: Build trust in the calculation instead of assuming it is correct.
-- Definition of Done: The QA note states whether the computed area is accepted as canonical and why.
-- Deliverables: `docs/qa/planning_districts_crs_validation.md (updated)`
+~~**Task 31.4 — Reconcile the computed area with any source area field**~~ *(COLLAPSED into Day 30 — `Shape__Area` units undocumented; does not map to sq ft, sq m, or any known unit. Decision: ignore source area, derive from geometry. Documented in extract plan.)*
 
 ---
 

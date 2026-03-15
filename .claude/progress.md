@@ -235,11 +235,11 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [x] Task 30.5 — Add dbt tests for the staging model (PASS, 10/10, 2026-03-14)
 
 **Day 31 — CRS validation and area computation**
-- [ ] Task 31.1 — Confirm the geometry SRID in-database
-- [ ] Task 31.2 — Choose the projected CRS for area calculations
-- [ ] Task 31.3 — Compute `land_area_sqmi`
-- [ ] Task 31.4 — Reconcile the computed area with any source area field
-- [ ] Task 31.5 — Add an automated area sanity test
+- ~~Task 31.1~~ *(collapsed into Day 30 — SRID confirmed 4326)*
+- ~~Task 31.2~~ *(collapsed into Day 30 — EPSG:2272 chosen)*
+- ~~Task 31.3~~ *(collapsed into Day 30 — land_area_sqmi in stg_planning_districts)*
+- ~~Task 31.4~~ *(collapsed into Day 30 — Shape__Area units unresolvable, ignored)*
+- [x] Task 31.5 — Add an automated area sanity test (PASS, 2026-03-14)
 
 **Day 32 — District dimensions and geometry tables**
 - [ ] Task 32.1 — Build `dim_date`
