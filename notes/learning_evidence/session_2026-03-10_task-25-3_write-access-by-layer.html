@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Write Access by Layer — Philly DW</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      padding: 40px 24px;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #475569;
+      margin-bottom: 48px;
+    }
+
+    .pipeline {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 16px;
+    }
+
+    .stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 160px;
+    }
+
+    /* Writer badge above each schema box */
+    .writer-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
+    .badge-python { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb; }
+    .badge-dbt    { background: #1a3a2a; color: #4ade80; border: 1px solid #16a34a; }
+
+    /* Schema box */
+    .schema-box {
+      width: 140px;
+      border-radius: 10px;
+      padding: 16px 12px 12px;
+      text-align: center;
+      position: relative;
+    }
+    .schema-name {
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      margin-bottom: 6px;
+    }
+    .schema-desc {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+    .schema-models {
+      margin-top: 8px;
+      font-size: 0.68rem;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    /* Color themes per schema */
+    .schema-raw         { background: #1e2535; border: 1.5px solid #3b82f6; }
+    .schema-raw .schema-name { color: #60a5fa; }
+
+    .schema-staging     { background: #1a2e1f; border: 1.5px solid #22c55e; }
+    .schema-staging .schema-name { color: #4ade80; }
+
+    .schema-intermediate { background: #1f2a1a; border: 1.5px solid #84cc16; }
+    .schema-intermediate .schema-name { color: #a3e635; }
+
+    .schema-marts       { background: #2a1f1a; border: 1.5px solid #f97316; }
+    .schema-marts .schema-name { color: #fb923c; }
+
+    .schema-analytics   { background: #2a1a2a; border: 1.5px solid #a855f7; }
+    .schema-analytics .schema-name { color: #c084fc; }
+
+    /* Arrow between stages */
+    .arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 6px;
+      padding-top: 44px; /* align with box center */
+    }
+    .arrow-line {
+      width: 28px;
+      height: 2px;
+      background: #334155;
+      position: relative;
+    }
+    .arrow-line::after {
+      content: '';
+      position: absolute;
+      right: -1px;
+      top: -4px;
+      border-left: 7px solid #334155;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+    .arrow-label {
+      font-size: 0.62rem;
+      color: #475569;
+      margin-top: 6px;
+      white-space: nowrap;
+    }
+
+    /* Consumer section below pipeline */
+    .consumer-section {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .consumer-box {
+      background: #1a1a2e;
+      border: 1.5px solid #6366f1;
+      border-radius: 10px;
+      padding: 12px 24px;
+      text-align: center;
+      min-width: 140px;
+    }
+    .consumer-box .schema-name { color: #818cf8; font-size: 0.9rem; }
+    .consumer-box .schema-desc { font-size: 0.72rem; color: #64748b; }
+
+    .consumer-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .consumer-arrow-vert {
+      width: 2px;
+      height: 20px;
+      background: #334155;
+      margin: 0 auto;
+    }
+    .consumer-arrow-vert::after {
+      content: '';
+      display: block;
+      margin-top: -1px;
+      margin-left: -4px;
+      border-top: 7px solid #334155;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+    }
+    .consumer-arrow-label {
+      font-size: 0.62rem;
+      color: #475569;
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-python { background: #3b82f6; }
+    .dot-dbt    { background: #22c55e; }
+    .dot-readonly { background: #334155; border: 1px solid #475569; }
+    .dot-consumer { background: #6366f1; }
+
+    /* Rule callout */
+    .rule-box {
+      max-width: 560px;
+      margin: 40px auto 0;
+      background: #1a1f2e;
+      border: 1px solid #334155;
+      border-left: 4px solid #64748b;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      line-height: 1.6;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Violations table */
+    .violations {
+      max-width: 660px;
+      margin: 40px auto 0;
+    }
+    .violations h2 {
+      font-size: 0.85rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    th {
+      background: #1e2535;
+      color: #64748b;
+      font-weight: 600;
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #334155;
+    }
+    td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #1e2535;
+      color: #94a3b8;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    td.violation { color: #f87171; font-family: 'Cascadia Code', monospace; font-size: 0.72rem; }
+    td.why { color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <h1>Write Access by Layer</h1>
+  <p class="subtitle">Philadelphia Data Warehouse — Pipeline Ownership Model</p>
+
+  <div class="pipeline">
+
+    <!-- RAW -->
+    <div class="stage">
+      <div class="writer-badge badge-python">Python only</div>
+      <div class="schema-box schema-raw">
+        <div class="schema-name">raw</div>
+        <div class="schema-desc">Immutable landed<br>source data from APIs</div>
+        <div class="schema-models">permits_li<br>planning_districts<br>zoning_base<br>acs_tract</div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">dbt reads</div>
+    </div>
+
+    <!-- STAGING -->
+    <div class="stage">
+      <div class="writer-badge badge-dbt">dbt stg_*</div>
+      <div class="schema-box schema-staging">
+        <div class="schema-name">staging</div>
+        <div class="schema-desc">Cleaned, renamed,<br>type-standardized</div>
+        <div class="schema-models">stg_li_permits<br>stg_planning_districts<br>stg_zoning_base<br>stg_acs_tract</div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">dbt reads</div>
+    </div>
+
+    <!-- INTERMEDIATE -->
+    <div class="stage">
+      <div class="writer-badge badge-dbt">dbt int_*</div>
+      <div class="schema-box schema-intermediate">
+        <div class="schema-name">intermediate</div>
+        <div class="schema-desc">Spatial joins,<br>district assignment</div>
+        <div class="schema-models">int_permits_with_district<br>int_zoning_intersections<br>int_tract_overlap</div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">dbt reads</div>
+    </div>
+
+    <!-- MARTS -->
+    <div class="stage">
+      <div class="writer-badge badge-dbt">dbt dim_* fct_* bridge_* geo_*</div>
+      <div class="schema-box schema-marts">
+        <div class="schema-name">marts</div>
+        <div class="schema-desc">Conformed dims,<br>facts, bridges, geo</div>
+        <div class="schema-models">dim_district / dim_date<br>fct_permits<br>bridge_tract_district<br>geo_district_boundaries</div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">dbt reads</div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="stage">
+      <div class="writer-badge badge-dbt">dbt agg_*</div>
+      <div class="schema-box schema-analytics">
+        <div class="schema-name">analytics</div>
+        <div class="schema-desc">Pre-computed<br>dashboard aggregates</div>
+        <div class="schema-models">agg_district_acs_hist<br>agg_permits_monthly</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Consumer -->
+  <div class="consumer-section">
+    <div style="text-align:center;">
+      <div class="consumer-arrow-vert" style="height:24px; width:2px; background:#334155; margin:0 auto;"></div>
+      <div class="consumer-arrow-vert" style="height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid #334155; margin:0 auto; width:0;"></div>
+      <div class="consumer-arrow-label" style="margin-bottom:6px;">SELECT only</div>
+      <div class="consumer-box">
+        <div class="schema-name">Metabase</div>
+        <div class="schema-desc">Read-only consumer<br>never writes back</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule-box">
+    "Each schema has exactly one writer. All other components treat it as read-only."<br>
+    <span style="color:#475569; font-size:0.75rem;">Convention enforced by code discipline — not Postgres roles.</span>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot dot-python"></div> Python ingestion pipeline</div>
+    <div class="legend-item"><div class="legend-dot dot-dbt"></div> dbt models</div>
+    <div class="legend-item"><div class="legend-dot dot-readonly"></div> Read-only (SELECT only)</div>
+    <div class="legend-item"><div class="legend-dot dot-consumer"></div> BI consumer (Metabase)</div>
+  </div>
+
+  <div class="violations">
+    <h2>Violation examples to avoid</h2>
+    <table>
+      <thead>
+        <tr><th>Violation</th><th>Why it breaks the policy</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="violation">Python script writes cleaned data to staging.*</td>
+          <td class="why">staging belongs to dbt stg_* models only</td>
+        </tr>
+        <tr>
+          <td class="violation">dbt model writes a backup table to raw.*</td>
+          <td class="why">raw belongs to the Python ingestion pipeline only</td>
+        </tr>
+        <tr>
+          <td class="violation">Ad-hoc SQL CREATE TABLE in marts.*</td>
+          <td class="why">marts belongs to dbt dim_*/fct_*/bridge_*/geo_* models only</td>
+        </tr>
+        <tr>
+          <td class="violation">Metabase model materializes to analytics.*</td>
+          <td class="why">analytics belongs to dbt agg_* models — Metabase is read-only</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

@@ -46,6 +46,8 @@ Thumbs.db
 
 # Claude session notes (private, not for version control)
 notes/claude_sessions/
+# Curated learning evidence (public — committed)
+!notes/learning_evidence/
 arhive/
 
 # Serena IDE plugin

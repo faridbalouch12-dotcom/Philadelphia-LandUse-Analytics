@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset Blast Radius — Task 25.4</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --border: #2a2d3a;
+    --text: #e2e4ea;
+    --text-dim: #8b8fa3;
+    --safe: #2dd4a0;
+    --safe-bg: rgba(45, 212, 160, 0.08);
+    --warn: #f59e0b;
+    --warn-bg: rgba(245, 158, 11, 0.08);
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.08);
+    --nuclear: #dc2626;
+    --nuclear-bg: rgba(220, 38, 38, 0.08);
+    --accent: #818cf8;
+    --accent-bg: rgba(129, 140, 248, 0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 2rem;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Principle callout */
+  .principle {
+    background: var(--accent-bg);
+    border: 1px solid rgba(129, 140, 248, 0.15);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.95rem;
+  }
+
+  .principle strong {
+    color: var(--accent);
+  }
+
+  /* Blast radius visualization */
+  .blast-grid {
+    display: grid;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .level-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .level-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .level-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .level-cmd {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .level-desc {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .level-1 { border-left: 3px solid var(--safe); }
+  .level-1 .level-label { color: var(--safe); }
+  .level-1 .level-cmd { color: var(--safe); }
+
+  .level-2 { border-left: 3px solid var(--warn); }
+  .level-2 .level-label { color: var(--warn); }
+  .level-2 .level-cmd { color: var(--warn); }
+
+  .level-3 { border-left: 3px solid var(--danger); }
+  .level-3 .level-label { color: var(--danger); }
+  .level-3 .level-cmd { color: var(--danger); }
+
+  .level-4 { border-left: 3px solid var(--nuclear); }
+  .level-4 .level-label { color: var(--nuclear); }
+  .level-4 .level-cmd { color: var(--nuclear); }
+
+  /* Schema bar visualization */
+  .schema-bars {
+    display: flex;
+    gap: 4px;
+    align-items: stretch;
+  }
+
+  .schema-bar {
+    flex: 1;
+    border-radius: 5px;
+    padding: 0.5rem 0.35rem;
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+    min-height: 54px;
+    transition: all 0.2s;
+  }
+
+  .schema-bar .schema-name {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.7rem;
+  }
+
+  .schema-bar .schema-status {
+    font-size: 0.6rem;
+    font-weight: 500;
+  }
+
+  .bar-dropped {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+  }
+
+  .bar-dropped .schema-status { color: #f87171; }
+
+  .bar-safe {
+    background: rgba(45, 212, 160, 0.08);
+    border: 1px solid rgba(45, 212, 160, 0.2);
+    color: #6ee7b7;
+  }
+
+  .bar-safe .schema-status { color: var(--safe); }
+
+  .bar-destroyed {
+    background: rgba(220, 38, 38, 0.2);
+    border: 1px solid rgba(220, 38, 38, 0.4);
+    color: #fca5a5;
+  }
+
+  .bar-destroyed .schema-status { color: var(--nuclear); font-weight: 700; }
+
+  .volume-bar {
+    flex: 0.6;
+    border-radius: 5px;
+    padding: 0.5rem 0.25rem;
+    text-align: center;
+    font-size: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+    min-height: 54px;
+    border-left: 2px dashed var(--border);
+    margin-left: 4px;
+    padding-left: 8px;
+  }
+
+  .volume-bar .schema-name {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+  }
+
+  .volume-bar .schema-status {
+    font-size: 0.58rem;
+    font-weight: 500;
+  }
+
+  .vol-safe {
+    color: #6ee7b7;
+  }
+
+  .vol-safe .schema-status { color: var(--safe); }
+
+  .vol-destroyed {
+    color: #fca5a5;
+  }
+
+  .vol-destroyed .schema-status { color: var(--nuclear); }
+
+  /* Recovery section */
+  .recovery {
+    margin-bottom: 2.5rem;
+  }
+
+  .recovery h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .recovery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+
+  .recovery-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .recovery-card h3 {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .rc-1 h3 { color: var(--safe); }
+  .rc-2 h3 { color: var(--warn); }
+  .rc-3 h3 { color: var(--danger); }
+  .rc-4 h3 { color: var(--nuclear); }
+
+  .recovery-steps {
+    list-style: none;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+
+  .recovery-steps li {
+    padding: 0.2rem 0;
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .recovery-steps li::before {
+    content: attr(data-step);
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 0.65rem;
+  }
+
+  /* Never touched section */
+  .never-touched {
+    margin-bottom: 1.5rem;
+  }
+
+  .never-touched h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .safe-items {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .safe-tag {
+    background: var(--safe-bg);
+    border: 1px solid rgba(45, 212, 160, 0.2);
+    color: var(--safe);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 5px;
+  }
+
+  @media (max-width: 768px) {
+    .level-card {
+      grid-template-columns: 1fr;
+    }
+    .recovery-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Reset Blast Radius</h1>
+  <p class="subtitle">Task 25.4 — What each reset level drops vs. preserves</p>
+
+  <div class="principle">
+    <strong>Rule of thumb:</strong> Use the smallest reset that fixes the problem. Each level drops more data and takes longer to recover.
+  </div>
+
+  <div class="blast-grid">
+
+    <!-- Level 1 -->
+    <div class="level-card level-1">
+      <div class="level-header">
+        <span class="level-label">Level 1</span>
+        <span class="level-cmd">make reset-analytics</span>
+        <span class="level-desc">Agg output is wrong — bins, tract counts, or attributes are off</span>
+      </div>
+      <div class="schema-bars">
+        <div class="schema-bar bar-safe"><span class="schema-name">raw</span><span class="schema-status">safe</span></div>
+        <div class="schema-bar bar-safe"><span class="schema-name">staging</span><span class="schema-status">safe</span></div>
+        <div class="schema-bar bar-safe"><span class="schema-name">intermediate</span><span class="schema-status">safe</span></div>
+        <div class="schema-bar bar-safe"><span class="schema-name">marts</span><span class="schema-status">safe</span></div>
+        <div class="schema-bar bar-dropped"><span class="schema-name">analytics</span><span class="schema-status">DROPPED</span></div>
+        <div class="volume-bar vol-safe"><span class="schema-name">volume</span><span class="schema-status">safe</span></div>
+      </div>
+    </div>
+
+    <!-- Level 2 -->
+    <div class="level-card level-2">
+      <div class="level-header">
+        <span class="level-label">Level 2</span>
+        <span class="level-cmd">make reset-transforms</span>
+        <span class="level-desc">dbt model broke staging, intermediate, marts, or analytics</span>
+      </div>
+      <div class="schema-bars">
+        <div class="schema-bar bar-safe"><span class="schema-name">raw</span><span class="schema-status">safe</span></div>
+        <div class="schema-bar bar-safe"><span class="schema-name">staging</span><span class="schema-status">rebuilt*</span></div>
+        <div class="schema-bar bar-dropped"><span class="schema-name">intermediate</span><span class="schema-status">DROPPED</span></div>
+        <div class="schema-bar bar-dropped"><span class="schema-name">marts</span><span class="schema-status">DROPPED</span></div>
+        <div class="schema-bar bar-dropped"><span class="schema-name">analytics</span><span class="schema-status">DROPPED</span></div>
+        <div class="volume-bar vol-safe"><span class="schema-name">volume</span><span class="schema-status">safe</span></div>
+      </div>
+    </div>
+
+    <!-- Level 3 -->
+    <div class="level-card level-3">
+      <div class="level-header">
+        <span class="level-label">Level 3</span>
+        <span class="level-cmd">make reset-data</span>
+        <span class="level-desc">Source data is stale — API schema changed, need fresh upstream pull</span>
+      </div>
+      <div class="schema-bars">
+        <div class="schema-bar bar-dropped"><span class="schema-name">raw</span><span class="schema-status">DROPPED</span></div>
+        <div class="schema-bar bar-dropped"><span class="schema-name">staging</span><span class="schema-status">DROPPED</span></div>
+        <div class="schema-bar bar-dropped"><span class="schema-name">intermediate</span><span class="schema-status">DROPPED</span></div>
+        <div class="schema-bar bar-dropped"><span class="schema-name">marts</span><span class="schema-status">DROPPED</span></div>
+        <div class="schema-bar bar-dropped"><span class="schema-name">analytics</span><span class="schema-status">DROPPED</span></div>
+        <div class="volume-bar vol-safe"><span class="schema-name">volume</span><span class="schema-status">safe</span></div>
+      </div>
+    </div>
+
+    <!-- Level 4 -->
+    <div class="level-card level-4">
+      <div class="level-header">
+        <span class="level-label">Level 4</span>
+        <span class="level-cmd">make reset-nuclear</span>
+        <span class="level-desc">Infrastructure broken — volume corrupt, init SQL must re-run, PostGIS wrong</span>
+      </div>
+      <div class="schema-bars">
+        <div class="schema-bar bar-destroyed"><span class="schema-name">raw</span><span class="schema-status">DESTROYED</span></div>
+        <div class="schema-bar bar-destroyed"><span class="schema-name">staging</span><span class="schema-status">DESTROYED</span></div>
+        <div class="schema-bar bar-destroyed"><span class="schema-name">intermediate</span><span class="schema-status">DESTROYED</span></div>
+        <div class="schema-bar bar-destroyed"><span class="schema-name">marts</span><span class="schema-status">DESTROYED</span></div>
+        <div class="schema-bar bar-destroyed"><span class="schema-name">analytics</span><span class="schema-status">DESTROYED</span></div>
+        <div class="volume-bar vol-destroyed"><span class="schema-name">volume</span><span class="schema-status">DESTROYED</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recovery steps -->
+  <div class="recovery">
+    <h2>Recovery path after each reset</h2>
+    <div class="recovery-grid">
+      <div class="recovery-card rc-1">
+        <h3>Level 1</h3>
+        <ol class="recovery-steps">
+          <li data-step="1.">Recreate analytics schema</li>
+          <li data-step="2.">Run Python agg script</li>
+        </ol>
+      </div>
+      <div class="recovery-card rc-2">
+        <h3>Level 2</h3>
+        <ol class="recovery-steps">
+          <li data-step="1.">Recreate 3 schemas</li>
+          <li data-step="2.">dbt run (full DAG)</li>
+          <li data-step="3.">Run Python agg script</li>
+        </ol>
+      </div>
+      <div class="recovery-card rc-3">
+        <h3>Level 3</h3>
+        <ol class="recovery-steps">
+          <li data-step="1.">Recreate 5 schemas</li>
+          <li data-step="2.">Re-ingest all 4 sources</li>
+          <li data-step="3.">dbt run</li>
+          <li data-step="4.">Run Python agg script</li>
+        </ol>
+      </div>
+      <div class="recovery-card rc-4">
+        <h3>Level 4</h3>
+        <ol class="recovery-steps">
+          <li data-step="1.">docker compose down -v</li>
+          <li data-step="2.">docker compose up --wait</li>
+          <li data-step="3.">Re-ingest all 4 sources</li>
+          <li data-step="4.">dbt run</li>
+          <li data-step="5.">Run Python agg script</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Never touched -->
+  <div class="never-touched">
+    <h2>Never touched by any reset</h2>
+    <div class="safe-items">
+      <span class="safe-tag">.env</span>
+      <span class="safe-tag">transform/ (dbt models)</span>
+      <span class="safe-tag">src/ingest/ (Python)</span>
+      <span class="safe-tag">metabase_data volume</span>
+      <span class="safe-tag">git history</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

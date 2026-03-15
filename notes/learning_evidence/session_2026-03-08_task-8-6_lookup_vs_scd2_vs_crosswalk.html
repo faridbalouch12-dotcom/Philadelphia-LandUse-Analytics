@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lookup Table vs. SCD Type 2 vs. Crosswalk</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8f9fa; color: #1a1a2e; padding: 2rem; }
+    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 2.5rem; }
+    h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; color: #333; }
+    h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; color: #555; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* Pattern cards */
+    .patterns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1040px; margin: 0 auto 3rem; }
+    .card { border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.09); }
+    .card-head { padding: 1rem 1.2rem; color: white; }
+    .card-head .pattern-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .card-head .pattern-table { font-size: 0.78rem; opacity: 0.85; font-family: monospace; }
+    .card-head .pattern-layer { font-size: 0.73rem; opacity: 0.75; margin-top: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .card-body { background: white; padding: 1.1rem 1.2rem; }
+    .meta-row { display: flex; gap: 0.5rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
+    .meta-pill { font-size: 0.73rem; padding: 0.2rem 0.55rem; border-radius: 20px; font-weight: 600; }
+    .card-body p { font-size: 0.84rem; line-height: 1.6; color: #444; margin-bottom: 0.7rem; }
+    .card-body p:last-child { margin-bottom: 0; }
+    .card-body strong { color: #111; }
+
+    /* Lookup */
+    .lookup .card-head { background: #1a6b3c; }
+    .lookup .meta-pill.entity { background: #e8f5ee; color: #1a6b3c; }
+    .lookup .meta-pill.layer { background: #e8f5ee; color: #1a6b3c; }
+
+    /* SCD2 */
+    .scd2 .card-head { background: #1a3a6b; }
+    .scd2 .meta-pill.entity { background: #e8eef5; color: #1a3a6b; }
+    .scd2 .meta-pill.layer { background: #e8eef5; color: #1a3a6b; }
+
+    /* Crosswalk */
+    .crosswalk .card-head { background: #6b4a1a; }
+    .crosswalk .meta-pill.entity { background: #f5f0e8; color: #6b4a1a; }
+    .crosswalk .meta-pill.layer { background: #f5f0e8; color: #6b4a1a; }
+
+    /* Tables */
+    .table-section { max-width: 1040px; margin: 0 auto 3rem; }
+    .table-wrap { overflow-x: auto; margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    thead { background: #2d2d2d; color: white; }
+    th { padding: 0.65rem 0.9rem; text-align: left; font-weight: 600; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    td { padding: 0.65rem 0.9rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; line-height: 1.5; font-family: monospace; font-size: 0.8rem; }
+    tr:last-child td { border-bottom: none; }
+    .row-highlight { background: #fffbea; }
+    .row-new { background: #f0faf4; }
+    .row-flag { background: #fff3f3; }
+    .caption { font-size: 0.78rem; color: #888; margin-top: 0.4rem; font-style: italic; }
+
+    /* Scenario section */
+    .scenarios { max-width: 1040px; margin: 0 auto 3rem; }
+    .scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+    .scenario-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .scenario-head { padding: 0.7rem 1rem; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: white; }
+    .scenario-a .scenario-head { background: #4a9b6f; }
+    .scenario-b .scenario-head { background: #4a6b9b; }
+    .scenario-c .scenario-head { background: #9b6b4a; }
+    .scenario-body { padding: 0.9rem 1rem; font-size: 0.83rem; line-height: 1.6; color: #444; }
+    .scenario-body strong { color: #111; }
+    .scenario-body .action { margin-top: 0.6rem; padding: 0.5rem 0.7rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+    .scenario-a .action { background: #e8f5ee; color: #1a6b3c; }
+    .scenario-b .action { background: #e8eef5; color: #1a3a6b; }
+    .scenario-c .action { background: #f5f0e8; color: #6b4a1a; }
+
+    /* Analytics impact */
+    .analytics { max-width: 1040px; margin: 0 auto 3rem; }
+    .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .analytics-card { background: white; border-radius: 8px; padding: 1.2rem; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .analytics-card h3 { margin-bottom: 0.8rem; }
+    .analytics-card p { font-size: 0.84rem; line-height: 1.6; color: #444; margin-bottom: 0.6rem; }
+    .analytics-card .query { background: #f4f4f4; border-radius: 4px; padding: 0.6rem 0.8rem; font-family: monospace; font-size: 0.78rem; color: #333; margin: 0.5rem 0; line-height: 1.5; }
+    .bad { border-left: 4px solid #e53e3e; }
+    .good { border-left: 4px solid #38a169; }
+    .bad h3 { color: #c53030; }
+    .good h3 { color: #276749; }
+
+    .note { max-width: 1040px; margin: 0 auto; background: #fffbea; border-left: 4px solid #f0b429; border-radius: 4px; padding: 1rem 1.2rem; font-size: 0.85rem; line-height: 1.6; color: #555; }
+    .note strong { color: #333; }
+    .divider { max-width: 1040px; margin: 0 auto 2rem; border: none; border-top: 2px solid #e8e8e8; }
+  </style>
+</head>
+<body>
+
+<h1>Lookup Table vs. SCD Type 2 vs. Crosswalk</h1>
+<p class="subtitle">Three patterns, three problems, three layers — with concrete examples from the Philly zoning warehouse</p>
+
+<!-- Pattern Overview Cards -->
+<div class="patterns">
+
+  <div class="card lookup">
+    <div class="card-head">
+      <div class="pattern-name">Lookup Table</div>
+      <div class="pattern-table">dim_zoning_code</div>
+      <div class="pattern-layer">Warehouse · Dimension layer</div>
+    </div>
+    <div class="card-body">
+      <div class="meta-row">
+        <span class="meta-pill entity">Entity: the zoning code</span>
+        <span class="meta-pill layer">Static reference</span>
+      </div>
+      <p><strong>Problem it solves:</strong> You need a stable reference for all known zoning codes so fact tables can join to a description without duplicating it everywhere.</p>
+      <p><strong>When to use:</strong> The entity's identity and descriptive attributes are stable — there's nothing to track over time.</p>
+      <p><strong>Key behavior:</strong> Retired codes stay with <code>active = FALSE</code>. New confirmed classifications get <code>INSERT</code>ed. No history rows needed.</p>
+    </div>
+  </div>
+
+  <div class="card scd2">
+    <div class="card-head">
+      <div class="pattern-name">SCD Type 2</div>
+      <div class="pattern-table">dim_zoning_code (versioned)</div>
+      <div class="pattern-layer">Warehouse · Dimension layer</div>
+    </div>
+    <div class="card-body">
+      <div class="meta-row">
+        <span class="meta-pill entity">Entity: the zoning code</span>
+        <span class="meta-pill layer">History-tracking</span>
+      </div>
+      <p><strong>Problem it solves:</strong> A code's <em>descriptive attributes</em> change over time and you need to know what the description was at a specific point in time when a fact row was recorded.</p>
+      <p><strong>When to use:</strong> A confirmed ordinance amendment changes what a code <em>means</em> (e.g., RSA-5 now allows 5 stories instead of 3). <strong>Not yet triggered in our project.</strong></p>
+      <p><strong>Key behavior:</strong> Surrogate key + <code>effective_date</code> + <code>expiry_date</code> + <code>current_row</code> flag. Fact rows join to the right dimension version via date.</p>
+    </div>
+  </div>
+
+  <div class="card crosswalk">
+    <div class="card-head">
+      <div class="pattern-name">Crosswalk Table</div>
+      <div class="pattern-table">stg_zoning_code_crosswalk</div>
+      <div class="pattern-layer">Pipeline · Staging layer</div>
+    </div>
+    <div class="card-body">
+      <div class="meta-row">
+        <span class="meta-pill entity">Entity: a (source, canonical) mapping</span>
+        <span class="meta-pill layer">Normalization</span>
+      </div>
+      <p><strong>Problem it solves:</strong> A source code label in a vintage shapefile differs from the canonical code stored in the warehouse — but refers to the same thing (confirmed rename).</p>
+      <p><strong>When to use:</strong> A rename is confirmed via spatial overlap check or official documentation. <strong>Never</strong> for unconfirmed cases.</p>
+      <p><strong>Key behavior:</strong> Maps <code>source_code + vintage_year → canonical_code</code>. Lives in staging, not warehouse. Never tracks history — it's a normalization step.</p>
+    </div>
+  </div>
+
+</div>
+
+<hr class="divider">
+
+<!-- Concrete Table Examples -->
+<div class="table-section">
+  <h2>What each table actually looks like</h2>
+
+  <h3 style="margin-bottom:0.5rem; margin-top:1.5rem;">1. dim_zoning_code — Lookup Table (no history needed)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>zoning_code_id</th>
+          <th>long_code</th>
+          <th>description</th>
+          <th>broad_category</th>
+          <th>active</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td><td>RSA-5</td><td>Residential Single Family Attached</td><td>Residential</td><td>TRUE</td>
+        </tr>
+        <tr>
+          <td>2</td><td>RSA-6</td><td>Residential Single Family Attached (dense)</td><td>Residential</td><td>TRUE</td>
+        </tr>
+        <tr>
+          <td>3</td><td>CMX-2</td><td>Neighborhood Commercial Mixed-Use</td><td>Commercial</td><td>TRUE</td>
+        </tr>
+        <tr class="row-flag">
+          <td>4</td><td>C-2</td><td>Commercial (legacy, pre-2013 code)</td><td>Commercial</td><td><strong>FALSE</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="caption">Row 4 (C-2) is a retired code from before the 2013 zoning overhaul. It stays in the table with active=FALSE so historical fact rows that reference it don't break.</p>
+
+  <h3 style="margin-bottom:0.5rem; margin-top:1.8rem;">2. stg_zoning_code_crosswalk — Crosswalk Table (confirmed renames only)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>source_code</th>
+          <th>vintage_year</th>
+          <th>canonical_code</th>
+          <th>notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-highlight">
+          <td>RSA-5A</td><td>2021</td><td>RSA-5</td><td>Confirmed rename via spatial overlap check — 98% area overlap with RSA-5 polygons in 2022</td>
+        </tr>
+        <tr class="row-highlight">
+          <td>CMX-2+</td><td>2022</td><td>CMX-2</td><td>Confirmed rename per L&I documentation (ordinance amendment 2022-003)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="caption">Only two rows here — because only two renames have been confirmed. Everything else retains its source code as-is and is treated as a new classification until confirmed.</p>
+
+  <h3 style="margin-bottom:0.5rem; margin-top:1.8rem;">3. dim_zoning_code — SCD Type 2 (only if a definition change is confirmed)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>zoning_code_sk</th>
+          <th>long_code</th>
+          <th>description</th>
+          <th>max_stories</th>
+          <th>effective_date</th>
+          <th>expiry_date</th>
+          <th>current_row</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-flag">
+          <td>101</td><td>RSA-5</td><td>Residential Single Family Attached</td><td>3</td><td>2021-01-01</td><td>2023-06-14</td><td><strong>FALSE</strong></td>
+        </tr>
+        <tr class="row-new">
+          <td>102</td><td>RSA-5</td><td>Residential Single Family Attached</td><td><strong>5</strong></td><td>2023-06-15</td><td>9999-12-31</td><td><strong>TRUE</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="caption">⚠️ This table does NOT exist yet. SCD Type 2 is only warranted if a confirmed ordinance amendment changes the meaning of a code (L16). The hypothetical here: RSA-5 was amended on 2023-06-15 to allow 5-story buildings instead of 3. Row 101 preserves what RSA-5 meant before that date.</p>
+</div>
+
+<hr class="divider">
+
+<!-- Detection Scenarios -->
+<div class="scenarios">
+  <h2>The three scenarios when a code appears or disappears between vintages</h2>
+  <div class="scenario-grid">
+
+    <div class="scenario-card scenario-a">
+      <div class="scenario-head">Scenario A — Code Stable</div>
+      <div class="scenario-body">
+        <strong>What happened:</strong> RSA-5 appears in both 2022 and 2023 shapefiles with the same meaning.<br><br>
+        <strong>String comparison result:</strong> No flag. Code present in both years.<br><br>
+        <strong>Spatial check needed?</strong> No.
+        <div class="action">Action: No crosswalk row needed. Fact rows join dim_zoning_code normally.</div>
+      </div>
+    </div>
+
+    <div class="scenario-card scenario-b">
+      <div class="scenario-head">Scenario B — Rename</div>
+      <div class="scenario-body">
+        <strong>What happened:</strong> RSA-5A in 2021 was renamed RSA-5 in 2022. Same land, different label. City documented the rename.<br><br>
+        <strong>String comparison result:</strong> RSA-5A disappears; RSA-5 appears. Flagged as candidate rename.<br><br>
+        <strong>Spatial check result:</strong> 98% polygon overlap confirms same geography.
+        <div class="action">Action: Add crosswalk row (RSA-5A, 2021 → RSA-5). No new dim_zoning_code row needed.</div>
+      </div>
+    </div>
+
+    <div class="scenario-card scenario-c">
+      <div class="scenario-head">Scenario C — New Classification</div>
+      <div class="scenario-body">
+        <strong>What happened:</strong> RSA-6 appears in 2023 for the first time. City created a new density category for small attached row homes.<br><br>
+        <strong>String comparison result:</strong> RSA-6 appears with no prior year match. Flagged.<br><br>
+        <strong>Spatial check result:</strong> Low overlap with any prior code — genuinely new.
+        <div class="action">Action: INSERT RSA-6 into dim_zoning_code. No crosswalk row. Tag affected fact rows vocab_stable=FALSE.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Analytics Impact -->
+<div class="analytics">
+  <h2>Why this matters for analytics — the SCD Type 2 problem illustrated</h2>
+  <p style="font-size:0.85rem; color:#555; margin-bottom:1.2rem; max-width:700px; line-height:1.6;">
+    Without SCD Type 2, a user filtering on RSA-5 and comparing pct_district_area across years gets a misleading result if the definition changed. Here's the concrete example.
+  </p>
+  <div class="analytics-grid">
+
+    <div class="analytics-card bad">
+      <h3>Without SCD Type 2 (static lookup)</h3>
+      <p>User runs a query: "Show me RSA-5 area share in District 7, 2021 vs. 2024."</p>
+      <div class="query">SELECT year, pct_district_area<br>FROM fct_district_year_zoning<br>JOIN dim_zoning_code USING (zoning_code_id)<br>WHERE long_code = 'RSA-5'<br>  AND district_id = 7</div>
+      <p>Result: 2021 → 42%, 2024 → 47%</p>
+      <p><strong>Problem:</strong> The user concludes District 7 gained 5% more RSA-5 land. But if RSA-5's definition changed in 2023 (now allows 5 stories), the comparison is between two different regulatory categories wearing the same label. The "gain" may reflect reclassification under the new definition, not actual rezoning.</p>
+    </div>
+
+    <div class="analytics-card good">
+      <h3>With SCD Type 2 (versioned dimension)</h3>
+      <p>Same query, but fact rows join to the correct dimension version via date:</p>
+      <div class="query">SELECT f.year, f.pct_district_area,<br>       d.max_stories, d.effective_date<br>FROM fct_district_year_zoning f<br>JOIN dim_zoning_code d<br>  ON f.zoning_code_sk = d.zoning_code_sk<br>WHERE d.long_code = 'RSA-5'<br>  AND f.district_id = 7</div>
+      <p>Result: 2021 → 42% (RSA-5 v1, max 3 stories), 2024 → 47% (RSA-5 v2, max 5 stories)</p>
+      <p><strong>Correct behavior:</strong> The user sees that they're comparing two different versions of RSA-5. The dashboard can surface a warning: "Note: RSA-5 definition changed on 2023-06-15." The comparison is now interpretable.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="note">
+  <strong>The decision rule for our project:</strong> Use a <strong>lookup table</strong> until a confirmed ordinance amendment changes a code's meaning — then upgrade to <strong>SCD Type 2</strong>. Use the <strong>crosswalk</strong> in the pipeline whenever a confirmed rename maps a source code to its canonical warehouse equivalent. These three patterns solve different problems at different layers and should never be conflated.
+</div>
+
+</body>
+</html>

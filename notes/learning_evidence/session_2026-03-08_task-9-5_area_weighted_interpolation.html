@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Area-Weighted Interpolation & MAUP — Task 9.5</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f4f5f7;
+      color: #1a1a2e;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    /* ── Section headers ── */
+    h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+      margin: 2rem 0 1rem;
+    }
+
+    /* ── Grid layouts ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    /* ── Cards ── */
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .card h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── SVG diagram ── */
+    .diagram-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    svg { width: 100%; height: auto; }
+
+    /* ── Formula block ── */
+    .formula {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      white-space: pre;
+    }
+    .formula .comment { color: #6c7086; }
+    .formula .fn { color: #89b4fa; }
+    .formula .kw { color: #cba6f7; }
+    .formula .num { color: #fab387; }
+
+    /* ── Assumption/risk pills ── */
+    .pill {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.4rem;
+    }
+    .pill-red { background: #fee2e2; color: #b91c1c; }
+    .pill-yellow { background: #fef9c3; color: #854d0e; }
+    .pill-green { background: #dcfce7; color: #166534; }
+    .pill-blue { background: #dbeafe; color: #1d4ed8; }
+
+    /* ── Step list ── */
+    .step-list { list-style: none; }
+    .step-list li {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      font-size: 0.875rem;
+    }
+    .step-num {
+      min-width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: #1d4ed8;
+      color: white;
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.05rem;
+    }
+
+    /* ── Sanity check table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    th {
+      background: #f1f5f9;
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      font-weight: 600;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── MAUP comparison ── */
+    .maup-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .maup-box {
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.85rem;
+    }
+    .maup-assumed { background: #dbeafe; border: 2px solid #3b82f6; }
+    .maup-actual  { background: #dcfce7; border: 2px solid #22c55e; }
+    .maup-result  { background: #fee2e2; border: 2px solid #ef4444; }
+    .maup-box strong { display: block; margin-bottom: 0.4rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* ── Source note ── */
+    .source-note {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Area-Weighted Interpolation &amp; MAUP</h1>
+<p class="subtitle">Task 9.5 · ACS Census Tracts → Philadelphia Planning Districts</p>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>The Problem: Two Boundary Systems That Don't Align</h2>
+<div class="two-col">
+  <div class="diagram-card">
+    <!-- SVG: census tract straddling two districts -->
+    <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- District A (left) -->
+      <rect x="20" y="20" width="170" height="180" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="105" y="44" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">District A</text>
+
+      <!-- District B (right) -->
+      <rect x="210" y="20" width="170" height="180" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <text x="295" y="44" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">District B</text>
+
+      <!-- Census tract straddling both — left half -->
+      <rect x="110" y="60" width="90" height="120" rx="0" fill="rgba(239,68,68,0.15)" stroke="none"/>
+      <!-- Census tract straddling both — right half -->
+      <rect x="200" y="60" width="60" height="120" rx="0" fill="rgba(239,68,68,0.15)" stroke="none"/>
+      <!-- Census tract border -->
+      <rect x="110" y="60" width="150" height="120" rx="4" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="6 3"/>
+      <text x="185" y="56" text-anchor="middle" font-size="11" font-weight="600" fill="#b91c1c">Census Tract</text>
+
+      <!-- District boundary line (the vertical split) -->
+      <line x1="200" y1="20" x2="200" y2="200" stroke="#374151" stroke-width="2.5"/>
+
+      <!-- Dimensions -->
+      <!-- Left overlap: 90px wide -->
+      <line x1="110" y1="192" x2="200" y2="192" stroke="#3b82f6" stroke-width="1.5" marker-start="url(#arr)" marker-end="url(#arr)"/>
+      <text x="155" y="208" text-anchor="middle" font-size="10" fill="#1d4ed8">60%</text>
+
+      <!-- Right overlap: 60px wide -->
+      <line x1="200" y1="192" x2="260" y2="192" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="230" y="208" text-anchor="middle" font-size="10" fill="#92400e">40%</text>
+
+      <!-- People icons cluster on left side -->
+      <text x="140" y="100" font-size="18">👥</text>
+      <text x="155" y="125" font-size="18">👥</text>
+      <text x="128" y="148" font-size="18">👥</text>
+      <text x="160" y="150" font-size="14">👤</text>
+
+      <!-- Label: all residents on left -->
+      <text x="155" y="174" text-anchor="middle" font-size="9" fill="#374151">all residents</text>
+
+      <!-- Empty right side -->
+      <text x="230" y="120" text-anchor="middle" font-size="22">🏭</text>
+      <text x="230" y="148" text-anchor="middle" font-size="9" fill="#6b7280">industrial /</text>
+      <text x="230" y="160" text-anchor="middle" font-size="9" fill="#6b7280">commercial</text>
+
+      <defs>
+        <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#374151"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="card">
+    <h3>What area-weighting does (and why it's wrong here)</h3>
+    <br>
+    <div class="maup-box maup-assumed" style="margin-bottom:0.75rem">
+      <strong>Assumption</strong>
+      Population is uniformly distributed inside the tract.
+      Tract is 60% in District A, 40% in District B.
+    </div>
+    <div class="maup-box maup-assumed" style="background:#dbeafe; margin-bottom:0.75rem">
+      <strong>Area-weighted result</strong>
+      → 600 people to District A<br>
+      → 400 people to District B<br>
+      <span style="font-size:0.8rem; color:#1d4ed8">(from 1,000 total in tract)</span>
+    </div>
+    <div class="maup-box maup-actual" style="margin-bottom:0.75rem">
+      <strong>Reality</strong>
+      All 1,000 residents live on the District A side (residential blocks). District B side is industrial.
+    </div>
+    <div class="maup-box maup-result">
+      <strong>Error introduced</strong>
+      District A undercounted by 400 people.<br>
+      District B overcounted by 400 people.<br>
+      <span class="pill pill-red" style="margin-top:0.4rem; display:inline-block">MAUP · L10</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>The Formula</h2>
+<div class="card">
+  <h3 style="margin-bottom:0.75rem">Area-weighted allocation — per (tract, district) pair</h3>
+  <div class="formula"><span class="comment">-- Step 1: for each (tract, district) intersection pair</span>
+<span class="kw">allocated_value</span> = tract_value
+    * (  <span class="fn">ST_Area</span>( <span class="fn">ST_Intersection</span>(tract.geom, district.geom) )
+       / <span class="fn">ST_Area</span>(tract.geom)  )
+
+<span class="comment">-- Step 2: sum contributions across all tracts per district</span>
+<span class="kw">district_value</span> = <span class="fn">SUM</span>(allocated_value)
+    <span class="kw">OVER</span> all tracts intersecting that district
+
+<span class="comment">-- Source: Spatial SQL (Forrest), Section 5.1, p. 318</span></div>
+  <br>
+  <p style="font-size:0.83rem; color:#6b7280; line-height:1.6">
+    The area fraction <code>(intersection area / tract area)</code> is the weight applied to each variable in the tract.
+    Summing across all tracts gives the district-level total. The same weight applies to every demographic variable —
+    population, median income, renter households, etc.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>Steps to Implement in PostGIS</h2>
+<div class="card">
+  <ul class="step-list">
+    <li>
+      <span class="step-num">1</span>
+      <div><strong>Validate geometries.</strong> Run <code>ST_IsValid()</code> on both layers before intersecting. Invalid geometries produce incorrect or empty intersection results.</div>
+    </li>
+    <li>
+      <span class="step-num">2</span>
+      <div><strong>Intersect layers.</strong> <code>ST_Intersection(tract.geom, district.geom)</code> for all pairs where <code>ST_Intersects()</code> is true. This produces one row per (tract, district) overlap.</div>
+    </li>
+    <li>
+      <span class="step-num">3</span>
+      <div><strong>Filter slivers.</strong> Discard intersection fragments below a minimum area threshold (e.g., 1 sq meter). Slivers are tiny artifacts from boundary misalignment — near-zero area, negligible values, but they inflate row counts.</div>
+    </li>
+    <li>
+      <span class="step-num">4</span>
+      <div><strong>Compute weights.</strong> <code>ST_Area(intersection) / ST_Area(tract)</code> per row. Weights for a given tract should sum to ≈ 1.0 (within floating point tolerance).</div>
+    </li>
+    <li>
+      <span class="step-num">5</span>
+      <div><strong>Allocate values.</strong> Multiply each demographic variable by its weight. Record <code>match_method = 'area_weighted'</code> for audit trail.</div>
+    </li>
+    <li>
+      <span class="step-num">6</span>
+      <div><strong>Aggregate to district.</strong> <code>SUM(allocated_value) GROUP BY district_id</code>. Run sanity checks before using results in any metric.</div>
+    </li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>Sanity Checks (Month 2 Pipeline QA)</h2>
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Check</th>
+        <th>What it measures</th>
+        <th>Pass condition</th>
+        <th>Risk if fail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Geometry validity</strong></td>
+        <td>District polygons tile Philly without overlaps or gaps</td>
+        <td>No overlapping districts; full city coverage</td>
+        <td><span class="pill pill-red">High</span> Tract cuts are wrong at every straddled boundary</td>
+      </tr>
+      <tr>
+        <td><strong>Split-tract count</strong></td>
+        <td>Count tracts assigned to more than one district; share of each district's tracts</td>
+        <td>Flag districts where split-tract share &gt; 20%</td>
+        <td><span class="pill pill-yellow">Med</span> High split share = more MAUP exposure</td>
+      </tr>
+      <tr>
+        <td><strong>Split ratio</strong></td>
+        <td>For split tracts: area fraction per district. Flag near-even splits (45–55%)</td>
+        <td>Document count; these carry highest MAUP risk</td>
+        <td><span class="pill pill-yellow">Med</span> Even splits = assumption doing the most work</td>
+      </tr>
+      <tr>
+        <td><strong>Population total</strong></td>
+        <td>Sum of all district allocated populations vs. Philadelphia ACS total</td>
+        <td>Within ±1% of city total</td>
+        <td><span class="pill pill-red">High</span> Population is leaking or double-counted</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>Why No Pre-Built Crosswalk Exists</h2>
+<div class="three-col">
+  <div class="card">
+    <h3>Census crosswalks <span class="pill pill-green">exist</span></h3>
+    <p style="font-size:0.83rem; margin-top:0.5rem; line-height:1.6">
+      Tract → County<br>
+      Tract → Place (city/borough)<br>
+      Tract → ZCTA (ZIP code tabulation area)<br>
+      Tract → PUMA<br><br>
+      <em>All Census-defined geographies.</em>
+    </p>
+  </div>
+  <div class="card">
+    <h3>Planning districts <span class="pill pill-red">no crosswalk</span></h3>
+    <p style="font-size:0.83rem; margin-top:0.5rem; line-height:1.6">
+      Defined by the City of Philadelphia, not the Census Bureau. The Census Bureau has no record of their boundaries. No relationship file is published.<br><br>
+      <em>Must compute from geometry.</em>
+    </p>
+  </div>
+  <div class="card">
+    <h3>Tradeoff vs. crosswalk</h3>
+    <p style="font-size:0.83rem; margin-top:0.5rem; line-height:1.6">
+      A Census crosswalk is authoritative + pre-validated. Computing your own overlay is flexible but introduces sliver risk, depends on geometry quality, and requires the MAUP caveat. Document it as a limitation (L10).
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>Connection to Other Project Work</h2>
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Earlier work</th>
+        <th>Connection to this task</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Land-only area note (Task 6.5)</strong></td>
+        <td>Same mindset: think carefully about what a geometry actually represents before computing with it. Land area ≠ total area; residential area ≠ tract area.</td>
+      </tr>
+      <tr>
+        <td><strong>Zoning polygon → district (Task 8.x)</strong></td>
+        <td>Same PostGIS pattern at its core. Zoning polygons can be assigned by centroid or binary containment. Census tracts straddle boundaries and need proportional allocation — same toolbox, higher complexity.</td>
+      </tr>
+      <tr>
+        <td><strong>Permits geocoding cascade (Task 7.6)</strong></td>
+        <td>Both tasks deal with spatial assignment failures. Permits use a match-method audit field; the overlay should do the same (record which tracts were split and by what ratio).</td>
+      </tr>
+      <tr>
+        <td><strong>PostGIS spatial primer (Task 2.8)</strong></td>
+        <td>ST_Intersection, ST_Area, ST_Intersects — this task is the first production use of those primitives from the notes.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="source-note">
+  Session 2026-03-08 · Task 9.5 · Score 9/10 PASS<br>
+  Formula source: <em>Spatial SQL</em>, Matt Forrest, Section 5.1 (p. 318) — NYC census block group → neighborhood interpolation example
+</p>
+
+</body>
+</html>

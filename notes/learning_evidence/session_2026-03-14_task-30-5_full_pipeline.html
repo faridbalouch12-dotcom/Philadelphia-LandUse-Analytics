@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planning Districts — Full Pipeline Overview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f1117;
+    color: #e2e4e9;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: #f0f1f3;
+  }
+  .subtitle {
+    font-size: 0.9rem;
+    color: #7a7f8a;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Pipeline flow */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 2.5rem;
+  }
+  .layer {
+    display: grid;
+    grid-template-columns: 140px 1fr 280px;
+    gap: 1.25rem;
+    align-items: start;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid #1e2028;
+  }
+  .layer:last-child { border-bottom: none; }
+
+  .layer-label {
+    text-align: right;
+    padding-top: 0.3rem;
+  }
+  .layer-name {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .layer-owner {
+    font-size: 0.65rem;
+    color: #555960;
+    margin-top: 0.2rem;
+  }
+
+  .layer-content {
+    background: #181a20;
+    border-radius: 10px;
+    padding: 1.25rem;
+    border: 1px solid #2a2d35;
+  }
+
+  .layer-artifacts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 0.2rem;
+  }
+  .artifact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+  }
+  .artifact-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .artifact-icon.py { background: #1a2535; color: #6aabf7; }
+  .artifact-icon.sql { background: #1a2e22; color: #5ae088; }
+  .artifact-icon.yml { background: #2a2a15; color: #e8d56a; }
+  .artifact-icon.md { background: #2a1a2a; color: #b87aed; }
+  .artifact-icon.test { background: #2e1a1a; color: #e85a5a; }
+  .artifact-path {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    color: #8ab4f8;
+    font-size: 0.68rem;
+  }
+
+  /* Source layer */
+  .layer.source .layer-name { color: #7a7f8a; }
+  .layer.source .layer-content { border-color: #2a2d35; background: #14161c; }
+
+  /* Raw layer */
+  .layer.raw .layer-name { color: #e8a56a; }
+  .layer.raw .layer-content { border-color: #3a2a18; }
+
+  /* Staging layer */
+  .layer.staging .layer-name { color: #6aabf7; }
+  .layer.staging .layer-content { border-color: #1a2535; }
+
+  /* Tests layer */
+  .layer.tests .layer-name { color: #e85a5a; }
+  .layer.tests .layer-content { border-color: #3a1a1a; }
+
+  /* Content blocks */
+  .content-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #d0d2d8;
+    margin-bottom: 0.6rem;
+  }
+  .content-detail {
+    font-size: 0.75rem;
+    color: #a0a4ad;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+  .content-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.72rem;
+    margin-top: 0.5rem;
+  }
+  .content-table th {
+    text-align: left;
+    color: #7a7f8a;
+    font-weight: 600;
+    padding: 0.3rem 0.5rem;
+    border-bottom: 1px solid #2a2d35;
+  }
+  .content-table td {
+    padding: 0.3rem 0.5rem;
+    color: #a0a4ad;
+    border-bottom: 1px solid #1e2028;
+  }
+  .content-table td:first-child {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    color: #8ab4f8;
+    font-size: 0.68rem;
+  }
+
+  /* Arrow connector */
+  .connector {
+    display: grid;
+    grid-template-columns: 140px 1fr 280px;
+    gap: 1.25rem;
+  }
+  .connector-line {
+    display: flex;
+    justify-content: center;
+    padding: 0.25rem 0;
+    color: #3a3d45;
+    font-size: 1rem;
+  }
+
+  /* Command box */
+  .command-box {
+    background: #181a20;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #2a2d35;
+    margin-bottom: 2.5rem;
+  }
+  .command-box h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7a7f8a;
+    margin-bottom: 1rem;
+  }
+  .command-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+  .command-item {
+    background: #14161c;
+    border-radius: 8px;
+    padding: 0.75rem;
+  }
+  .command-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #d0d2d8;
+    margin-bottom: 0.4rem;
+  }
+  .command-code {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 0.7rem;
+    color: #5ae088;
+  }
+  .command-desc {
+    font-size: 0.65rem;
+    color: #555960;
+    margin-top: 0.3rem;
+  }
+
+  /* Transformations */
+  .transforms {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .transform {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.6rem;
+    background: #14161c;
+    border-radius: 4px;
+    border-left: 2px solid #1a2535;
+  }
+  .transform .from {
+    color: #7a7f8a;
+    text-decoration: line-through;
+  }
+  .transform .to {
+    color: #6aabf7;
+    font-weight: 500;
+  }
+  .transform .arrow {
+    color: #3a3d45;
+    margin: 0 0.25rem;
+  }
+
+  /* Stats bar */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .stat {
+    background: #181a20;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid #2a2d35;
+  }
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f0f1f3;
+  }
+  .stat-label {
+    font-size: 0.65rem;
+    color: #7a7f8a;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.3rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>Planning Districts — Full Pipeline</h1>
+<p class="subtitle">Days 28–30: From API to tested staging model</p>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-value">18</div>
+    <div class="stat-label">Districts</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">5</div>
+    <div class="stat-label">Staging Columns</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">7</div>
+    <div class="stat-label">dbt Tests</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">2</div>
+    <div class="stat-label">pytest Tests</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">9</div>
+    <div class="stat-label">Tasks Passed</div>
+  </div>
+</div>
+
+<!-- Pipeline -->
+<div class="pipeline">
+
+  <!-- Source -->
+  <div class="layer source">
+    <div class="layer-label">
+      <div class="layer-name">Source</div>
+      <div class="layer-owner">ArcGIS Hub</div>
+    </div>
+    <div class="layer-content">
+      <div class="content-title">ArcGIS Hub Download API</div>
+      <div class="content-detail">GeoJSON endpoint, EPSG:4326 (WGS 84), no auth required. Returns all 18 planning district polygons with attributes.</div>
+      <table class="content-table">
+        <tr><th>Field</th><th>Notes</th></tr>
+        <tr><td>objectid</td><td>Row identifier — natural key</td></tr>
+        <tr><td>dist_name</td><td>Full district name</td></tr>
+        <tr><td>abbrev</td><td>Short label</td></tr>
+        <tr><td>Shape__Area</td><td>Unknown units — dropped</td></tr>
+        <tr><td>Shape__Length</td><td>Not needed — dropped</td></tr>
+        <tr><td>geometry</td><td>Polygon/MultiPolygon, 4326</td></tr>
+      </table>
+    </div>
+    <div class="layer-artifacts">
+      <div class="artifact">
+        <div class="artifact-icon md">MD</div>
+        <div class="artifact-path">docs/runbooks/planning_districts_extract_plan.md</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div></div><div class="connector-line">&#8595; make ingest-districts</div><div></div></div>
+
+  <!-- Raw -->
+  <div class="layer raw">
+    <div class="layer-label">
+      <div class="layer-name">Raw</div>
+      <div class="layer-owner">Python pipeline</div>
+    </div>
+    <div class="layer-content">
+      <div class="content-title">raw.planning_districts</div>
+      <div class="content-detail">Immutable copy of API response. Loaded via <code>to_postgis(if_exists="replace")</code>. No transformations — data exactly as received. Each run logs to <code>raw.ingestion_logs</code>.</div>
+      <table class="content-table">
+        <tr><th>Column</th><th>Type</th></tr>
+        <tr><td>objectid</td><td>integer</td></tr>
+        <tr><td>dist_name</td><td>text</td></tr>
+        <tr><td>abbrev</td><td>text</td></tr>
+        <tr><td>Shape__Area</td><td>float</td></tr>
+        <tr><td>Shape__Length</td><td>float</td></tr>
+        <tr><td>geometry</td><td>geometry (4326)</td></tr>
+      </table>
+    </div>
+    <div class="layer-artifacts">
+      <div class="artifact">
+        <div class="artifact-icon py">PY</div>
+        <div class="artifact-path">src/philly_dw/ingest/planning_districts.py</div>
+      </div>
+      <div class="artifact">
+        <div class="artifact-icon py">PY</div>
+        <div class="artifact-path">src/philly_dw/ingest/utils.py</div>
+      </div>
+      <div class="artifact">
+        <div class="artifact-icon sql">DDL</div>
+        <div class="artifact-path">docker/postgres/init/02_tables.sql</div>
+      </div>
+      <div class="artifact">
+        <div class="artifact-icon yml">YML</div>
+        <div class="artifact-path">dbt/.../sources/src_planning.yml</div>
+      </div>
+      <div class="artifact">
+        <div class="artifact-icon md">MD</div>
+        <div class="artifact-path">docs/runbooks/planning_districts_raw_ingest.md</div>
+      </div>
+      <div class="artifact">
+        <div class="artifact-icon test">TST</div>
+        <div class="artifact-path">tests/test_planning_districts_raw.py</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div></div><div class="connector-line">&#8595; dbt run --select stg_planning_districts</div><div></div></div>
+
+  <!-- Staging -->
+  <div class="layer staging">
+    <div class="layer-label">
+      <div class="layer-name">Staging</div>
+      <div class="layer-owner">dbt (view)</div>
+    </div>
+    <div class="layer-content">
+      <div class="content-title">staging.stg_planning_districts</div>
+      <div class="content-detail">Cleaned view on top of raw. Renames columns, reprojects geometry to EPSG:2272, derives land area in square miles. Drops undocumented source fields.</div>
+
+      <div class="transforms">
+        <div class="transform"><span class="from">objectid</span><span class="arrow">→</span><span class="to">district_id</span></div>
+        <div class="transform"><span class="from">dist_name</span><span class="arrow">→</span><span class="to">district_name</span></div>
+        <div class="transform"><span class="from">abbrev</span><span class="arrow">→</span><span class="to">district_abbrev</span></div>
+        <div class="transform"><span class="from">geometry (4326)</span><span class="arrow">→</span><span class="to">geom (2272)</span></div>
+        <div class="transform"><span class="from">—</span><span class="arrow">→</span><span class="to">land_area_sqmi (derived)</span></div>
+        <div class="transform"><span class="from">Shape__Area</span><span class="arrow">→</span><span class="to">dropped</span></div>
+      </div>
+
+      <table class="content-table" style="margin-top: 0.75rem;">
+        <tr><th>Column</th><th>Type</th><th>Tests</th></tr>
+        <tr><td>district_id</td><td>integer</td><td>not_null, unique</td></tr>
+        <tr><td>district_name</td><td>text</td><td>not_null</td></tr>
+        <tr><td>district_abbrev</td><td>text</td><td>—</td></tr>
+        <tr><td>geom</td><td>geometry (2272)</td><td>not_null, unique</td></tr>
+        <tr><td>land_area_sqmi</td><td>float</td><td>not_null, unique</td></tr>
+      </table>
+    </div>
+    <div class="layer-artifacts">
+      <div class="artifact">
+        <div class="artifact-icon sql">SQL</div>
+        <div class="artifact-path">dbt/.../staging/planning/stg_planning_districts.sql</div>
+      </div>
+      <div class="artifact">
+        <div class="artifact-icon yml">YML</div>
+        <div class="artifact-path">dbt/.../staging/planning/stg_planning_districts.yml</div>
+      </div>
+      <div class="artifact">
+        <div class="artifact-icon md">MD</div>
+        <div class="artifact-path">docs/qa/planning_districts_raw_qa.md</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div></div><div class="connector-line">&#8595; next: dim_district, geo_district_boundaries</div><div></div></div>
+
+  <!-- Next layers (preview) -->
+  <div class="layer" style="opacity: 0.4;">
+    <div class="layer-label">
+      <div class="layer-name" style="color: #5ae088;">Marts</div>
+      <div class="layer-owner">Day 32</div>
+    </div>
+    <div class="layer-content" style="border-style: dashed;">
+      <div class="content-title" style="color: #7a7f8a;">dim_district &bull; geo_district_boundaries</div>
+      <div class="content-detail">Conformed dimension and geometry table. Feeds all downstream joins and Metabase maps.</div>
+    </div>
+    <div class="layer-artifacts"></div>
+  </div>
+</div>
+
+<!-- Commands -->
+<div class="command-box">
+  <h2>Operational Commands</h2>
+  <div class="command-grid">
+    <div class="command-item">
+      <div class="command-label">Ingest</div>
+      <div class="command-code">make ingest-districts</div>
+      <div class="command-desc">Pull from API → raw.planning_districts + log row</div>
+    </div>
+    <div class="command-item">
+      <div class="command-label">Build staging</div>
+      <div class="command-code">dbt run --select stg_planning_districts --profiles-dir .</div>
+      <div class="command-desc">Create/refresh the staging view</div>
+    </div>
+    <div class="command-item">
+      <div class="command-label">Test</div>
+      <div class="command-code">dbt test --select stg_planning_districts --profiles-dir .</div>
+      <div class="command-desc">Run 7 column-level tests</div>
+    </div>
+    <div class="command-item">
+      <div class="command-label">Raw validation</div>
+      <div class="command-code">pytest tests/test_planning_districts_raw.py</div>
+      <div class="command-desc">Row count + geometry null checks</div>
+    </div>
+    <div class="command-item">
+      <div class="command-label">Full rebuild</div>
+      <div class="command-code">make reset-nuclear</div>
+      <div class="command-desc">Destroy volume, reinit, ingest all, dbt run</div>
+    </div>
+    <div class="command-item">
+      <div class="command-label">Verify log</div>
+      <div class="command-code">SELECT * FROM raw.ingestion_logs</div>
+      <div class="command-desc">Check extraction history</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

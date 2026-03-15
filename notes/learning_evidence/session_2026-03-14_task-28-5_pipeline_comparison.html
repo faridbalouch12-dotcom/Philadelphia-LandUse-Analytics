@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Architecture Comparison — Day 28</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f1117;
+    color: #e2e4e9;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #f0f1f3;
+  }
+  .subtitle {
+    font-size: 0.9rem;
+    color: #7a7f8a;
+    margin-bottom: 2.5rem;
+  }
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .pipeline {
+    background: #181a20;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #2a2d35;
+  }
+  .pipeline.original {
+    border-color: #3a3040;
+  }
+  .pipeline.actual {
+    border-color: #1e3a2a;
+  }
+  .pipeline-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #2a2d35;
+  }
+  .pipeline.original .pipeline-label { color: #b87aed; }
+  .pipeline.actual .pipeline-label { color: #5ae088; }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .step-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+  .pipeline.original .step-icon {
+    background: #2a2035;
+    color: #b87aed;
+  }
+  .pipeline.actual .step-icon {
+    background: #1a2e22;
+    color: #5ae088;
+  }
+  .step-content {
+    flex: 1;
+    padding-top: 0.1rem;
+  }
+  .step-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #d0d2d8;
+  }
+  .step-detail {
+    font-size: 0.75rem;
+    color: #7a7f8a;
+    margin-top: 0.15rem;
+  }
+  .step-task {
+    font-size: 0.65rem;
+    color: #555960;
+    margin-top: 0.15rem;
+    font-style: italic;
+  }
+  .arrow {
+    display: flex;
+    justify-content: center;
+    padding: 0.25rem 0;
+    color: #3a3d45;
+    font-size: 0.9rem;
+  }
+  .removed {
+    opacity: 0.35;
+    text-decoration: line-through;
+  }
+  .tradeoffs {
+    background: #181a20;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #2a2d35;
+  }
+  .tradeoffs h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7a7f8a;
+    margin-bottom: 1rem;
+  }
+  .tradeoff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .tradeoff-col h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  .tradeoff-col.gained h3 { color: #5ae088; }
+  .tradeoff-col.lost h3 { color: #e8a56a; }
+  .tradeoff-item {
+    font-size: 0.8rem;
+    color: #a0a4ad;
+    padding: 0.4rem 0;
+    padding-left: 0.75rem;
+    border-left: 2px solid #2a2d35;
+    margin-bottom: 0.4rem;
+  }
+  .tradeoff-col.gained .tradeoff-item { border-color: #2a4a35; }
+  .tradeoff-col.lost .tradeoff-item { border-color: #4a3a28; }
+  .file-map {
+    margin-top: 2.5rem;
+    background: #181a20;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #2a2d35;
+  }
+  .file-map h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7a7f8a;
+    margin-bottom: 1rem;
+  }
+  .file-row {
+    display: grid;
+    grid-template-columns: 2fr 3fr 1fr;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #1e2028;
+    font-size: 0.8rem;
+  }
+  .file-row:last-child { border-bottom: none; }
+  .file-row .path {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    color: #8ab4f8;
+    font-size: 0.75rem;
+  }
+  .file-row .role { color: #a0a4ad; }
+  .file-row .task {
+    color: #555960;
+    text-align: right;
+    font-size: 0.75rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>Pipeline Architecture: Original vs Actual</h1>
+<p class="subtitle">Day 28 — Planning Districts Raw Ingestion</p>
+
+<div class="comparison">
+  <div class="pipeline original">
+    <div class="pipeline-label">Original Syllabus Plan</div>
+
+    <div class="step">
+      <div class="step-icon">1</div>
+      <div class="step-content">
+        <div class="step-name">Hit API endpoint</div>
+        <div class="step-detail">GeoJSON from ArcGIS Hub</div>
+        <div class="step-task">Task 28.2</div>
+      </div>
+    </div>
+    <div class="arrow">&#8595;</div>
+
+    <div class="step removed">
+      <div class="step-icon">2</div>
+      <div class="step-content">
+        <div class="step-name">Save to local file</div>
+        <div class="step-detail">data/raw/planning_districts/&lt;date&gt;/</div>
+        <div class="step-task">Task 28.4</div>
+      </div>
+    </div>
+    <div class="arrow removed">&#8595;</div>
+
+    <div class="step removed">
+      <div class="step-icon">3</div>
+      <div class="step-content">
+        <div class="step-name">Write manifest.json</div>
+        <div class="step-detail">URL, timestamp, row count, file hash</div>
+        <div class="step-task">Task 28.3</div>
+      </div>
+    </div>
+    <div class="arrow removed">&#8595;</div>
+
+    <div class="step removed">
+      <div class="step-icon">4</div>
+      <div class="step-content">
+        <div class="step-name">Create raw landing table</div>
+        <div class="step-detail">DDL for raw.planning_districts</div>
+        <div class="step-task">Task 30.1</div>
+      </div>
+    </div>
+    <div class="arrow removed">&#8595;</div>
+
+    <div class="step removed">
+      <div class="step-icon">5</div>
+      <div class="step-content">
+        <div class="step-name">Load file into raw schema</div>
+        <div class="step-detail">From disk to PostGIS</div>
+        <div class="step-task">Task 30.2</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pipeline actual">
+    <div class="pipeline-label">Actual Implementation</div>
+
+    <div class="step">
+      <div class="step-icon">1</div>
+      <div class="step-content">
+        <div class="step-name">Hit API endpoint</div>
+        <div class="step-detail">GeoJSON from ArcGIS Hub</div>
+        <div class="step-task">Task 28.2</div>
+      </div>
+    </div>
+    <div class="arrow">&#8595;</div>
+
+    <div class="step">
+      <div class="step-icon">2</div>
+      <div class="step-content">
+        <div class="step-name">Load directly into PostGIS</div>
+        <div class="step-detail">to_postgis() creates table + loads in one step</div>
+        <div class="step-task">Task 28.2 (absorbs 28.4, 30.1, 30.2)</div>
+      </div>
+    </div>
+    <div class="arrow">&#8595;</div>
+
+    <div class="step">
+      <div class="step-icon">3</div>
+      <div class="step-content">
+        <div class="step-name">Write to ingestion_logs</div>
+        <div class="step-detail">schema, table, URL, row count, timestamp</div>
+        <div class="step-task">Task 28.3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tradeoffs">
+  <h2>Tradeoff Analysis</h2>
+  <div class="tradeoff-grid">
+    <div class="tradeoff-col gained">
+      <h3>Gained</h3>
+      <div class="tradeoff-item">Simpler pipeline &mdash; 3 steps instead of 5</div>
+      <div class="tradeoff-item">No file management or disk layout to maintain</div>
+      <div class="tradeoff-item">Traceability lives in DB alongside the data</div>
+      <div class="tradeoff-item">3 tasks collapsed &mdash; less overhead, same learning</div>
+    </div>
+    <div class="tradeoff-col lost">
+      <h3>Lost</h3>
+      <div class="tradeoff-item">No offline inspection without Docker running</div>
+      <div class="tradeoff-item">Volume wipe = must re-hit API (no local backup)</div>
+      <div class="tradeoff-item">Acceptable for 18 rows &mdash; revisit for permits</div>
+    </div>
+  </div>
+</div>
+
+<div class="file-map">
+  <h2>Artifacts Produced</h2>
+  <div class="file-row">
+    <div class="path">src/philly_dw/ingest/planning_districts.py</div>
+    <div class="role">Extractor &mdash; API pull + PostGIS load</div>
+    <div class="task">28.2</div>
+  </div>
+  <div class="file-row">
+    <div class="path">src/philly_dw/ingest/utils.py</div>
+    <div class="role">Shared engine + ingestion log writer</div>
+    <div class="task">28.2, 28.3</div>
+  </div>
+  <div class="file-row">
+    <div class="path">docker/postgres/init/02_tables.sql</div>
+    <div class="role">DDL for raw.ingestion_logs</div>
+    <div class="task">28.3</div>
+  </div>
+  <div class="file-row">
+    <div class="path">docs/runbooks/planning_districts_extract_plan.md</div>
+    <div class="role">Endpoint inspection &amp; field decisions</div>
+    <div class="task">28.1</div>
+  </div>
+  <div class="file-row">
+    <div class="path">docs/runbooks/planning_districts_raw_ingest.md</div>
+    <div class="role">Operational runbook</div>
+    <div class="task">28.5</div>
+  </div>
+  <div class="file-row">
+    <div class="path">Makefile (ingest-districts target)</div>
+    <div class="role">make ingest-districts</div>
+    <div class="task">28.5</div>
+  </div>
+</div>
+
+</body>
+</html>
