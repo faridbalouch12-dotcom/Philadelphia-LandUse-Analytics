@@ -44,13 +44,13 @@ ingest-districts: ## Ingest planning districts data
 	python -m philly_dw.ingest.planning_districts
 
 ingest-permits: ## Ingest L&I permits data
-	python -m philly_dw.ingest_permits
+	python -m philly_dw.ingest.permits
 
 ingest-zoning: ## Ingest zoning data
-	python -m philly_dw.ingest_zoning
+	python -m philly_dw.ingest.zoning
 
 ingest-acs: ## Ingest ACS data
-	python -m philly_dw.ingest_acs
+	python -m philly_dw.ingest.acs
 
 ingest-all: ingest-districts ingest-permits ingest-zoning ingest-acs ## Ingest all datasets in sequence
 
