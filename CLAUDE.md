@@ -551,6 +551,27 @@ When the learner proposes or makes an architectural change during conversation â
 
 ---
 
+## Post-Implementation Checks
+
+After any Code Pair session that creates or modifies files in `src/`, `dbt/`, `docker/`, or `Makefile`, invoke `/repo-check` before ending the session. Present the report to the learner. If all checks pass, confirm with a one-liner. If drift is found, present the report and ask: "Want to fix these now or defer?"
+
+**Auto-trigger conditions (detect proactively):**
+1. A new Python module was added to `src/philly_dw/ingest/`
+2. `pyproject.toml` dependencies were changed
+3. A new dbt model or source was declared
+4. `Makefile` ingest targets were added or modified
+5. `docker/postgres/init/` scripts were changed
+6. A new `.md` file was added to `docs/`
+
+**What does NOT trigger:**
+- Docs-only sessions (reading notes, design review artifacts)
+- Sessions that only modify existing code without adding new imports/modules/tables
+- Grading sessions
+
+**This is repo hygiene, not governance.** `/repo-check` catches infrastructure and spec drift. `/reconcile` catches architectural contradictions. They complement each other.
+
+---
+
 ## Syllabus Flexibility
 
 The syllabus is a learning roadmap, not a rigid contract. As the learner progresses, they will make deliberate design choices that diverge from specific task deliverables, sequences, or file outputs.
