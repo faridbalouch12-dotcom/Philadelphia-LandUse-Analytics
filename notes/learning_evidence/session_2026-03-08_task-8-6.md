@@ -67,6 +67,14 @@ The crosswalk table also previews a pattern you'll use in Month 2: staging-layer
 
 ---
 
+## Learning System Highlights
+
+- Design Review mode forced the learner to articulate a three-part comparability framework before any code was written — detection, mapping, and validity conditions
+- Counterargument surfaced the three-layer complexity problem (physical reality vs regulatory framework vs administrative records) that the learner hadn't initially distinguished
+- The resulting design was stress-tested against edge cases (code renames, definition changes, subcode drift) before being locked
+
+---
+
 ## Coming Up Next
 
 **Task 8.7** (done same session) extended this work into the limitations register — adding L15 (vocabulary drift), L16 (definition change risk), and L17 (subcode-set instability). See [session_2026-03-08_task-8-7.md](./session_2026-03-08_task-8-7.md).
