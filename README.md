@@ -102,7 +102,7 @@ flowchart LR
     C --> D[Grade with rubric]
     D --> E{Pass?}
     E -->|No| C
-    E -->|Yes| F[Reconcile against\nlocked decisions]
+    E -->|Yes| F[Reconcile against<br>locked decisions]
     F --> G[Capture session notes]
     G --> H[Next task]
 ```
@@ -112,24 +112,24 @@ flowchart LR
 ```mermaid
 flowchart TD
     T[Task loaded] --> Q{What type?}
-    Q -->|Reading/concept| DP[Discussion Partner\nLearner explains, Claude probes gaps]
-    Q -->|Schema/grain/metric design| DR[Design Review\nLearner proposes, Claude stress-tests]
-    Q -->|Python/dbt/SQL| CP[Code Pair\nLearner writes, Claude navigates]
-    Q -->|Documentation/spec| TU[Tutor\nClaude guides, never writes first draft]
-    Q -->|Grade request| GR[Grader\nPass/fail gates before scoring]
+    Q -->|Reading/concept| DP[Discussion Partner<br>Learner explains, Claude probes gaps]
+    Q -->|Schema/grain/metric design| DR[Design Review<br>Learner proposes, Claude stress-tests]
+    Q -->|Python/dbt/SQL| CP[Code Pair<br>Learner writes, Claude navigates]
+    Q -->|Documentation/spec| TU[Tutor<br>Claude guides, never writes first draft]
+    Q -->|Grade request| GR[Grader<br>Pass/fail gates before scoring]
 ```
 
 ### How design decisions are protected
 
 ```mermaid
 flowchart TD
-    A[New implementation choice] --> B{Contradicts a\nlocked decision?}
+    A[New implementation choice] --> B{Contradicts a<br>locked decision?}
     B -->|No| C[Proceed]
     B -->|Yes| D[Surface the contradiction]
-    D --> E[Learner defends\nor revises]
-    E -->|Defended| F[Update decision log\nwith rationale]
-    E -->|Revised| G[Adjust approach\nto align]
-    F --> H[Update all\ndownstream docs]
+    D --> E[Learner defends<br>or revises]
+    E -->|Defended| F[Update decision log<br>with rationale]
+    E -->|Revised| G[Adjust approach<br>to align]
+    F --> H[Update all<br>downstream docs]
     G --> H
 ```
 
