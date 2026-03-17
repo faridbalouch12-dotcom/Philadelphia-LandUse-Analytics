@@ -1,10 +1,11 @@
 erDiagram
 
     dim_district {
-        integer district_id       PK
-        varchar district_name
-        varchar district_abbrev
-        numeric land_area_sqmi
+        integer  district_id       PK
+        varchar  district_name
+        varchar  district_abbrev
+        numeric  land_area_sqmi
+        geometry polygon_geometry
     }
 
     dim_date {
@@ -81,12 +82,6 @@ erDiagram
         integer tract_count
     }
 
-    geo_district_boundaries {
-        varchar  district_id       PK, FK
-        varchar  boundary_version  PK
-        geometry polygon_geometry
-    }
-
     dim_district ||--o{ fct_permits : "R1 · district_id"
     dim_date ||--o{ fct_permits : "R2 · date_key"
     dim_district ||--o{ fct_district_year_zoning_composition : "R3 · district_id"
@@ -98,4 +93,3 @@ erDiagram
     dim_date ||--o{ fct_tract_acs : "R9 · acs_period_end_date"
     dim_district ||--o{ agg_district_acs_attributes_hist : "R10 · district_id"
     dim_date ||--o{ agg_district_acs_attributes_hist : "R11 · boundary_version_eoy"
-    dim_district ||--o{ geo_district_boundaries : "R12 · district_id"

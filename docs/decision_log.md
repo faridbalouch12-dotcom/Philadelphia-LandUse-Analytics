@@ -183,6 +183,8 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ### D13. Separate polygon geometry from `dim_district` into a dedicated `geo_district_boundaries` table
 
+> **SUPERSEDED by D20 on 2026-03-15.** See D20 for current decision.
+
 | Field | Detail |
 |-------|--------|
 | **Date** | 2026-03-08 |
@@ -265,6 +267,18 @@ and placeholder entries for decisions that have not actually been made yet.
 
 ---
 
+### D20. Co-locate `polygon_geometry` in `dim_district`; drop `geo_district_boundaries`
+
+| Field | Detail |
+|-------|--------|
+| **Date** | 2026-03-15 |
+| **Decision** | `dim_district` includes a `polygon_geometry` (EPSG:4326) column. `geo_district_boundaries` (E8) is dropped from the schema. Boundary versioning (`boundary_version`) is also dropped — boundary changes are handled via Type 1 overwrite on `dim_district`, consistent with D17. |
+| **Alternatives** | (1) Keep D13 as-is — maintain `geo_district_boundaries` as a separate geo table. (2) Store geometry as WKT string in `dim_district` — reduces PostGIS overhead while keeping schema flat. |
+| **Rationale** | D13's geometry-separation reasoning was that `dim_district` is joined by every analytics query, making geometry column overhead unavoidable. At MVP scale with 18 static districts, this overhead is negligible — the geometry data is tiny. The D19 precedent established that co-location is acceptable when consumers use explicit column selection. Adding a separate `geo_district_boundaries` table adds schema complexity (an extra table, an extra task, an extra join for map rendering) without meaningful benefit at this scale. Boundary versioning is also dropped: district boundaries are administratively stable for the MVP window, and the versioning mechanism adds complexity (new rows per boundary change, bridge table re-computation) that is not justified for 18 static districts. |
+| **Implications** | `dim_district` now carries a `polygon_geometry GEOMETRY(MULTIPOLYGON, 4326)` column. Task 32.3 (`geo_district_boundaries`) is collapsed into 32.2. The `geo_` table type is no longer used in the marts layer. D17's reference to boundary versioning via `geo_district_boundaries` is superseded for the `dim_district` case — boundary changes now result in a Type 1 overwrite on `dim_district`. dbt models joining `dim_district` for analytics (non-spatial) purposes must use explicit column selection and exclude `polygon_geometry`. |
+
+---
+
 ## References
 
 - **[B7]** The Pragmatic Programmer (20th Anniversary). See
@@ -298,3 +312,4 @@ and placeholder entries for decisions that have not actually been made yet.
 | 2026-03-10 | Amended D7: replaced stale "two fact tables" count with appendable fact table registry; added fct_tract_acs; updated Implications to reflect three fact tables | Farid |
 | 2026-03-10 | Reordered entries D11–D18 to sequential numeric order (D-numbers unchanged) | Farid |
 | 2026-03-10 | Added D19: tract_geometry co-located in fct_tract_acs rather than separated to geo_tract_boundaries — D13 pattern explicitly not applied; rationale: low join frequency, explicit column selection, MVP scope | Farid |
+| 2026-03-15 | Superseded D13: polygon_geometry co-located in dim_district; geo_district_boundaries dropped; boundary versioning dropped — D19 precedent applied; 18 static districts, negligible overhead, MVP scope | Farid |

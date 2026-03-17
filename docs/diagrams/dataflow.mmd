@@ -58,7 +58,6 @@ flowchart TD
         subgraph MART_FEATURE["Feature tables"]
             FCT_PERMITS["fct_permits  [G1]"]
             FCT_ACS["fct_tract_acs  [G4]"]
-            GEO_BOUNDS["geo_district_boundaries  [E8]"]
         end
 
         subgraph MART_ROLLUP["Rollup + Bridge tables"]
@@ -103,7 +102,6 @@ flowchart TD
     STG_ZONING           --> DIM_ZONING
     GEN_DATE             --> DIM_DATE
 
-    STG_DISTRICTS        --> GEO_BOUNDS
     INT_PERMITS_DISTRICT --> FCT_PERMITS
     STG_ACS              --> FCT_ACS
 

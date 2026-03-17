@@ -34,8 +34,8 @@ Text-only entity-relationship draft for the Philadelphia data warehouse. Defines
 **Type:** Dimension
 **Grain:** One planning district
 **PK:** `district_id`
-**Key columns:** `district_id` (integer), `district_name`, `district_abbrev`, `land_area_sqmi`
-**Purpose:** Lightweight district lookup table used by all fact and aggregation tables. Geometry is intentionally excluded — polygon geometry lives in `geo_district_boundaries` (E8) to avoid storage and join overhead.
+**Key columns:** `district_id` (integer), `district_name`, `district_abbrev`, `land_area_sqmi`, `polygon_geometry`
+**Purpose:** District lookup table used by all fact and aggregation tables. Co-locates `polygon_geometry` for map rendering — same pattern as `fct_tract_acs` (D19). Analytics consumers must use explicit column selection and exclude `polygon_geometry` in non-spatial queries. See D20.
 
 ---
 
@@ -99,13 +99,9 @@ Text-only entity-relationship draft for the Philadelphia data warehouse. Defines
 
 ---
 
-### E8 — `geo_district_boundaries`
+### ~~E8 — `geo_district_boundaries`~~
 
-**Type:** Feature layer
-**Grain:** One planning district boundary version
-**PK:** (`district_id`, `boundary_version`)
-**Key columns:** `district_id`, `boundary_version`, `polygon_geometry`
-**Purpose:** Polygon geometry store for planning district boundaries. Separated from `dim_district` to avoid large geometry columns in analytics joins. Used only for spatial operations and map rendering.
+> **Dropped — superseded by D20 (2026-03-15).** Polygon geometry is now co-located in `dim_district`. See D20 for rationale.
 
 ---
 
@@ -190,7 +186,7 @@ These transform tables are pipeline-only infrastructure. They are not queried by
 | R9 | `fct_tract_acs` | `dim_date` | many-to-one | `acs_period_end_date → date_key` | EOY date of ACS period end year |
 | R10 | `agg_district_acs_attributes_hist` | `dim_district` | many-to-one | `district_id` | Many histogram bins per district |
 | R11 | `agg_district_acs_attributes_hist` | `dim_date` | many-to-one | `boundary_version_eoy → date_key` | EOY date of boundary version used in aggregation |
-| R12 | `geo_district_boundaries` | `dim_district` | many-to-one | `district_id` | One or more boundary versions per district |
+| ~~R12~~ | ~~`geo_district_boundaries`~~ | ~~`dim_district`~~ | — | — | Dropped — `geo_district_boundaries` removed (D20) |
 
 ---
 
@@ -199,8 +195,8 @@ These transform tables are pipeline-only infrastructure. They are not queried by
 **DD1 — EOY date pattern for year-level joins**
 All year-level and period-level fact tables use an EOY surrogate date column (e.g., `vintage_date`, `acs_period_end_date`, `boundary_version_eoy`) to join cleanly to `dim_date` without fan-out. A join on `year` integer would match 365 rows in `dim_date` per fact row.
 
-**DD2 — Geometry separated from `dim_district`**
-Polygon geometry lives in `geo_district_boundaries` (E8), not `dim_district` (E1). Analytics joins to `dim_district` stay lightweight. Geometry is only loaded when spatial operations or map rendering are needed.
+**DD2 — Geometry co-located in `dim_district`** *(updated 2026-03-15, supersedes original DD2 — see D20)*
+`dim_district` co-locates `polygon_geometry` alongside scalar attributes, following the same pattern as `fct_tract_acs` (DD6, D19). `geo_district_boundaries` is dropped. Analytics consumers must use explicit column selection to exclude `polygon_geometry` in non-spatial queries.
 
 **DD3 — `fct_tract_acs` used as lookup by bridge**
 `bridge_tract_district_overlap` joins to `fct_tract_acs` on `geoid_tract` — a fact table acting as a dimensional lookup for tract identity. This is intentional: ACS data contains measurements (estimates + MOE), not just descriptive attributes, so a separate `dim_census_tract` would duplicate data already in the fact table.
@@ -254,3 +250,4 @@ DD2 separates polygon geometry from `dim_district` because `dim_district` is joi
 | 2026-03-10 | Reconciliation: E7 key columns `median_income/moe` → `median_hh_income/moe` to match SC4 and erd.mmd; links section `zoning_comparability_plan_draft.md` → `zoning_comparability_plan.md` (draft deleted) | Farid |
 | 2026-03-10 | Full reconciliation: E5 key columns — added `vocab_stable` per SC2 update | Farid |
 | 2026-03-10 | Added `tract_geometry` to E7 key columns and purpose; added DD6 — geometry co-located in fct_tract_acs (D13 pattern explicitly not applied; see D19) | Farid |
+| 2026-03-15 | D20: E8 dropped; E1 updated to include polygon_geometry; DD2 updated; R12 removed | Farid |

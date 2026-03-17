@@ -138,10 +138,11 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 | `district_name` | `VARCHAR` | NOT NULL | Human-readable district name. Subject to Type 1 overwrite if name is corrected. |
 | `district_abbrev` | `VARCHAR` | NOT NULL | Short district abbreviation for charts and map tooltips. |
 | `land_area_sqmi` | `NUMERIC` | NOT NULL | Land-only area in square miles, derived from geometry reprojected to EPSG:2272 in staging. |
+| `polygon_geometry` | `GEOMETRY(MULTIPOLYGON, 4326)` | NOT NULL | District boundary polygon for map rendering. Co-located per D20. Analytics consumers must use explicit column selection and exclude this column in non-spatial queries. |
 
 **Key strategy:**
 - Natural PK: `district_id` (integer, source `objectid`; stable for 18 static districts)
-- No FK versioning columns (`effective_date`, `expiry_date`, `is_current`) — Type 1 SCD, boundary changes tracked via `boundary_version` in `geo_district_boundaries` (D17)
+- No FK versioning columns (`effective_date`, `expiry_date`, `is_current`) — Type 1 SCD; boundary changes result in Type 1 overwrite on `dim_district` (D17, D20)
 
 **Grain validation rules:**
 1. `district_id` must be unique — 18 rows expected for Philadelphia MVP
@@ -195,3 +196,4 @@ This document defines DDL-ready column contracts for the highest-risk warehouse 
 | 2026-03-10 | SC4: added renter_occupied_units, renter_occupied_units_moe, occupied_units, occupied_units_moe — raw count columns required by acs_tenure_proxy metric; supports overlap-weighted district-level aggregation | Farid |
 | 2026-03-10 | Full reconciliation: header date synced; scope count corrected (five → six); SC2 `vocab_stable` column added with validation rule | Farid |
 | 2026-03-10 | SC4: added `tract_geometry GEOMETRY(MULTIPOLYGON, 4326) NOT NULL` — co-located per D19 | Farid |
+| 2026-03-15 | SC5: added `polygon_geometry GEOMETRY(MULTIPOLYGON, 4326) NOT NULL`; updated key strategy — boundary versioning dropped per D20 | Farid |
