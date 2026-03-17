@@ -1,0 +1,48 @@
+models:
+  - name: dim_date
+    config:
+      materialized: table
+      indexes:
+        - columns: ['date_key']
+          unique: true
+    description: "Dimension table for dates, including various date attributes."
+    columns:
+      - name: date_key
+        description: "Unique identifier for the date (YYYYMMDD)."
+        tests:
+          - not_null
+          - unique
+      - name: date_actual
+        description: "The actual date in YYYY-MM-DD format."
+        tests:
+          - not_null
+          - unique
+      - name: day_name
+        description: "Full name of the day (e.g. Monday)."
+        tests:
+          - not_null
+      - name: day_of_week
+        description: "ISO day of week (1=Monday, 7=Sunday)."
+        tests:
+          - not_null
+      - name: month_actual
+        description: "The month component of the date (1-12)."
+        tests:
+          - not_null
+      - name: month_name
+        description: "Full name of the month (e.g. January)."
+        tests:
+          - not_null
+      - name: quarter_actual
+        description: "The quarter of the year (1-4)."
+        tests:
+          - not_null
+      - name: year_actual
+        description: "The year component of the date."
+        tests:
+          - not_null
+      - name: weekend_indr
+        description: "True if the date falls on a Saturday or Sunday."
+        tests:
+          - not_null
+

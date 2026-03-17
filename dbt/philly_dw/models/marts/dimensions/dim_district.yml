@@ -1,0 +1,39 @@
+models:
+  - name: dim_district
+    config:
+      materialized: table
+      indexes:
+        - columns: ['district_id']
+    description: >
+      Conformed dimension for Philadelphia's 18 planning districts. One row per planning district.
+      Geometry is co-located
+      in this table rather than a separate geo_district_boundaries table (per D20) — the 18-row
+      cardinality makes a join-only boundary table unnecessary overhead with no analytical benefit.
+      Analytics consumers running non-spatial queries should use explicit column selection to
+      exclude polygon_geometry and avoid serializing geometry unnecessarily.
+    columns:
+      - name: district_id
+        description: "Integer surrogate key for the planning district. Used as the FK join column in fact tables and intermediate models."
+        tests:
+          - not_null
+          - unique
+      - name: district_name
+        description: "Full name of the Philadelphia planning district (e.g., 'Lower Northeast')."
+        tests:
+          - not_null
+      - name: district_abbrev
+        description: "Short abbreviation for the planning district (e.g., 'LNE')."
+        tests:
+          - not_null
+      - name: polygon_geometry
+        description: >
+          Polygon boundary of the planning district in WGS 84 (EPSG:4326), suitable for GeoJSON
+          export and web mapping. Co-located per D20. Staging stores geometry in EPSG:2272 for
+          area calculation; this column transforms to 4326 via ST_Transform for analytics consumers.
+          Exclude this column in non-spatial queries.
+        tests:
+          - not_null
+      - name: land_area_sqmi
+        description: "Land area of the planning district in square miles, derived from the EPSG:2272 geometry in staging."
+        tests:
+          - not_null
