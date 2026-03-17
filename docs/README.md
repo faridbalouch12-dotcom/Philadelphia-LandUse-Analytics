@@ -2,7 +2,7 @@
 
 **Author:** Farid
 **Created:** 2026-02-28
-**Last Updated:** 2026-03-08 (Week 4 final pass)
+**Last Updated:** 2026-03-15 (Month 2 district slice + Metabase)
 **Status:** Active
 
 ---
@@ -202,6 +202,17 @@ source file and gives a one-line summary of what that document is for.
 | [dbt docs site](./runbooks/dbt_docs.md) | How to generate and serve the dbt docs site locally, navigate source nodes, and verify descriptions rendered correctly. |
 | [Planning districts extract plan](./runbooks/planning_districts_extract_plan.md) | Endpoint inspection: URL, expected fields, CRS, and key decisions for the planning districts extractor. |
 | [Planning districts raw ingest](./runbooks/planning_districts_raw_ingest.md) | Operational runbook for running the planning districts extraction pipeline. |
+| [Metabase connection](./runbooks/metabase_connection.md) | Step-by-step guide for connecting Metabase to the warehouse database, including Docker hostname note and known display quirks. |
+| [Metabase district sanity](./runbooks/metabase_district_sanity.md) | Saved Metabase question validating the district slice: 18 rows, per-district land area, sum ≈ 142 sqmi. |
+
+---
+
+## Backlog
+
+| Document | Summary |
+|----------|---------|
+| [Metabase modeling backlog](./backlog/metabase_modeling_backlog.md) | Issues and usability gaps surfaced during the district slice Metabase review: WKB hex display, date_key formatting, schema visibility scoping. |
+| [Permits blocker list](./backlog/permits_blockers.md) | Blockers and risks identified before permits implementation begins: fetch time, WHERE clause typo, geometry null rate, `typeofwork` nulls. |
 
 ---
 
@@ -218,3 +229,5 @@ source file and gives a one-line summary of what that document is for.
 | 2026-03-08 | Added Week 3 recap + Week 4 plan link (Task 15.2 fix) | Farid  |
 | 2026-03-08 | Week 4 final pass: added ERD review checklist, dataflow diagram, map-first contract, Checklists section, Product specs section (Tasks 16.2–19.2) | Farid  |
 | 2026-03-08 | Updated Last Updated field and change log | Farid  |
+| 2026-03-15 | Month 2 district slice: added Metabase runbooks, district sanity doc, backlog section (Tasks 33.1–33.5) | Farid  |
+| 2026-03-15 | Added permits blocker list (Task 34.5) | Farid  |

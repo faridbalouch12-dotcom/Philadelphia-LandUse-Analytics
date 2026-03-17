@@ -242,25 +242,25 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [x] Task 31.5 — Add an automated area sanity test (PASS, 2026-03-14)
 
 **Day 32 — District dimensions and geometry tables**
-- [ ] Task 32.1 — Build `dim_date`
-- [ ] Task 32.2 — Build `dim_district`
-- [ ] Task 32.3 — Build `geo_district_boundaries`
-- [ ] Task 32.4 — Add dimension/geometry relationship tests
-- [ ] Task 32.5 — Update dbt documentation for the district layer
+- [x] Task 32.1 — Build `dim_date` (PASS, 8/10, 2026-03-15)
+- [x] Task 32.2 — Build `dim_district` (PASS, 9/10, 2026-03-15)
+- ~~Task 32.3~~ *(REMOVED — geo_district_boundaries dropped per D20)*
+- [x] Task 32.4 — Add district dimension tests (PASS, 8/10, 2026-03-15)
+- [x] Task 32.5 — Update dbt documentation for the district layer (PASS, 9/10, 2026-03-15)
 
 **Day 33 — Connect to Metabase**
-- [ ] Task 33.1 — Connect Metabase to the Postgres database
-- [ ] Task 33.2 — Expose the district dimension and geometry tables
-- [ ] Task 33.3 — Create one district sanity question
-- [ ] Task 33.4 — Capture any district-slice issues discovered in Metabase
-- [ ] Task 33.5 — Update the docs index
+- [x] Task 33.1 — Connect Metabase to the Postgres database (PASS, 10/10, 2026-03-15)
+- [x] Task 33.2 — Expose the district dimension and geometry tables (PASS, 9/10, 2026-03-15)
+- [x] Task 33.3 — Create one district sanity question (PASS, 10/10, 2026-03-15)
+- [x] Task 33.4 — Capture any district-slice issues discovered in Metabase (PASS, 10/10, 2026-03-15)
+- [x] Task 33.5 — Update the docs index (PASS, 10/10, 2026-03-15)
 
 **Day 34 — Week 2 checkpoint and cleanup**
-- [ ] Task 34.1 — Run the district slice from clean start
-- [ ] Task 34.2 — Refactor obvious naming or structure debt
-- [ ] Task 34.3 — Add a district-slice QA checklist
-- [ ] Task 34.4 — Write the district-slice recap
-- [ ] Task 34.5 — Open the permits blocker list
+- [x] Task 34.1 — Run the district slice from clean start (PASS, 8/10, 2026-03-15)
+- ~~Task 34.2~~ *(REMOVED — no naming debt found)*
+- [x] Task 34.3 — Add a district-slice QA checklist (PASS, 10/10, 2026-03-15)
+- [x] Task 34.4 — Write the district-slice recap (PASS, 10/10, 2026-03-15)
+- [x] Task 34.5 — Open the permits blocker list (PASS, 10/10, 2026-03-15)
 
 ---
 
@@ -270,7 +270,6 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 - [ ] Task 35.1 — Re-inspect the permits source
 - [ ] Task 35.2 — Choose the extraction key strategy
 - [ ] Task 35.3 — Build the permits extractor CLI/module
-- [ ] Task 35.4 — Land a small sample successfully
 - [ ] Task 35.5 — Write the backfill plan
 
 **Day 36 — Raw load and checkpointing**
@@ -409,4 +408,4 @@ Track completed tasks here. Updated after each graded task that receives a PASS 
 
 ---
 
-**Last updated:** 2026-03-14 (Task 30.5)
+**Last updated:** 2026-03-15 (Task 34.5)

@@ -1116,29 +1116,24 @@ By the end of Month 2, the repo should contain:
 
 ---
 
-**Task 32.3 — Build `geo_district_boundaries`**
-- Description: Create the geometry table separated from `dim_district`, consistent with the Month 1 design decision.
-- Learning Objective: Keep geometry-heavy tables isolated from descriptive dimensions.
-- Definition of Done: The geometry table builds and joins cleanly to `dim_district`.
-- Deliverables: `dbt/philly_dw/models/marts/geo/geo_district_boundaries.sql, dbt/philly_dw/models/marts/geo/geo_district_boundaries.yml`
-- Reading: D27, D38
+~~**Task 32.3 — Build `geo_district_boundaries`**~~ *(REMOVED — `geo_district_boundaries` dropped per D20; geometry co-located in `dim_district`)*
 
 ---
 
-**Task 32.4 — Add dimension/geometry relationship tests**
-- Description: Add tests for uniqueness, not-null keys, and district-to-geometry join integrity.
+**Task 32.4 — Add district dimension tests**
+- Description: Add tests for uniqueness, not-null keys, and geometry not-null on `dim_district`.
 - Learning Objective: Make your dimensional assumptions executable.
-- Definition of Done: The tests pass and relationship assumptions are encoded in code, not just in docs.
-- Deliverables: `dbt/philly_dw/models/marts/dimensions/dim_district.yml, dbt/philly_dw/models/marts/geo/geo_district_boundaries.yml`
+- Definition of Done: Tests pass covering `district_id` uniqueness, all scalar columns not-null, and `polygon_geometry` not-null.
+- Deliverables: `dbt/philly_dw/models/marts/dimensions/dim_district.yml`
 - Reading: D34
 
 ---
 
 **Task 32.5 — Update dbt documentation for the district layer**
-- Description: Add descriptions for models and key columns in the district slice.
+- Description: Add descriptions for `dim_district` model and key columns including `polygon_geometry`.
 - Learning Objective: Practice building a warehouse that others can read, not just query.
-- Definition of Done: The key district models and columns appear with descriptions in dbt docs.
-- Deliverables: `dbt/philly_dw/models/marts/dimensions/dim_district.yml, dbt/philly_dw/models/marts/geo/geo_district_boundaries.yml (updated)`
+- Definition of Done: `dim_district` model and all columns appear with descriptions in dbt docs.
+- Deliverables: `dbt/philly_dw/models/marts/dimensions/dim_district.yml`
 - Reading: D35
 
 ---
@@ -1201,12 +1196,7 @@ By the end of Month 2, the repo should contain:
 
 ---
 
-**Task 34.2 — Refactor obvious naming or structure debt**
-- Description: Fix awkward naming, duplicate logic, or misplaced files discovered during the first full vertical slice.
-- Learning Objective: Refactor while the cost is still low.
-- Definition of Done: The district slice is cleaner than it was on Day 33, with no unresolved “obvious mess” left behind.
-- Deliverables: `src/... OR dbt/... (refactored), docs/runbooks/district_slice_rebuild.md (updated)`
-- Reading: B12
+~~**Task 34.2 — Refactor obvious naming or structure debt**~~ *(REMOVED — no naming debt or misplaced files found after district slice review)*
 
 ---
 
